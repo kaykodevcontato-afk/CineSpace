@@ -1,488 +1,385 @@
-/* =====================================================
+"use strict";
+
+/* ==========================================
    ARCOVERDE BUS
-   SCRIPT.JS
-
-   Protótipo acadêmico.
-   Rotas e coordenadas são demonstrativas.
-===================================================== */
-
-
-/* =====================================================
-   CONFIGURAÇÃO
-===================================================== */
+========================================== */
 
 const ARCOVERDE = [-8.4189, -37.0531];
 
-const OSRM_URL =
+const OSRM =
     "https://router.project-osrm.org/route/v1/driving";
 
 
-/* =====================================================
-   DADOS DEMONSTRATIVOS
-===================================================== */
+/* ==========================================
+   DADOS
+========================================== */
 
-/*
-    IMPORTANTE:
+const linhas = {
 
-    Os pontos abaixo são coordenadas aproximadas para
-    demonstração do sistema.
+    escolar: {
 
-    Não representam itinerários oficiais.
-*/
+        "ESC-01": {
+            nome: "Escolar São Cristóvão",
+            velocidade: 30,
 
+            pontos: [
+                {
+                    nome: "São Cristóvão",
+                    tipo: "bairro",
+                    coords: [-8.4095, -37.0600]
+                },
 
-const escolas = {
+                {
+                    nome: "Parada São Cristóvão",
+                    tipo: "parada",
+                    coords: [-8.4110, -37.0585]
+                },
 
-    rotary: {
-        nome: "Escola Municipal Rotary",
-        tipo: "escola",
-        endereco: "São Cristóvão",
-        coords: [-8.4128, -37.0570]
-    },
+                {
+                    nome: "Escola Municipal Rotary",
+                    tipo: "escola",
+                    coords: [-8.4128, -37.0570]
+                },
 
-    alfabeto: {
-        nome: "Escola Municipal Alfabeto",
-        tipo: "escola",
-        endereco: "São Cristóvão",
-        coords: [-8.4144, -37.0582]
-    },
+                {
+                    nome: "Escola Municipal Alfabeto",
+                    tipo: "escola",
+                    coords: [-8.4144, -37.0582]
+                },
 
-    sebastiao: {
-        nome: "Escola Municipal Sebastião Luiz Cavalcanti",
-        tipo: "escola",
-        endereco: "São Cristóvão",
-        coords: [-8.4160, -37.0558]
-    },
+                {
+                    nome: "Escola Municipal Sebastião Luiz Cavalcanti",
+                    tipo: "escola",
+                    coords: [-8.4160, -37.0558]
+                },
 
-    gumercindo: {
-        nome: "Escola Municipal Gumercindo Cavalcanti",
-        tipo: "escola",
-        endereco: "Tamboril",
-        coords: [-8.4260, -37.0460]
-    },
-
-    antonioCosta: {
-        nome: "Escola Municipal Antônio Costa Leitão",
-        tipo: "escola",
-        endereco: "Tamboril",
-        coords: [-8.4245, -37.0448]
-    },
-
-    joseMedeiros: {
-        nome: "Escola Municipal José Medeiros da Fonseca",
-        tipo: "escola",
-        endereco: "Sucupira",
-        coords: [-8.4305, -37.0510]
-    },
-
-    antonioJoaquim: {
-        nome: "Escola Municipal Antônio Joaquim da Silva",
-        tipo: "escola",
-        endereco: "Boa Vista",
-        coords: [-8.4075, -37.0650]
-    },
-
-    olga: {
-        nome: "Escola Municipal Olga Gueiros Leite",
-        tipo: "escola",
-        endereco: "Centro",
-        coords: [-8.4173, -37.0550]
-    }
-
-};
+                {
+                    nome: "Parada Centro",
+                    tipo: "parada",
+                    coords: [-8.4170, -37.0555]
+                }
+            ]
+        },
 
 
-/* =====================================================
-   LINHAS ESCOLARES
-===================================================== */
+        "ESC-02": {
+            nome: "Escolar Boa Vista / Centro",
+            velocidade: 28,
 
-const linhasEscolares = {
+            pontos: [
+                {
+                    nome: "Boa Vista",
+                    tipo: "bairro",
+                    coords: [-8.4070, -37.0650]
+                },
 
-    "ESC-01": {
+                {
+                    nome: "Parada Boa Vista",
+                    tipo: "parada",
+                    coords: [-8.4085, -37.0635]
+                },
 
-        nome: "Escolar São Cristóvão",
+                {
+                    nome: "Escola Municipal Antônio Joaquim da Silva",
+                    tipo: "escola",
+                    coords: [-8.4075, -37.0650]
+                },
 
-        tipo: "escolar",
+                {
+                    nome: "Sucupira",
+                    tipo: "bairro",
+                    coords: [-8.4300, -37.0515]
+                },
 
-        velocidade: 30,
+                {
+                    nome: "Escola Municipal José Medeiros da Fonseca",
+                    tipo: "escola",
+                    coords: [-8.4305, -37.0510]
+                },
 
-        pontos: [
+                {
+                    nome: "Centro",
+                    tipo: "bairro",
+                    coords: [-8.4180, -37.0540]
+                },
 
-            {
-                nome: "São Cristóvão",
-                tipo: "bairro",
-                coords: [-8.4095, -37.0600]
-            },
-
-            {
-                nome: "Parada São Cristóvão",
-                tipo: "parada",
-                coords: [-8.4110, -37.0585]
-            },
-
-            {
-                nome: escolas.rotary.nome,
-                tipo: "escola",
-                coords: escolas.rotary.coords
-            },
-
-            {
-                nome: escolas.alfabeto.nome,
-                tipo: "escola",
-                coords: escolas.alfabeto.coords
-            },
-
-            {
-                nome: escolas.sebastiao.nome,
-                tipo: "escola",
-                coords: escolas.sebastiao.coords
-            },
-
-            {
-                nome: "Parada Centro",
-                tipo: "parada",
-                coords: [-8.4170, -37.0555]
-            }
-
-        ]
-
-    },
+                {
+                    nome: "Escola Municipal Olga Gueiros Leite",
+                    tipo: "escola",
+                    coords: [-8.4173, -37.0550]
+                }
+            ]
+        },
 
 
-    "ESC-02": {
+        "ESC-03": {
+            nome: "Escolar Tamboril",
+            velocidade: 27,
 
-        nome: "Escolar Boa Vista / Centro",
+            pontos: [
+                {
+                    nome: "Centro",
+                    tipo: "bairro",
+                    coords: [-8.4180, -37.0540]
+                },
 
-        tipo: "escolar",
+                {
+                    nome: "Parada Centro",
+                    tipo: "parada",
+                    coords: [-8.4170, -37.0550]
+                },
 
-        velocidade: 28,
+                {
+                    nome: "Tamboril",
+                    tipo: "bairro",
+                    coords: [-8.4260, -37.0465]
+                },
 
-        pontos: [
+                {
+                    nome: "Escola Municipal Gumercindo Cavalcanti",
+                    tipo: "escola",
+                    coords: [-8.4260, -37.0460]
+                },
 
-            {
-                nome: "Boa Vista",
-                tipo: "bairro",
-                coords: [-8.4070, -37.0650]
-            },
-
-            {
-                nome: "Parada Boa Vista",
-                tipo: "parada",
-                coords: [-8.4085, -37.0635]
-            },
-
-            {
-                nome: escolas.antonioJoaquim.nome,
-                tipo: "escola",
-                coords: escolas.antonioJoaquim.coords
-            },
-
-            {
-                nome: "Sucupira",
-                tipo: "bairro",
-                coords: [-8.4300, -37.0515]
-            },
-
-            {
-                nome: escolas.joseMedeiros.nome,
-                tipo: "escola",
-                coords: escolas.joseMedeiros.coords
-            },
-
-            {
-                nome: "Centro",
-                tipo: "bairro",
-                coords: [-8.4180, -37.0540]
-            },
-
-            {
-                nome: escolas.olga.nome,
-                tipo: "escola",
-                coords: escolas.olga.coords
-            }
-
-        ]
+                {
+                    nome: "Escola Municipal Antônio Costa Leitão",
+                    tipo: "escola",
+                    coords: [-8.4245, -37.0448]
+                }
+            ]
+        }
 
     },
 
 
-    "ESC-03": {
-
-        nome: "Escolar Tamboril",
-
-        tipo: "escolar",
-
-        velocidade: 27,
-
-        pontos: [
-
-            {
-                nome: "Centro",
-                tipo: "bairro",
-                coords: [-8.4180, -37.0540]
-            },
-
-            {
-                nome: "Parada Centro",
-                tipo: "parada",
-                coords: [-8.4170, -37.0550]
-            },
-
-            {
-                nome: "Tamboril",
-                tipo: "bairro",
-                coords: [-8.4260, -37.0465]
-            },
-
-            {
-                nome: escolas.gumercindo.nome,
-                tipo: "escola",
-                coords: escolas.gumercindo.coords
-            },
-
-            {
-                nome: escolas.antonioCosta.nome,
-                tipo: "escola",
-                coords: escolas.antonioCosta.coords
-            }
-
-        ]
-
-    }
-
-};
-
-
-/* =====================================================
-   LINHAS PÚBLICAS
-===================================================== */
-
-const linhasPublicas = {
-
-    "PUB-01": {
-
-        nome: "Centro → São Cristóvão",
-
-        tipo: "publico",
-
-        velocidade: 35,
-
-        pontos: [
-
-            {
-                nome: "Centro",
-                tipo: "bairro",
-                coords: [-8.4180, -37.0540]
-            },
-
-            {
-                nome: "Terminal Centro",
-                tipo: "parada",
-                coords: [-8.4170, -37.0550]
-            },
-
-            {
-                nome: "São Geraldo",
-                tipo: "bairro",
-                coords: [-8.4145, -37.0585]
-            },
-
-            {
-                nome: "Parada São Geraldo",
-                tipo: "parada",
-                coords: [-8.4140, -37.0595]
-            },
-
-            {
-                nome: "São Cristóvão",
-                tipo: "bairro",
-                coords: [-8.4095, -37.0600]
-            },
-
-            {
-                nome: "Parada São Cristóvão",
-                tipo: "parada",
-                coords: [-8.4110, -37.0585]
-            }
-
-        ]
-
-    },
-
-
-    "PUB-02": {
-
-        nome: "Centro → Tamboril",
-
-        tipo: "publico",
-
-        velocidade: 32,
-
-        pontos: [
-
-            {
-                nome: "Centro",
-                tipo: "bairro",
-                coords: [-8.4180, -37.0540]
-            },
-
-            {
-                nome: "Parada Centro",
-                tipo: "parada",
-                coords: [-8.4170, -37.0550]
-            },
-
-            {
-                nome: "Tamboril",
-                tipo: "bairro",
-                coords: [-8.4260, -37.0465]
-            },
-
-            {
-                nome: "Parada Tamboril",
-                tipo: "parada",
-                coords: [-8.4250, -37.0460]
-            }
-
-        ]
-
-    },
-
-
-    "PUB-03": {
-
-        nome: "Boa Vista → Centro → Sucupira",
-
-        tipo: "publico",
-
-        velocidade: 30,
-
-        pontos: [
-
-            {
-                nome: "Boa Vista",
-                tipo: "bairro",
-                coords: [-8.4070, -37.0650]
-            },
-
-            {
-                nome: "Parada Boa Vista",
-                tipo: "parada",
-                coords: [-8.4085, -37.0635]
-            },
-
-            {
-                nome: "Centro",
-                tipo: "bairro",
-                coords: [-8.4180, -37.0540]
-            },
-
-            {
-                nome: "Parada Centro",
-                tipo: "parada",
-                coords: [-8.4170, -37.0550]
-            },
-
-            {
-                nome: "Sucupira",
-                tipo: "bairro",
-                coords: [-8.4300, -37.0515]
-            },
-
-            {
-                nome: "Parada Sucupira",
-                tipo: "parada",
-                coords: [-8.4290, -37.0510]
-            }
-
-        ]
-
-    },
-
-
-    "PUB-04": {
-
-        nome: "Centro → Boa Vista",
-
-        tipo: "publico",
-
-        velocidade: 31,
-
-        pontos: [
-
-            {
-                nome: "Centro",
-                tipo: "bairro",
-                coords: [-8.4180, -37.0540]
-            },
-
-            {
-                nome: "Terminal Centro",
-                tipo: "parada",
-                coords: [-8.4170, -37.0550]
-            },
-
-            {
-                nome: "Boa Vista",
-                tipo: "bairro",
-                coords: [-8.4070, -37.0650]
-            },
-
-            {
-                nome: "Parada Boa Vista",
-                tipo: "parada",
-                coords: [-8.4085, -37.0635]
-            }
-
-        ]
+    publico: {
+
+        "PUB-01": {
+            nome: "Centro → São Cristóvão",
+            velocidade: 35,
+
+            pontos: [
+                {
+                    nome: "Centro",
+                    tipo: "bairro",
+                    coords: [-8.4180, -37.0540]
+                },
+
+                {
+                    nome: "Terminal Centro",
+                    tipo: "parada",
+                    coords: [-8.4170, -37.0550]
+                },
+
+                {
+                    nome: "São Geraldo",
+                    tipo: "bairro",
+                    coords: [-8.4145, -37.0585]
+                },
+
+                {
+                    nome: "Parada São Geraldo",
+                    tipo: "parada",
+                    coords: [-8.4140, -37.0595]
+                },
+
+                {
+                    nome: "São Cristóvão",
+                    tipo: "bairro",
+                    coords: [-8.4095, -37.0600]
+                },
+
+                {
+                    nome: "Parada São Cristóvão",
+                    tipo: "parada",
+                    coords: [-8.4110, -37.0585]
+                }
+            ]
+        },
+
+
+        "PUB-02": {
+            nome: "Centro → Tamboril",
+            velocidade: 32,
+
+            pontos: [
+                {
+                    nome: "Centro",
+                    tipo: "bairro",
+                    coords: [-8.4180, -37.0540]
+                },
+
+                {
+                    nome: "Parada Centro",
+                    tipo: "parada",
+                    coords: [-8.4170, -37.0550]
+                },
+
+                {
+                    nome: "Tamboril",
+                    tipo: "bairro",
+                    coords: [-8.4260, -37.0465]
+                },
+
+                {
+                    nome: "Parada Tamboril",
+                    tipo: "parada",
+                    coords: [-8.4250, -37.0460]
+                }
+            ]
+        },
+
+
+        "PUB-03": {
+            nome: "Boa Vista → Centro → Sucupira",
+            velocidade: 30,
+
+            pontos: [
+                {
+                    nome: "Boa Vista",
+                    tipo: "bairro",
+                    coords: [-8.4070, -37.0650]
+                },
+
+                {
+                    nome: "Parada Boa Vista",
+                    tipo: "parada",
+                    coords: [-8.4085, -37.0635]
+                },
+
+                {
+                    nome: "Centro",
+                    tipo: "bairro",
+                    coords: [-8.4180, -37.0540]
+                },
+
+                {
+                    nome: "Parada Centro",
+                    tipo: "parada",
+                    coords: [-8.4170, -37.0550]
+                },
+
+                {
+                    nome: "Sucupira",
+                    tipo: "bairro",
+                    coords: [-8.4300, -37.0515]
+                },
+
+                {
+                    nome: "Parada Sucupira",
+                    tipo: "parada",
+                    coords: [-8.4290, -37.0510]
+                }
+            ]
+        },
+
+
+        "PUB-04": {
+            nome: "Centro → Boa Vista",
+            velocidade: 31,
+
+            pontos: [
+                {
+                    nome: "Centro",
+                    tipo: "bairro",
+                    coords: [-8.4180, -37.0540]
+                },
+
+                {
+                    nome: "Terminal Centro",
+                    tipo: "parada",
+                    coords: [-8.4170, -37.0550]
+                },
+
+                {
+                    nome: "Boa Vista",
+                    tipo: "bairro",
+                    coords: [-8.4070, -37.0650]
+                },
+
+                {
+                    nome: "Parada Boa Vista",
+                    tipo: "parada",
+                    coords: [-8.4085, -37.0635]
+                }
+            ]
+        }
 
     }
 
 };
 
 
-/* =====================================================
-   ESTADO
-===================================================== */
+/* ==========================================
+   VARIÁVEIS
+========================================== */
 
-let mapa;
+let map = null;
 
-let rotaLayer = null;
+let bus = null;
 
-let busMarker = null;
+let route = null;
 
-let stopMarkers = [];
+let markers = [];
 
-let routeCoordinates = [];
+let routePoints = [];
 
-let animationFrame = null;
+let positionIndex = 0;
 
-let animationIndex = 0;
+let timer = null;
 
-let simulationRunning = true;
+let running = true;
 
-let tipoAtual = "escolar";
+let currentType = "escolar";
 
-let linhaAtual = null;
+let currentLine = null;
 
-let pontosAtuais = [];
 
-let favoritos = JSON.parse(
-    localStorage.getItem("arcoverdeBusFavoritos") || "[]"
+/* ==========================================
+   INICIAR
+========================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    init
 );
 
-let presentationIndex = 0;
+
+function init() {
+
+    if (
+        typeof L === "undefined"
+    ) {
+
+        alert(
+            "Erro: o Leaflet não foi carregado."
+        );
+
+        return;
+
+    }
 
 
-/* =====================================================
-   INICIAR MAPA
-===================================================== */
+    createMap();
 
-function iniciarMapa() {
+    createBus();
 
-    mapa = L.map("map", {
-        zoomControl: true
-    }).setView(
+    setupEvents();
+
+    updateLines();
+
+}
+
+
+/* ==========================================
+   MAPA
+========================================== */
+
+function createMap() {
+
+    map = L.map(
+        "map"
+    ).setView(
         ARCOVERDE,
         14
     );
@@ -492,181 +389,478 @@ function iniciarMapa() {
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         {
             maxZoom: 19,
+
             attribution:
-                '&copy; OpenStreetMap contributors'
+                "&copy; OpenStreetMap contributors"
         }
-    ).addTo(mapa);
-
-
-    criarOnibus();
+    ).addTo(map);
 
 }
 
 
-/* =====================================================
-   ÍCONE DO ÔNIBUS
-===================================================== */
+/* ==========================================
+   ÔNIBUS
+========================================== */
 
-function criarIconeOnibus(tipo) {
+function createBus() {
 
-    const classe =
-        tipo === "escolar"
-            ? "escolar"
-            : "publico";
+    bus = L.marker(
+        ARCOVERDE,
+        {
+            icon: busIcon(
+                currentType
+            ),
+            zIndexOffset: 1000
+        }
+    ).addTo(map);
+
+
+    bus.bindPopup(
+        "<strong>🚌 Ônibus</strong><br>" +
+        "Simulação acadêmica"
+    );
+
+}
+
+
+function busIcon(type) {
+
+    const color =
+        type === "escolar"
+            ? "#ff7900"
+            : "#008cff";
 
 
     return L.divIcon({
 
         className: "",
 
-        html: `
-            <div class="bus-marker ${classe}">
+        html:
+            `<div class="bus-icon"
+                  style="background:${color}">
                 🚌
-            </div>
-        `,
+             </div>`,
 
-        iconSize: [42, 42],
+        iconSize: [
+            44,
+            44
+        ],
 
-        iconAnchor: [21, 21]
+        iconAnchor: [
+            22,
+            22
+        ]
 
     });
 
 }
 
 
-/* =====================================================
-   CRIAR ÔNIBUS
-===================================================== */
+/* ==========================================
+   EVENTOS
+========================================== */
 
-function criarOnibus() {
+function setupEvents() {
 
-    busMarker = L.marker(
-        ARCOVERDE,
-        {
-            icon: criarIconesOnibus("escolar"),
-            zIndexOffset: 1000
-        }
-    ).addTo(mapa);
+    document
+        .getElementById(
+            "btnEscolar"
+        )
+        .addEventListener(
+            "click",
+            () => changeType("escolar")
+        );
 
 
-    busMarker.bindPopup(
-        `
-        <div class="popup-title">
-            🚌 Ônibus em movimento
-        </div>
+    document
+        .getElementById(
+            "btnPublico"
+        )
+        .addEventListener(
+            "click",
+            () => changeType("publico")
+        );
 
-        <div class="popup-type">
-            Simulação acadêmica
-        </div>
-        `
+
+    document
+        .getElementById(
+            "lineSelect"
+        )
+        .addEventListener(
+            "change",
+            event => {
+
+                loadLine(
+                    event.target.value
+                );
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            "centerBus"
+        )
+        .addEventListener(
+            "click",
+            centerBus
+        );
+
+
+    document
+        .getElementById(
+            "fitRoute"
+        )
+        .addEventListener(
+            "click",
+            fitRoute
+        );
+
+
+    document
+        .getElementById(
+            "resetView"
+        )
+        .addEventListener(
+            "click",
+            resetMap
+        );
+
+
+    document
+        .getElementById(
+            "toggleSimulation"
+        )
+        .addEventListener(
+            "click",
+            toggleSimulation
+        );
+
+
+    document
+        .getElementById(
+            "presentationBtn"
+        )
+        .addEventListener(
+            "click",
+            () =>
+                openModal(
+                    "presentationModal"
+                )
+        );
+
+
+    document
+        .getElementById(
+            "aboutBtn"
+        )
+        .addEventListener(
+            "click",
+            () =>
+                openModal(
+                    "aboutModal"
+                )
+        );
+
+
+    document
+        .querySelectorAll(
+            "[data-close]"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    () =>
+                        closeModal(
+                            button.dataset.close
+                        )
+                );
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            "prevSlide"
+        )
+        .addEventListener(
+            "click",
+            previousSlide
+        );
+
+
+    document
+        .getElementById(
+            "nextSlide"
+        )
+        .addEventListener(
+            "click",
+            nextSlide
+        );
+
+}
+
+
+/* ==========================================
+   TROCAR TRANSPORTE
+========================================== */
+
+function changeType(type) {
+
+    currentType = type;
+
+
+    document
+        .getElementById(
+            "btnEscolar"
+        )
+        .classList.toggle(
+            "active",
+            type === "escolar"
+        );
+
+
+    document
+        .getElementById(
+            "btnPublico"
+        )
+        .classList.toggle(
+            "active",
+            type === "publico"
+        );
+
+
+    bus.setIcon(
+        busIcon(type)
     );
 
-}
 
-
-/* =====================================================
-   LIMPAR MAPA
-===================================================== */
-
-function limparMapa() {
-
-    if (rotaLayer) {
-
-        mapa.removeLayer(rotaLayer);
-
-        rotaLayer = null;
-
-    }
-
-
-    stopMarkers.forEach(marker => {
-
-        mapa.removeLayer(marker);
-
-    });
-
-
-    stopMarkers = [];
+    updateLines();
 
 }
 
 
-/* =====================================================
-   CALCULAR ROTA PELAS RUAS
-===================================================== */
+/* ==========================================
+   ATUALIZAR LINHAS
+========================================== */
 
-async function calcularRota(pontos) {
+function updateLines() {
 
-    if (!pontos || pontos.length < 2) {
+    const select =
+        document.getElementById(
+            "lineSelect"
+        );
 
-        return [];
+
+    const data =
+        linhas[currentType];
+
+
+    select.innerHTML = "";
+
+
+    Object.keys(data)
+        .forEach(
+            id => {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value = id;
+
+                option.textContent =
+                    `${id} — ${data[id].nome}`;
+
+
+                select.appendChild(
+                    option
+                );
+
+            }
+        );
+
+
+    const first =
+        Object.keys(data)[0];
+
+
+    loadLine(first);
+
+}
+
+
+/* ==========================================
+   CARREGAR LINHA
+========================================== */
+
+async function loadLine(id) {
+
+    stopSimulation();
+
+    clearMapObjects();
+
+
+    currentLine =
+        linhas[currentType][id];
+
+
+    if (!currentLine) {
+
+        return;
 
     }
 
 
-    const coordenadas = pontos
-        .map(p => `${p.coords[1]},${p.coords[0]}`)
-        .join(";");
+    positionIndex = 0;
+
+
+    updateInterface(
+        id,
+        currentLine
+    );
+
+
+    drawPoints(
+        currentLine.pontos
+    );
+
+
+    updateList(
+        currentLine.pontos
+    );
+
+
+    bus.setIcon(
+        busIcon(currentType)
+    );
+
+
+    bus.setLatLng(
+        currentLine.pontos[0].coords
+    );
+
+
+    routePoints =
+        await getRoute(
+            currentLine.pontos
+        );
+
+
+    drawRoute(
+        routePoints
+    );
+
+
+    running = true;
+
+
+    document.getElementById(
+        "toggleSimulation"
+    ).textContent =
+        "⏸️ Pausar";
+
+
+    startSimulation();
+
+}
+
+
+/* ==========================================
+   ROTA OSRM
+========================================== */
+
+async function getRoute(points) {
+
+    if (
+        points.length < 2
+    ) {
+
+        return points.map(
+            p => p.coords
+        );
+
+    }
+
+
+    const coords =
+        points
+            .map(
+                p =>
+                    `${p.coords[1]},${p.coords[0]}`
+            )
+            .join(";");
 
 
     const url =
-        `${OSRM_URL}/${coordenadas}` +
-        `?overview=full&geometries=geojson`;
+        `${OSRM}/${coords}` +
+        "?overview=full&geometries=geojson";
 
 
     try {
 
-        const resposta = await fetch(url);
+        const response =
+            await fetch(url);
 
 
-        if (!resposta.ok) {
+        if (!response.ok) {
 
             throw new Error(
-                "Falha no serviço de rota."
+                "OSRM HTTP " +
+                response.status
             );
 
         }
 
 
-        const dados = await resposta.json();
+        const data =
+            await response.json();
 
 
         if (
-            !dados.routes ||
-            !dados.routes.length
+            !data.routes ||
+            data.routes.length === 0
         ) {
 
             throw new Error(
-                "Rota não encontrada."
+                "Nenhuma rota encontrada"
             );
 
         }
 
 
-        return dados.routes[0]
+        return data.routes[0]
             .geometry
             .coordinates
-            .map(coord => [
-                coord[1],
-                coord[0]
-            ]);
+            .map(
+                c => [
+                    c[1],
+                    c[0]
+                ]
+            );
 
-    } catch (erro) {
+    } catch (error) {
 
         console.warn(
-            "OSRM indisponível. Usando rota alternativa.",
-            erro
+            "OSRM indisponível:",
+            error
         );
 
 
         /*
-            ROTA ALTERNATIVA
+         * FALLBACK
+         *
+         * Se o serviço de rota falhar,
+         * o sistema continua funcionando.
+         */
 
-            Caso o serviço de ruas esteja indisponível,
-            o sistema conecta os pontos diretamente.
-        */
-
-        return pontos.map(
+        return points.map(
             p => p.coords
         );
 
@@ -675,127 +869,94 @@ async function calcularRota(pontos) {
 }
 
 
-/* =====================================================
+/* ==========================================
    DESENHAR ROTA
-===================================================== */
+========================================== */
 
-function desenharRota(route) {
+function drawRoute(points) {
 
-    if (!route.length) {
+    if (!points.length) {
 
         return;
 
     }
 
 
-    const cor =
-        tipoAtual === "escolar"
+    const color =
+        currentType === "escolar"
             ? "#ff7900"
             : "#008cff";
 
 
-    rotaLayer = L.polyline(
-        route,
-        {
-            color: cor,
-
-            weight: 6,
-
-            opacity: .85,
-
-            lineJoin: "round",
-
-            lineCap: "round"
-        }
-    ).addTo(mapa);
+    route =
+        L.polyline(
+            points,
+            {
+                color: color,
+                weight: 6,
+                opacity: .85
+            }
+        ).addTo(map);
 
 
-    mapa.fitBounds(
-        rotaLayer.getBounds(),
-        {
-            padding: [40, 40]
-        }
-    );
+    fitRoute();
 
 }
 
 
-/* =====================================================
-   DESENHAR PONTOS
-===================================================== */
+/* ==========================================
+   PONTOS
+========================================== */
 
-function desenharPontos(pontos) {
+function drawPoints(points) {
 
-    pontos.forEach(
-        (ponto, index) => {
+    points.forEach(
+        (point, index) => {
 
-            let emoji = "📍";
-
-            if (
-                ponto.tipo === "escola"
-            ) {
-
-                emoji = "🏫";
-
-            }
-
-            if (
-                ponto.tipo === "bairro"
-            ) {
-
-                emoji = "🏘️";
-
-            }
+            const emoji =
+                point.type === "escola"
+                    ? "🏫"
+                    : point.type === "bairro"
+                        ? "🏘️"
+                        : "📍";
 
 
             const marker =
                 L.marker(
-                    ponto.coords,
+                    point.coords,
                     {
-                        icon: L.divIcon({
+                        icon:
+                            L.divIcon({
 
-                            className:
-                                "custom-point",
+                                className:
+                                    "",
 
-                            html: `
-                                <div
-                                    style="
-                                    font-size:22px;
-                                    text-align:center;
-                                    ">
-                                    ${emoji}
-                                </div>
-                            `,
+                                html:
+                                    `<div class="point-icon">
+                                        ${emoji}
+                                     </div>`,
 
-                            iconSize: [
-                                28,
-                                28
-                            ],
+                                iconSize:
+                                    [28, 28],
 
-                            iconAnchor: [
-                                14,
-                                14
-                            ]
+                                iconAnchor:
+                                    [14, 14]
 
-                        })
+                            })
                     }
-                ).addTo(mapa);
+                ).addTo(map);
 
 
             marker.bindPopup(
                 `
-                <div class="popup-title">
+                <strong>
                     ${emoji}
-                    ${escaparHTML(ponto.nome)}
-                </div>
-
-                <div class="popup-type">
-                    ${tipoPonto(ponto.tipo)}
-                </div>
-
-                <div class="popup-type">
-                    Ponto ${index + 1}
-                </div>
+                    ${escapeHTML(point.nome)}
+                </strong>
+                <br>
+                <small>
+                    ${pointType(point.type)}
+                </small>
                 `
             );
 
@@ -804,19 +965,18 @@ function desenharPontos(pontos) {
                 "click",
                 () => {
 
-                    mapa.flyTo(
-                        ponto.coords,
-                        16,
-                        {
-                            duration: .7
-                        }
+                    map.flyTo(
+                        point.coords,
+                        16
                     );
 
                 }
             );
 
 
-            stopMarkers.push(marker);
+            markers.push(
+                marker
+            );
 
         }
     );
@@ -824,46 +984,23 @@ function desenharPontos(pontos) {
 }
 
 
-/* =====================================================
-   TEXTO DO TIPO
-===================================================== */
+/* ==========================================
+   LISTA
+========================================== */
 
-function tipoPonto(tipo) {
+function updateList(points) {
 
-    if (tipo === "escola") {
-
-        return "Escola";
-
-    }
-
-    if (tipo === "bairro") {
-
-        return "Bairro";
-
-    }
-
-    return "Parada de ônibus";
-
-}
-
-
-/* =====================================================
-   LISTA DE PONTOS
-===================================================== */
-
-function atualizarLista(pontos) {
-
-    const lista =
+    const list =
         document.getElementById(
             "stopList"
         );
 
 
-    lista.innerHTML = "";
+    list.innerHTML = "";
 
 
-    pontos.forEach(
-        (ponto, index) => {
+    points.forEach(
+        (point, index) => {
 
             const item =
                 document.createElement(
@@ -879,46 +1016,29 @@ function atualizarLista(pontos) {
                 index;
 
 
-            let emoji = "📍";
-
-
-            if (
-                ponto.tipo === "escola"
-            ) {
-
-                emoji = "🏫";
-
-            }
-
-
-            if (
-                ponto.tipo === "bairro"
-            ) {
-
-                emoji = "🏘️";
-
-            }
+            const emoji =
+                point.type === "escola"
+                    ? "🏫"
+                    : point.type === "bairro"
+                        ? "🏘️"
+                        : "📍";
 
 
             item.innerHTML = `
-
-                <div class="stop-number">
+                <span class="number">
                     ${index + 1}
-                </div>
+                </span>
 
-                <div class="stop-info">
-
+                <div>
                     <strong>
                         ${emoji}
-                        ${escaparHTML(ponto.nome)}
+                        ${escapeHTML(point.nome)}
                     </strong>
 
-                    <span>
-                        ${tipoPonto(ponto.tipo)}
-                    </span>
-
+                    <small>
+                        ${pointType(point.type)}
+                    </small>
                 </div>
-
             `;
 
 
@@ -926,29 +1046,22 @@ function atualizarLista(pontos) {
                 "click",
                 () => {
 
-                    mapa.flyTo(
-                        ponto.coords,
-                        16,
-                        {
-                            duration: .7
-                        }
+                    map.flyTo(
+                        point.coords,
+                        16
                     );
 
 
-                    if (
-                        stopMarkers[index]
-                    ) {
-
-                        stopMarkers[index]
-                            .openPopup();
-
-                    }
+                    markers[index]
+                        ?.openPopup();
 
                 }
             );
 
 
-            lista.appendChild(item);
+            list.appendChild(
+                item
+            );
 
         }
     );
@@ -956,282 +1069,60 @@ function atualizarLista(pontos) {
 }
 
 
-/* =====================================================
-   ATUALIZAR DASHBOARD
-===================================================== */
-
-function atualizarDashboard() {
-
-    const linhas =
-        tipoAtual === "escolar"
-            ? linhasEscolares
-            : linhasPublicas;
-
-
-    const quantidadeLinhas =
-        Object.keys(linhas).length;
-
-
-    const quantidadeParadas =
-        pontosAtuais.filter(
-            p => p.tipo === "parada"
-        ).length;
-
-
-    const quantidadeLocais =
-        pontosAtuais.filter(
-            p =>
-                p.tipo === "escola" ||
-                p.tipo === "bairro"
-        ).length;
-
-
-    document.getElementById(
-        "totalLines"
-    ).textContent =
-        quantidadeLinhas;
-
-
-    document.getElementById(
-        "totalBuses"
-    ).textContent = "1";
-
-
-    document.getElementById(
-        "totalStops"
-    ).textContent =
-        quantidadeParadas;
-
-
-    document.getElementById(
-        "totalPlaces"
-    ).textContent =
-        quantidadeLocais;
-
-}
-
-
-/* =====================================================
-   ATUALIZAR INTERFACE
-===================================================== */
-
-function atualizarInterface() {
-
-    const linhas =
-        tipoAtual === "escolar"
-            ? linhasEscolares
-            : linhasPublicas;
-
-
-    const select =
-        document.getElementById(
-            "lineSelect"
-        );
-
-
-    select.innerHTML = "";
-
-
-    Object.entries(linhas)
-        .forEach(
-            ([id, linha]) => {
-
-                const option =
-                    document.createElement(
-                        "option"
-                    );
-
-
-                option.value = id;
-
-                option.textContent =
-                    `${id} — ${linha.nome}`;
-
-
-                select.appendChild(
-                    option
-                );
-
-            }
-        );
-
-
-    const primeiraLinha =
-        Object.keys(linhas)[0];
-
-
-    carregarLinha(
-        primeiraLinha
-    );
-
-}
-
-
-/* =====================================================
-   CARREGAR LINHA
-===================================================== */
-
-async function carregarLinha(id) {
-
-    const linhas =
-        tipoAtual === "escolar"
-            ? linhasEscolares
-            : linhasPublicas;
-
-
-    const linha =
-        linhas[id];
-
-
-    if (!linha) {
-
-        return;
-
-    }
-
-
-    linhaAtual = linha;
-
-    pontosAtuais =
-        linha.pontos;
-
-
-    animationIndex = 0;
-
-
-    pararAnimacao();
-
-
-    limparMapa();
-
-
-    atualizarTextosLinha(
-        id,
-        linha
-    );
-
-
-    desenharPontos(
-        pontosAtuais
-    );
-
-
-    atualizarLista(
-        pontosAtuais
-    );
-
-
-    atualizarDashboard();
-
-
-    busMarker.setIcon(
-        criarIconesOnibus(
-            tipoAtual
-        )
-    );
-
-
-    busMarker.setLatLng(
-        pontosAtuais[0].coords
-    );
-
-
-    document.getElementById(
-        "speed"
-    ).textContent =
-        linha.velocidade;
-
-
-    const rota =
-        await calcularRota(
-            pontosAtuais
-        );
-
-
-    routeCoordinates =
-        rota;
-
-
-    desenharRota(
-        routeCoordinates
-    );
-
-
-    iniciarAnimacao();
-
-}
-
-
-/* =====================================================
-   ATUALIZAR TEXTOS
-===================================================== */
-
-function atualizarTextosLinha(
+/* ==========================================
+   INTERFACE
+========================================== */
+
+function updateInterface(
     id,
-    linha
+    line
 ) {
 
     const escolar =
-        tipoAtual === "escolar";
+        currentType === "escolar";
 
 
-    const badge =
-        document.getElementById(
-            "lineBadge"
-        );
+    document.getElementById(
+        "lineBadge"
+    ).textContent = id;
 
 
-    badge.textContent = id;
-
-
-    badge.className =
-        `line-badge ${
-            escolar
-                ? "escolar"
-                : "publico"
-        }`;
+    document.getElementById(
+        "lineBadge"
+    ).className =
+        "badge " +
+        (escolar
+            ? "escolar"
+            : "publico");
 
 
     document.getElementById(
         "routeName"
     ).textContent =
-        linha.nome;
+        line.nome;
 
 
-    const routeMode =
-        document.getElementById(
-            "routeMode"
-        );
+    document.getElementById(
+        "speed"
+    ).textContent =
+        line.velocidade;
 
 
-    routeMode.textContent =
+    document.getElementById(
+        "routeMode"
+    ).textContent =
         escolar
             ? "🏫 Transporte Escolar"
             : "🚌 Transporte Público";
 
 
-    routeMode.className =
-        `route-mode ${
-            escolar
-                ? "escolar-mode"
-                : "publico-mode"
-        }`;
-
-
     document.getElementById(
-        "busType"
-    ).textContent =
-        escolar
-            ? "Escolar"
-            : "Público";
-
-
-    document.getElementById(
-        "pointListTitle"
-    ).textContent =
-        escolar
-            ? "🏫 Escolas e paradas"
-            : "🏘️ Bairros e paradas";
+        "routeMode"
+    ).className =
+        "mode " +
+        (escolar
+            ? "escolar-mode"
+            : "publico-mode");
 
 
     document.getElementById(
@@ -1248,140 +1139,160 @@ function atualizarTextosLinha(
             : "🚌 Transporte Público";
 
 
-    atualizarFavorito();
-
-}
-
-
-/* =====================================================
-   ANIMAÇÃO
-===================================================== */
-
-function iniciarAnimacao() {
-
-    if (
-        !routeCoordinates.length
-    ) {
-
-        return;
-
-    }
+    document.getElementById(
+        "pointListTitle"
+    ).textContent =
+        escolar
+            ? "🏫 Escolas e paradas"
+            : "🏘️ Bairros e paradas";
 
 
-    simulationRunning = true;
+    const stops =
+        line.pontos.filter(
+            p =>
+                p.type === "parada"
+        ).length;
+
+
+    const places =
+        line.pontos.filter(
+            p =>
+                p.type !== "parada"
+        ).length;
 
 
     document.getElementById(
-        "toggleSimulation"
+        "totalLines"
     ).textContent =
-        "⏸️ Pausar simulação";
+        Object.keys(
+            linhas[currentType]
+        ).length;
 
 
-    animationIndex = 0;
+    document.getElementById(
+        "totalStops"
+    ).textContent =
+        stops;
 
 
-    animarOnibus();
+    document.getElementById(
+        "totalPlaces"
+    ).textContent =
+        places;
 
 }
 
 
-/* =====================================================
-   ANIMAR ÔNIBUS
-===================================================== */
+/* ==========================================
+   SIMULAÇÃO
+========================================== */
 
-function animarOnibus() {
+function startSimulation() {
 
-    if (
-        !simulationRunning ||
-        !routeCoordinates.length
-    ) {
-
-        return;
-
-    }
+    stopSimulation();
 
 
-    const posicao =
-        routeCoordinates[
-            animationIndex
-        ];
+    running = true;
 
 
-    busMarker.setLatLng(
-        posicao
-    );
+    function move() {
+
+        if (!running) {
+
+            return;
+
+        }
 
 
-    atualizarEstados(
-        posicao
-    );
+        if (
+            !routePoints.length
+        ) {
+
+            return;
+
+        }
 
 
-    animationIndex++;
+        const position =
+            routePoints[
+                positionIndex
+            ];
 
 
-    if (
-        animationIndex >=
-        routeCoordinates.length
-    ) {
-
-        animationIndex = 0;
-
-    }
-
-
-    animationFrame =
-        setTimeout(
-            () => {
-
-                requestAnimationFrame(
-                    animarOnibus
-                );
-
-            },
-            120
+        bus.setLatLng(
+            position
         );
 
+
+        updateBusInfo(
+            position
+        );
+
+
+        positionIndex++;
+
+
+        if (
+            positionIndex >=
+            routePoints.length
+        ) {
+
+            positionIndex = 0;
+
+        }
+
+
+        timer =
+            setTimeout(
+                move,
+                100
+            );
+
+    }
+
+
+    move();
+
 }
 
 
-/* =====================================================
+/* ==========================================
    PARAR
-===================================================== */
+========================================== */
 
-function pararAnimacao() {
+function stopSimulation() {
 
-    simulationRunning = false;
+    running = false;
 
 
-    if (animationFrame) {
+    if (timer !== null) {
 
         clearTimeout(
-            animationFrame
+            timer
         );
 
-        animationFrame = null;
+        timer = null;
 
     }
 
 }
 
 
-/* =====================================================
-   PAUSAR / CONTINUAR
-===================================================== */
+/* ==========================================
+   PAUSAR
+========================================== */
 
-function alternarSimulacao() {
+function toggleSimulation() {
 
-    if (simulationRunning) {
+    if (running) {
 
-        pararAnimacao();
+        stopSimulation();
 
 
         document.getElementById(
             "toggleSimulation"
         ).textContent =
-            "▶️ Continuar simulação";
+            "▶️ Continuar";
 
 
         document.getElementById(
@@ -1391,13 +1302,13 @@ function alternarSimulacao() {
 
     } else {
 
-        simulationRunning = true;
+        startSimulation();
 
 
         document.getElementById(
             "toggleSimulation"
         ).textContent =
-            "⏸️ Pausar simulação";
+            "⏸️ Pausar";
 
 
         document.getElementById(
@@ -1405,84 +1316,113 @@ function alternarSimulacao() {
         ).textContent =
             "🟢 Simulação ativa";
 
-
-        animarOnibus();
-
     }
 
 }
 
 
-/* =====================================================
-   ATUALIZAR ESTADOS
-===================================================== */
+/* ==========================================
+   INFO ÔNIBUS
+========================================== */
 
-function atualizarEstados(
-    posicao
-) {
+function updateBusInfo(position) {
 
-    const ponto =
-        encontrarPontoMaisProximo(
-            posicao,
-            pontosAtuais
-        );
-
-
-    if (!ponto) {
+    if (
+        !currentLine
+    ) {
 
         return;
 
     }
 
 
+    let nearest = 0;
+
+    let smallest =
+        Infinity;
+
+
+    currentLine.pontos
+        .forEach(
+            (point, index) => {
+
+                const distance =
+                    distanceMeters(
+                        position,
+                        point.coords
+                    );
+
+
+                if (
+                    distance <
+                    smallest
+                ) {
+
+                    smallest =
+                        distance;
+
+                    nearest =
+                        index;
+
+                }
+
+            }
+        );
+
+
+    const point =
+        currentLine.pontos[
+            nearest
+        ];
+
+
     document.getElementById(
         "nextStop"
     ).textContent =
-        ponto.ponto.nome;
+        point.nome;
 
 
     document.getElementById(
         "mapNextStop"
     ).textContent =
-        ponto.ponto.nome;
+        point.nome;
 
 
     document.getElementById(
         "stopCounter"
     ).textContent =
-        `${ponto.index + 1}/${pontosAtuais.length}`;
+        `${nearest + 1}/${currentLine.pontos.length}`;
 
 
     document.getElementById(
         "distance"
     ).textContent =
-        formatarDistancia(
-            ponto.distancia
+        formatDistance(
+            smallest
         );
 
 
-    document.querySelectorAll(
-        ".stop-item"
-    ).forEach(
-        item => {
+    document
+        .querySelectorAll(
+            ".stop-item"
+        )
+        .forEach(
+            item =>
+                item.classList.remove(
+                    "active"
+                )
+        );
 
-            item.classList.remove(
-                "active"
-            );
 
-        }
-    );
-
-
-    const item =
+    const active =
         document.querySelector(
-            `.stop-item[data-index="${ponto.index}"]`
+            `.stop-item[data-index="${nearest}"]`
         );
 
 
-    if (item) {
+    if (active) {
 
-        item.classList.add(
+        active.classList.add(
             "active"
         );
 
@@ -1491,75 +1431,11 @@ function atualizarEstados(
 }
 
 
-/* =====================================================
-   PONTO MAIS PRÓXIMO
-===================================================== */
+/* ==========================================
+   DISTÂNCIA
+========================================== */
 
-function encontrarPontoMaisProximo(
-    posicao,
-    pontos
-) {
-
-    let menorDistancia =
-        Infinity;
-
-
-    let pontoEncontrado =
-        null;
-
-
-    let indiceEncontrado =
-        0;
-
-
-    pontos.forEach(
-        (ponto, index) => {
-
-            const distancia =
-                distanciaMetros(
-                    posicao,
-                    ponto.coords
-                );
-
-
-            if (
-                distancia <
-                menorDistancia
-            ) {
-
-                menorDistancia =
-                    distancia;
-
-                pontoEncontrado =
-                    ponto;
-
-                indiceEncontrado =
-                    index;
-
-            }
-
-        }
-    );
-
-
-    return {
-
-        ponto: pontoEncontrado,
-
-        index: indiceEncontrado,
-
-        distancia: menorDistancia
-
-    };
-
-}
-
-
-/* =====================================================
-   DISTÂNCIA HAVERSINE
-===================================================== */
-
-function distanciaMetros(
+function distanceMeters(
     a,
     b
 ) {
@@ -1580,13 +1456,13 @@ function distanciaMetros(
         180;
 
 
-    const deltaLat =
+    const dLat =
         (b[0] - a[0]) *
         Math.PI /
         180;
 
 
-    const deltaLon =
+    const dLon =
         (b[1] - a[1]) *
         Math.PI /
         180;
@@ -1594,7 +1470,7 @@ function distanciaMetros(
 
     const x =
         Math.sin(
-            deltaLat / 2
+            dLat / 2
         ) ** 2
         +
         Math.cos(lat1)
@@ -1602,199 +1478,93 @@ function distanciaMetros(
         Math.cos(lat2)
         *
         Math.sin(
-            deltaLon / 2
+            dLon / 2
         ) ** 2;
 
 
-    const y =
+    return (
+        R *
         2 *
         Math.atan2(
             Math.sqrt(x),
             Math.sqrt(1 - x)
-        );
-
-
-    return R * y;
-
-}
-
-
-/* =====================================================
-   FORMATAR DISTÂNCIA
-===================================================== */
-
-function formatarDistancia(
-    metros
-) {
-
-    if (
-        metros < 1000
-    ) {
-
-        return `${Math.round(metros)} m`;
-
-    }
-
-
-    return `${(
-        metros / 1000
-    ).toFixed(1)} km`;
-
-}
-
-
-/* =====================================================
-   FAVORITOS
-===================================================== */
-
-function atualizarFavorito() {
-
-    if (!linhaAtual) {
-
-        return;
-
-    }
-
-
-    const select =
-        document.getElementById(
-            "lineSelect"
-        );
-
-
-    const id =
-        select.value;
-
-
-    const button =
-        document.getElementById(
-            "favoriteBtn"
-        );
-
-
-    const favorito =
-        favoritos.includes(id);
-
-
-    button.classList.toggle(
-        "active",
-        favorito
-    );
-
-
-    button.textContent =
-        favorito
-            ? "★ Remover dos favoritos"
-            : "☆ Adicionar aos favoritos";
-
-}
-
-
-/* =====================================================
-   ALTERAR FAVORITO
-===================================================== */
-
-function alternarFavorito() {
-
-    const id =
-        document.getElementById(
-            "lineSelect"
-        ).value;
-
-
-    if (!id) {
-
-        return;
-
-    }
-
-
-    if (
-        favoritos.includes(id)
-    ) {
-
-        favoritos =
-            favoritos.filter(
-                item =>
-                    item !== id
-            );
-
-    } else {
-
-        favoritos.push(id);
-
-    }
-
-
-    localStorage.setItem(
-        "arcoverdeBusFavoritos",
-        JSON.stringify(
-            favoritos
         )
     );
 
+}
 
-    atualizarFavorito();
+
+function formatDistance(
+    meters
+) {
+
+    if (
+        meters < 1000
+    ) {
+
+        return (
+            Math.round(meters) +
+            " m"
+        );
+
+    }
+
+
+    return (
+        (meters / 1000)
+            .toFixed(1) +
+        " km"
+    );
 
 }
 
 
-/* =====================================================
-   CENTRALIZAR ÔNIBUS
-===================================================== */
+/* ==========================================
+   MAPA
+========================================== */
 
-function centralizarOnibus() {
+function centerBus() {
 
-    if (!busMarker) {
+    if (!bus) {
 
         return;
 
     }
 
 
-    mapa.flyTo(
-        busMarker.getLatLng(),
-        16,
+    map.flyTo(
+        bus.getLatLng(),
+        16
+    );
+
+}
+
+
+function fitRoute() {
+
+    if (!route) {
+
+        return;
+
+    }
+
+
+    map.fitBounds(
+        route.getBounds(),
         {
-            duration: .8
+            padding: [
+                40,
+                40
+            ]
         }
     );
 
 }
 
 
-/* =====================================================
-   MOSTRAR ROTA
-===================================================== */
+function resetMap() {
 
-function mostrarRota() {
-
-    if (
-        rotaLayer
-    ) {
-
-        mapa.fitBounds(
-            rotaLayer.getBounds(),
-            {
-                padding: [
-                    50,
-                    50
-                ]
-            }
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-   RESTAURAR MAPA
-===================================================== */
-
-function restaurarMapa() {
-
-    mapa.setView(
+    map.setView(
         ARCOVERDE,
         14
     );
@@ -1802,336 +1572,82 @@ function restaurarMapa() {
 }
 
 
-/* =====================================================
-   TROCAR TIPO
-===================================================== */
+/* ==========================================
+   LIMPAR
+========================================== */
 
-function trocarTipo(
-    tipo
-) {
+function clearMapObjects() {
 
-    if (
-        tipoAtual === tipo
-    ) {
+    if (route) {
 
-        return;
+        map.removeLayer(
+            route
+        );
+
+        route = null;
 
     }
 
 
-    tipoAtual = tipo;
+    markers.forEach(
+        marker => {
 
+            map.removeLayer(
+                marker
+            );
 
-    document
-        .getElementById(
-            "btnEscolar"
-        )
-        .classList.toggle(
-            "active",
-            tipo === "escolar"
-        );
-
-
-    document
-        .getElementById(
-            "btnPublico"
-        )
-        .classList.toggle(
-            "active",
-            tipo === "publico"
-        );
-
-
-    atualizarInterface();
-
-}
-
-
-/* =====================================================
-   EVENTOS
-===================================================== */
-
-function configurarEventos() {
-
-    document
-        .getElementById(
-            "btnEscolar"
-        )
-        .addEventListener(
-            "click",
-            () => {
-
-                trocarTipo(
-                    "escolar"
-                );
-
-            }
-        );
-
-
-    document
-        .getElementById(
-            "btnPublico"
-        )
-        .addEventListener(
-            "click",
-            () => {
-
-                trocarTipo(
-                    "publico"
-                );
-
-            }
-        );
-
-
-    document
-        .getElementById(
-            "lineSelect"
-        )
-        .addEventListener(
-            "change",
-            event => {
-
-                carregarLinha(
-                    event.target.value
-                );
-
-            }
-        );
-
-
-    document
-        .getElementById(
-            "favoriteBtn"
-        )
-        .addEventListener(
-            "click",
-            alternarFavorito
-        );
-
-
-    document
-        .getElementById(
-            "centerBus"
-        )
-        .addEventListener(
-            "click",
-            centralizarOnibus
-        );
-
-
-    document
-        .getElementById(
-            "toggleSimulation"
-        )
-        .addEventListener(
-            "click",
-            alternarSimulacao
-        );
-
-
-    document
-        .getElementById(
-            "fitRoute"
-        )
-        .addEventListener(
-            "click",
-            mostrarRota
-        );
-
-
-    document
-        .getElementById(
-            "resetView"
-        )
-        .addEventListener(
-            "click",
-            restaurarMapa
-        );
-
-
-    document
-        .getElementById(
-            "presentationBtn"
-        )
-        .addEventListener(
-            "click",
-            abrirApresentacao
-        );
-
-
-    document
-        .getElementById(
-            "aboutBtn"
-        )
-        .addEventListener(
-            "click",
-            () => {
-
-                abrirModal(
-                    "aboutModal"
-                );
-
-            }
-        );
-
-
-    document
-        .querySelectorAll(
-            "[data-close]"
-        )
-        .forEach(
-            button => {
-
-                button.addEventListener(
-                    "click",
-                    () => {
-
-                        fecharModal(
-                            button.dataset.close
-                        );
-
-                    }
-                );
-
-            }
-        );
-
-
-    document
-        .getElementById(
-            "prevSlide"
-        )
-        .addEventListener(
-            "click",
-            slideAnterior
-        );
-
-
-    document
-        .getElementById(
-            "nextSlide"
-        )
-        .addEventListener(
-            "click",
-            proximoSlide
-        );
-
-
-    document
-        .getElementById(
-            "presentationModal"
-        )
-        .addEventListener(
-            "click",
-            event => {
-
-                if (
-                    event.target.id ===
-                    "presentationModal"
-                ) {
-
-                    fecharModal(
-                        "presentationModal"
-                    );
-
-                }
-
-            }
-        );
-
-
-    document
-        .getElementById(
-            "aboutModal"
-        )
-        .addEventListener(
-            "click",
-            event => {
-
-                if (
-                    event.target.id ===
-                    "aboutModal"
-                ) {
-
-                    fecharModal(
-                        "aboutModal"
-                    );
-
-                }
-
-            }
-        );
-
-}
-
-
-/* =====================================================
-   MODAL
-===================================================== */
-
-function abrirModal(
-    id
-) {
-
-    document
-        .getElementById(id)
-        .classList.add(
-            "show"
-        );
-
-}
-
-
-function fecharModal(
-    id
-) {
-
-    document
-        .getElementById(id)
-        .classList.remove(
-            "show"
-        );
-
-}
-
-
-/* =====================================================
-   APRESENTAÇÃO
-===================================================== */
-
-function abrirApresentacao() {
-
-    presentationIndex = 0;
-
-    atualizarSlide();
-
-    abrirModal(
-        "presentationModal"
+        }
     );
 
+
+    markers = [];
+
 }
 
 
-/* =====================================================
-   ATUALIZAR SLIDE
-===================================================== */
+/* ==========================================
+   MODAIS
+========================================== */
 
-function atualizarSlide() {
+function openModal(id) {
+
+    document
+        .getElementById(id)
+        .classList.add("show");
+
+}
+
+
+function closeModal(id) {
+
+    document
+        .getElementById(id)
+        .classList.remove("show");
+
+}
+
+
+/* ==========================================
+   SLIDES
+========================================== */
+
+let slide = 0;
+
+
+function showSlide() {
 
     const slides =
         document.querySelectorAll(
-            ".presentation-slide"
+            ".slide"
         );
 
 
     slides.forEach(
-        (slide, index) => {
+        (item, index) => {
 
-            slide.classList.toggle(
+            item.classList.toggle(
                 "active",
-                index === presentationIndex
+                index === slide
             );
 
         }
@@ -2141,130 +1657,128 @@ function atualizarSlide() {
     document.getElementById(
         "slideIndicator"
     ).textContent =
-        `${presentationIndex + 1} / ${slides.length}`;
+        `${slide + 1} / ${slides.length}`;
 
 }
 
 
-/* =====================================================
-   PRÓXIMO SLIDE
-===================================================== */
-
-function proximoSlide() {
+function nextSlide() {
 
     const slides =
         document.querySelectorAll(
-            ".presentation-slide"
+            ".slide"
         );
 
 
-    presentationIndex++;
-
+    slide++;
 
     if (
-        presentationIndex >=
-        slides.length
+        slide >= slides.length
     ) {
 
-        presentationIndex = 0;
+        slide = 0;
 
     }
 
 
-    atualizarSlide();
+    showSlide();
 
 }
 
 
-/* =====================================================
-   SLIDE ANTERIOR
-===================================================== */
-
-function slideAnterior() {
+function previousSlide() {
 
     const slides =
         document.querySelectorAll(
-            ".presentation-slide"
+            ".slide"
         );
 
 
-    presentationIndex--;
-
+    slide--;
 
     if (
-        presentationIndex < 0
+        slide < 0
     ) {
 
-        presentationIndex =
+        slide =
             slides.length - 1;
 
     }
 
 
-    atualizarSlide();
+    showSlide();
 
 }
 
 
-/* =====================================================
-   ESCAPAR HTML
-===================================================== */
+/* ==========================================
+   TIPO DO PONTO
+========================================== */
 
-function escaparHTML(
-    texto
-) {
+function pointType(type) {
 
-    const div =
+    if (
+        type === "escola"
+    ) {
+
+        return "Escola";
+
+    }
+
+
+    if (
+        type === "bairro"
+    ) {
+
+        return "Bairro";
+
+    }
+
+
+    return "Parada de ônibus";
+
+}
+
+
+/* ==========================================
+   SEGURANÇA HTML
+========================================== */
+
+function escapeHTML(text) {
+
+    const element =
         document.createElement(
             "div"
         );
 
 
-    div.textContent =
-        texto;
+    element.textContent =
+        text;
 
 
-    return div.innerHTML;
+    return element.innerHTML;
 
 }
 
 
-/* =====================================================
+/* ==========================================
    TECLADO
-===================================================== */
+========================================== */
 
 document.addEventListener(
     "keydown",
     event => {
 
-        const modal =
-            document.querySelector(
-                ".modal.show"
+        const presentation =
+            document.getElementById(
+                "presentationModal"
             );
 
 
-        if (!modal) {
-
-            return;
-
-        }
-
-
         if (
-            event.key ===
-            "Escape"
-        ) {
-
-            modal.classList.remove(
+            presentation.classList.contains(
                 "show"
-            );
-
-        }
-
-
-        if (
-            modal.id ===
-            "presentationModal"
+            )
         ) {
 
             if (
@@ -2272,7 +1786,7 @@ document.addEventListener(
                 "ArrowRight"
             ) {
 
-                proximoSlide();
+                nextSlide();
 
             }
 
@@ -2282,29 +1796,11 @@ document.addEventListener(
                 "ArrowLeft"
             ) {
 
-                slideAnterior();
+                previousSlide();
 
             }
 
         }
-
-    }
-);
-
-
-/* =====================================================
-   INICIAR SISTEMA
-===================================================== */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        iniciarMapa();
-
-        configurarEventos();
-
-        atualizarInterface();
 
     }
 );
