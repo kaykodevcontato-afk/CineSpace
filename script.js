@@ -1,373 +1,795 @@
-/* =====================================================
-   ARCOVERDE BUS
-   Protótipo de localização de ônibus
-===================================================== */
+/*
+=========================================================
+ ARCOVERDE BUS
+ Sistema de transporte escolar / público
+ Protótipo
+
+ Tecnologias:
+ - Leaflet
+ - OpenStreetMap
+ - Nominatim
+ - OSRM
+
+ IMPORTANTE:
+ As linhas deste arquivo são SIMULAÇÕES.
+ Não representam itinerários oficiais.
+=========================================================
+*/
 
 
-/* =====================================================
-   CONFIGURAÇÃO DO MAPA
-===================================================== */
+/* ======================================================
+   CONFIGURAÇÃO
+====================================================== */
 
-const mapa = L.map("map").setView(
-    [-8.41889, -37.05389],
-    13
-);
+const ARCOVERDE = [-8.4189, -37.0531];
+
+const NOMINATIM_URL =
+    "https://nominatim.openstreetmap.org/search";
+
+const OSRM_URL =
+    "https://router.project-osrm.org/route/v1/driving";
 
 
-L.tileLayer(
-    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+/* ======================================================
+   ESCOLAS REAIS DA RELAÇÃO DA PREFEITURA
+====================================================== */
+
+const escolas = [
+
     {
-        attribution: "&copy; OpenStreetMap contributors",
-        maxZoom: 19
-    }
-).addTo(mapa);
-
-
-/* =====================================================
-   DADOS DAS LINHAS
-
-   ATENÇÃO:
-   Estes dados são apenas DEMONSTRAÇÃO.
-===================================================== */
-
-const ROTAS = [
-
-    {
-        id: "publico-01",
-
-        nome: "Linha 01 — Centro / Bairro",
-
-        tipo: "Transporte Público",
-
-        numeroOnibus: "BUS-001",
-
-        velocidade: 25,
-
-        cor: "#087f5b",
-
-        paradas: [
-
-            {
-                nome: "Terminal",
-                lat: -8.41889,
-                lng: -37.05389
-            },
-
-            {
-                nome: "Parada 02",
-                lat: -8.41650,
-                lng: -37.04900
-            },
-
-            {
-                nome: "Parada 03",
-                lat: -8.41400,
-                lng: -37.04400
-            },
-
-            {
-                nome: "Parada 04",
-                lat: -8.41050,
-                lng: -37.04000
-            },
-
-            {
-                nome: "Parada 05",
-                lat: -8.40700,
-                lng: -37.04500
-            },
-
-            {
-                nome: "Parada 06",
-                lat: -8.40950,
-                lng: -37.05200
-            },
-
-            {
-                nome: "Parada 07",
-                lat: -8.41400,
-                lng: -37.05600
-            },
-
-            {
-                nome: "Terminal de retorno",
-                lat: -8.41889,
-                lng: -37.05389
-            }
-
-        ]
+        id: "gumercindo",
+        nome: "Escola Municipal Gumercindo Cavalcanti",
+        endereco: "Rua Magalhães Porto, 08, Tamboril, Arcoverde, PE"
     },
 
+    {
+        id: "antonio-costa",
+        nome: "Escola Municipal Antônio Costa Leitão",
+        endereco: "Rua Vicente Gomes, Tamboril, Arcoverde, PE"
+    },
 
     {
-        id: "escolar-01",
+        id: "freire",
+        nome: "Escola Municipal Freire Filho",
+        endereco: "Rua João Gonçalves de Lima, 145, São Geraldo, Arcoverde, PE"
+    },
 
-        nome: "Escolar 01 — Rota Demonstrativa",
+    {
+        id: "jose-medeiros",
+        nome: "Escola Municipal José Medeiros da Fonseca",
+        endereco: "Rua José Ferreira de Lima, S/N, Sucupira, Arcoverde, PE"
+    },
 
-        tipo: "Transporte Escolar",
+    {
+        id: "euclides",
+        nome: "Escola Municipal Euclides da Cunha",
+        endereco: "Rua Leonardo José Guimarães, S/N, Centro, Arcoverde, PE"
+    },
 
-        numeroOnibus: "ESC-001",
+    {
+        id: "olga",
+        nome: "Escola Municipal Olga Gueiros Leite",
+        endereco: "Rua Joaquim Bezerra, S/N, Centro, Arcoverde, PE"
+    },
 
-        velocidade: 30,
+    {
+        id: "barao",
+        nome: "Escola Municipal Barão do Rio Branco",
+        endereco: "Rua Serafim de Brito, Centro, Arcoverde, PE"
+    },
 
-        cor: "#1971c2",
+    {
+        id: "joao-batista",
+        nome: "Escola Municipal João Batista Cruz Barros",
+        endereco: "Rua Manoel Bezerra, S/N, Cidade Jardim, Arcoverde, PE"
+    },
 
-        paradas: [
+    {
+        id: "ivany",
+        nome: "CEI Ivany Rodrigues Bradley",
+        endereco: "Rua Dr. Manoel Borba, S/N, Tamboril, Arcoverde, PE"
+    },
 
-            {
-                nome: "Ponto Inicial",
-                lat: -8.42500,
-                lng: -37.06000
-            },
+    {
+        id: "rotary",
+        nome: "Escola Municipal Rotary",
+        endereco: "Rua Teixeira de Freitas, 319, São Cristóvão, Arcoverde, PE"
+    },
 
-            {
-                nome: "Parada Escolar 02",
-                lat: -8.42200,
-                lng: -37.05500
-            },
+    {
+        id: "alfabeto",
+        nome: "Escola Municipal Alfabeto",
+        endereco: "Rua Gumercindo Cavalcanti, S/N, São Cristóvão, Arcoverde, PE"
+    },
 
-            {
-                nome: "Parada Escolar 03",
-                lat: -8.41900,
-                lng: -37.05000
-            },
+    {
+        id: "sebastiao",
+        nome: "Escola Municipal Sebastião Luiz Cavalcanti",
+        endereco: "Rua Corália de Siqueira, 120, São Cristóvão, Arcoverde, PE"
+    },
 
-            {
-                nome: "Parada Escolar 04",
-                lat: -8.41600,
-                lng: -37.04700
-            },
+    {
+        id: "adalgiza",
+        nome: "Escola Municipal Adalgiza Cavalcanti de Barros Correia",
+        endereco: "Rua José Lopes, S/N, Vila São Francisco, Arcoverde, PE"
+    },
 
-            {
-                nome: "Escola",
-                lat: -8.41200,
-                lng: -37.04400
-            },
-
-            {
-                nome: "Retorno",
-                lat: -8.41800,
-                lng: -37.05200
-            }
-
-        ]
+    {
+        id: "antonio-joaquim",
+        nome: "Escola Municipal Antônio Joaquim da Silva",
+        endereco: "Rua James Pacheco, Boa Vista, Arcoverde, PE"
     }
 
 ];
 
 
-/* =====================================================
-   VARIÁVEIS
-===================================================== */
+/* ======================================================
+   LINHAS DE SIMULAÇÃO
+====================================================== */
 
-let rotaAtual = null;
+const linhas = {
 
-let indiceAtual = 0;
+    "ESC-01": {
 
-let progresso = 0;
+        nome: "Escolar São Cristóvão",
 
-let marcadorOnibus = null;
+        tipo: "escolar",
 
-let marcadoresParadas = [];
+        velocidade: 32,
 
-let linhaMapa = null;
+        paradas: [
 
-let intervaloMovimento = null;
+            {
+                tipo: "bairro",
+                nome: "São Cristóvão",
+                busca: "São Cristóvão, Arcoverde, Pernambuco"
+            },
 
+            {
+                tipo: "escola",
+                escolaId: "rotary"
+            },
 
-/* =====================================================
-   ELEMENTOS HTML
-===================================================== */
+            {
+                tipo: "escola",
+                escolaId: "alfabeto"
+            },
 
-const linhaSelect =
-    document.getElementById("linhaSelect");
+            {
+                tipo: "escola",
+                escolaId: "sebastiao"
+            },
 
-const tipoLinha =
-    document.getElementById("tipoLinha");
+            {
+                tipo: "bairro",
+                nome: "Centro",
+                busca: "Centro, Arcoverde, Pernambuco"
+            },
 
-const nomeLinha =
-    document.getElementById("nomeLinha");
+            {
+                tipo: "escola",
+                escolaId: "olga"
+            },
 
-const busId =
-    document.getElementById("busId");
+            {
+                tipo: "escola",
+                escolaId: "barao"
+            }
 
-const statusOnibus =
-    document.getElementById("statusOnibus");
+        ]
 
-const proximaParada =
-    document.getElementById("proximaParada");
-
-const tempoChegada =
-    document.getElementById("tempoChegada");
-
-const ultimaAtualizacao =
-    document.getElementById("ultimaAtualizacao");
-
-const listaParadas =
-    document.getElementById("listaParadas");
-
-const contadorParadas =
-    document.getElementById("contadorParadas");
-
-
-/* =====================================================
-   PREENCHER SELECT DE LINHAS
-===================================================== */
-
-ROTAS.forEach(rota => {
-
-    const option =
-        document.createElement("option");
-
-    option.value = rota.id;
-
-    option.textContent =
-        `${rota.nome} — ${rota.tipo}`;
-
-    linhaSelect.appendChild(option);
-
-});
+    },
 
 
-/* =====================================================
-   SELECIONAR LINHA
-===================================================== */
+    "ESC-02": {
 
-linhaSelect.addEventListener("change", function () {
+        nome: "Escolar Centro",
 
-    const id = this.value;
+        tipo: "escolar",
 
-    const rota =
-        ROTAS.find(item => item.id === id);
+        velocidade: 30,
 
-    if (!rota) {
+        paradas: [
 
-        limparMapa();
+            {
+                tipo: "bairro",
+                nome: "Boa Vista",
+                busca: "Boa Vista, Arcoverde, Pernambuco"
+            },
 
-        return;
+            {
+                tipo: "escola",
+                escolaId: "antonio-joaquim"
+            },
+
+            {
+                tipo: "bairro",
+                nome: "Sucupira",
+                busca: "Sucupira, Arcoverde, Pernambuco"
+            },
+
+            {
+                tipo: "escola",
+                escolaId: "jose-medeiros"
+            },
+
+            {
+                tipo: "bairro",
+                nome: "Centro",
+                busca: "Centro, Arcoverde, Pernambuco"
+            },
+
+            {
+                tipo: "escola",
+                escolaId: "euclides"
+            },
+
+            {
+                tipo: "bairro",
+                nome: "Tamboril",
+                busca: "Tamboril, Arcoverde, Pernambuco"
+            },
+
+            {
+                tipo: "escola",
+                escolaId: "gumercindo"
+            }
+
+        ]
+
     }
 
-    iniciarRota(rota);
-
-});
+};
 
 
-/* =====================================================
-   INICIAR ROTA
-===================================================== */
+/* ======================================================
+   VARIÁVEIS
+====================================================== */
 
-function iniciarRota(rota) {
+let mapa;
 
-    pararSimulacao();
+let rotaLayer = null;
 
-    limparMapa();
+let busMarker = null;
 
-    rotaAtual = rota;
+let stopMarkers = [];
 
-    indiceAtual = 0;
+let routeCoordinates = [];
 
-    progresso = 0;
+let animationFrame = null;
 
+let animationIndex = 0;
 
-    nomeLinha.textContent =
-        rota.nome;
+let simulationRunning = true;
 
-    tipoLinha.textContent =
-        rota.tipo;
+let currentLine = "ESC-01";
 
-    busId.textContent =
-        rota.numeroOnibus;
-
-    contadorParadas.textContent =
-        `${rota.paradas.length} paradas`;
+let routeReady = false;
 
 
-    desenharRota();
+/* ======================================================
+   INICIAR MAPA
+====================================================== */
 
-    criarParadas();
+function iniciarMapa() {
 
-    criarOnibus();
+    mapa = L.map("map", {
 
-    atualizarInformacoes();
+        zoomControl: true,
 
-    iniciarSimulacao();
+        preferCanvas: true
+
+    }).setView(ARCOVERDE, 13);
 
 
-    mapa.fitBounds(
-        rota.paradas.map(p => [
-            p.lat,
-            p.lng
-        ]),
+    L.tileLayer(
+        "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
         {
-            padding: [30, 30]
+            maxZoom: 19,
+
+            attribution:
+                '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }
+    ).addTo(mapa);
+
+
+    criarIconeOnibus();
+
+}
+
+
+/* ======================================================
+   ÍCONE DO ÔNIBUS
+====================================================== */
+
+function criarIconeOnibus() {
+
+    const busIcon = L.divIcon({
+
+        className: "",
+
+        html:
+            '<div class="bus-marker">🚌</div>',
+
+        iconSize: [42, 42],
+
+        iconAnchor: [21, 21],
+
+        popupAnchor: [0, -22]
+
+    });
+
+
+    busMarker = L.marker(
+
+        ARCOVERDE,
+
+        {
+            icon: busIcon,
+
+            zIndexOffset: 1000
+        }
+
+    ).addTo(mapa);
+
+
+    busMarker.bindPopup(`
+        <div class="popup-title">
+            🚌 ESC-01
+        </div>
+
+        <div class="popup-subtitle">
+            Ônibus escolar em simulação
+        </div>
+    `);
+
+}
+
+
+/* ======================================================
+   GEOCODIFICAÇÃO
+====================================================== */
+
+async function geocodificar(endereco) {
+
+    const params = new URLSearchParams({
+
+        q: endereco,
+
+        format: "json",
+
+        limit: "1",
+
+        countrycodes: "br",
+
+        addressdetails: "1"
+
+    });
+
+
+    try {
+
+        const response = await fetch(
+            `${NOMINATIM_URL}?${params.toString()}`,
+            {
+                headers: {
+                    "Accept": "application/json"
+                }
+            }
+        );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Falha na geocodificação"
+            );
+
+        }
+
+
+        const data = await response.json();
+
+
+        if (!data.length) {
+
+            console.warn(
+                "Local não encontrado:",
+                endereco
+            );
+
+            return null;
+
+        }
+
+
+        return [
+
+            Number(data[0].lat),
+
+            Number(data[0].lon)
+
+        ];
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Erro Nominatim:",
+            error
+        );
+
+        return null;
+
+    }
+
+}
+
+
+/* ======================================================
+   PREPARAR PARADAS
+====================================================== */
+
+async function prepararParadas(lineId) {
+
+    const linha = linhas[lineId];
+
+    const resultado = [];
+
+
+    for (const parada of linha.paradas) {
+
+        let nome = parada.nome;
+
+        let endereco = parada.busca;
+
+        let coordenadas = null;
+
+
+        if (parada.tipo === "escola") {
+
+            const escola = escolas.find(
+                item =>
+                    item.id === parada.escolaId
+            );
+
+
+            if (!escola) {
+                continue;
+            }
+
+
+            nome = escola.nome;
+
+            endereco = escola.endereco;
+
+        }
+
+
+        coordenadas =
+            await geocodificar(endereco);
+
+
+        if (!coordenadas) {
+
+            console.warn(
+                "Não foi possível localizar:",
+                nome
+            );
+
+            continue;
+
+        }
+
+
+        resultado.push({
+
+            nome,
+
+            tipo: parada.tipo,
+
+            coordenadas,
+
+            endereco
+
+        });
+
+
+        /*
+        Nominatim deve ser utilizado
+        com intervalo entre requisições.
+        */
+
+        await esperar(1100);
+
+    }
+
+
+    return resultado;
+
+}
+
+
+/* ======================================================
+   ROTA OSRM
+====================================================== */
+
+async function calcularRota(paradas) {
+
+    if (paradas.length < 2) {
+
+        throw new Error(
+            "São necessárias pelo menos duas paradas."
+        );
+
+    }
+
+
+    const coordenadas = paradas
+        .map(
+            parada =>
+                `${parada.coordenadas[1]},${parada.coordenadas[0]}`
+        )
+        .join(";");
+
+
+    const url =
+        `${OSRM_URL}/${coordenadas}` +
+        "?overview=full" +
+        "&geometries=geojson";
+
+
+    const response =
+        await fetch(url);
+
+
+    if (!response.ok) {
+
+        throw new Error(
+            "Erro ao calcular rota."
+        );
+
+    }
+
+
+    const data =
+        await response.json();
+
+
+    if (
+        data.code !== "Ok" ||
+        !data.routes ||
+        !data.routes.length
+    ) {
+
+        throw new Error(
+            "A rota não pôde ser calculada."
+        );
+
+    }
+
+
+    return data.routes[0];
+
+}
+
+
+/* ======================================================
+   DESENHAR PARADAS
+====================================================== */
+
+function desenharParadas(paradas) {
+
+    stopMarkers.forEach(
+        marker =>
+            mapa.removeLayer(marker)
+    );
+
+
+    stopMarkers = [];
+
+
+    paradas.forEach(
+        (parada, index) => {
+
+            const icon = L.divIcon({
+
+                className: "",
+
+                html: `
+                    <div style="
+                        width:28px;
+                        height:28px;
+                        border-radius:50%;
+                        background:#0b1726;
+                        border:3px solid ${
+                            parada.tipo === "escola"
+                                ? "#facc15"
+                                : "#168cff"
+                        };
+                        display:grid;
+                        place-items:center;
+                        font-size:13px;
+                    ">
+                        ${
+                            parada.tipo === "escola"
+                                ? "🏫"
+                                : "📍"
+                        }
+                    </div>
+                `,
+
+                iconSize: [28, 28],
+
+                iconAnchor: [14, 14]
+
+            });
+
+
+            const marker =
+                L.marker(
+                    parada.coordenadas,
+                    {
+                        icon
+                    }
+                ).addTo(mapa);
+
+
+            marker.bindPopup(`
+                <div class="popup-title">
+                    ${
+                        parada.tipo === "escola"
+                            ? "🏫"
+                            : "📍"
+                    }
+                    ${escaparHTML(parada.nome)}
+                </div>
+
+                <div class="popup-subtitle">
+                    ${
+                        parada.tipo === "escola"
+                            ? "Escola"
+                            : "Parada / bairro"
+                    }
+                </div>
+            `);
+
+
+            stopMarkers.push(marker);
+
         }
     );
 
 }
 
 
-/* =====================================================
+/* ======================================================
    DESENHAR ROTA
-===================================================== */
+====================================================== */
 
-function desenharRota() {
+function desenharRota(route) {
 
-    const pontos =
-        rotaAtual.paradas.map(p => [
-            p.lat,
-            p.lng
-        ]);
+    if (rotaLayer) {
 
-    linhaMapa =
+        mapa.removeLayer(
+            rotaLayer
+        );
+
+    }
+
+
+    const latlngs =
+        route.geometry.coordinates.map(
+            coord => [
+                coord[1],
+                coord[0]
+            ]
+        );
+
+
+    routeCoordinates =
+        latlngs;
+
+
+    rotaLayer =
         L.polyline(
-            pontos,
+
+            latlngs,
+
             {
-                color: rotaAtual.cor,
+                color: "#168cff",
 
                 weight: 6,
 
-                opacity: 0.8
+                opacity: .9,
+
+                lineJoin: "round"
             }
+
         ).addTo(mapa);
+
+
+    mapa.fitBounds(
+        rotaLayer.getBounds(),
+        {
+            padding: [40, 40]
+        }
+    );
+
+
+    routeReady = true;
 
 }
 
 
-/* =====================================================
-   CRIAR PARADAS
-===================================================== */
+/* ======================================================
+   ATUALIZAR LISTA
+====================================================== */
 
-function criarParadas() {
+function atualizarLista(paradas) {
 
-    rotaAtual.paradas.forEach(
+    const container =
+        document.getElementById(
+            "stopList"
+        );
+
+
+    container.innerHTML = "";
+
+
+    paradas.forEach(
         (parada, index) => {
 
-            const marcador =
-                L.circleMarker(
-                    [parada.lat, parada.lng],
-                    {
-                        radius: 7,
+            const div =
+                document.createElement(
+                    "div"
+                );
 
-                        color: "#ffffff",
 
-                        weight: 3,
+            div.className =
+                "stop-item";
 
-                        fillColor: "#ff922b",
 
-                        fillOpacity: 1
+            div.dataset.index =
+                index;
+
+
+            div.innerHTML = `
+
+                <div class="stop-icon">
+                    ${
+                        parada.tipo === "escola"
+                            ? "🏫"
+                            : "📍"
                     }
-                ).addTo(mapa);
+                </div>
+
+                <div>
+
+                    <div class="stop-name">
+                        ${escaparHTML(parada.nome)}
+                    </div>
+
+                    <span class="stop-type">
+                        ${
+                            parada.tipo === "escola"
+                                ? "Escola"
+                                : "Parada"
+                        }
+                    </span>
+
+                </div>
+
+                <div class="stop-state">
+                    🔵
+                </div>
+
+            `;
 
 
-            marcador.bindPopup(`
-                <strong>📍 Parada ${index + 1}</strong>
-                <br>
-                ${parada.nome}
-            `);
-
-
-            marcadoresParadas.push(
-                marcador
+            container.appendChild(
+                div
             );
 
         }
@@ -376,392 +798,391 @@ function criarParadas() {
 }
 
 
-/* =====================================================
-   ÍCONE DO ÔNIBUS
-===================================================== */
-
-const iconeOnibus =
-    L.divIcon({
-
-        className: "icone-onibus",
-
-        html: `
-            <div style="
-                width:42px;
-                height:42px;
-                background:#087f5b;
-                border:4px solid white;
-                border-radius:50%;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                font-size:22px;
-                box-shadow:0 3px 12px rgba(0,0,0,.35);
-            ">
-                🚌
-            </div>
-        `,
-
-        iconSize: [42, 42],
-
-        iconAnchor: [21, 21]
-
-    });
-
-
-/* =====================================================
-   CRIAR ÔNIBUS
-===================================================== */
-
-function criarOnibus() {
-
-    const primeiraParada =
-        rotaAtual.paradas[0];
-
-
-    marcadorOnibus =
-        L.marker(
-            [
-                primeiraParada.lat,
-                primeiraParada.lng
-            ],
-            {
-                icon: iconeOnibus
-            }
-        ).addTo(mapa);
-
-
-    marcadorOnibus.bindPopup(
-        `<strong>🚌 ${rotaAtual.numeroOnibus}</strong>
-         <br>
-         Ônibus em movimento`
-    );
-
-}
-
-
-/* =====================================================
-   SIMULAÇÃO
-===================================================== */
-
-function iniciarSimulacao() {
-
-    intervaloMovimento =
-        setInterval(() => {
-
-            moverOnibus();
-
-        }, 1000);
-
-}
-
-
-/* =====================================================
-   MOVER ÔNIBUS
-===================================================== */
-
-function moverOnibus() {
-
-    if (!rotaAtual) return;
-
-
-    const paradas =
-        rotaAtual.paradas;
-
-
-    const atual =
-        paradas[indiceAtual];
-
-
-    const proxima =
-        paradas[
-            (indiceAtual + 1)
-            % paradas.length
-        ];
-
-
-    progresso += 0.04;
-
-
-    if (progresso >= 1) {
-
-        progresso = 0;
-
-        indiceAtual++;
-
-        if (
-            indiceAtual >=
-            paradas.length
-        ) {
-
-            indiceAtual = 0;
-
-        }
-
-    }
-
-
-    const lat =
-        atual.lat +
-        (
-            proxima.lat -
-            atual.lat
-        ) * progresso;
-
-
-    const lng =
-        atual.lng +
-        (
-            proxima.lng -
-            atual.lng
-        ) * progresso;
-
-
-    marcadorOnibus.setLatLng([
-        lat,
-        lng
-    ]);
-
-
-    atualizarInformacoes();
-
-}
-
-
-/* =====================================================
-   ATUALIZAR INFORMAÇÕES
-===================================================== */
-
-function atualizarInformacoes() {
-
-    if (!rotaAtual) return;
-
-
-    const paradas =
-        rotaAtual.paradas;
-
-
-    const proximoIndice =
-        (indiceAtual + 1)
-        % paradas.length;
-
-
-    const proxima =
-        paradas[proximoIndice];
-
-
-    proximaParada.textContent =
-        proxima.nome;
-
-
-    const distancia =
-        calcularDistancia(
-            marcadorOnibus
-                ? marcadorOnibus.getLatLng().lat
-                : paradas[indiceAtual].lat,
-
-            marcadorOnibus
-                ? marcadorOnibus.getLatLng().lng
-                : paradas[indiceAtual].lng,
-
-            proxima.lat,
-            proxima.lng
+/* ======================================================
+   ESTADO DAS PARADAS
+====================================================== */
+
+function atualizarEstadoParadas(
+    paradas,
+    indiceAtual
+) {
+
+    const itens =
+        document.querySelectorAll(
+            ".stop-item"
         );
 
 
-    const velocidade =
-        rotaAtual.velocidade;
+    itens.forEach(
+        (item, index) => {
+
+            item.classList.remove(
+                "next",
+                "passed"
+            );
 
 
-    const minutos =
-        Math.max(
-            1,
-            Math.ceil(
-                (distancia / velocidade) * 60
-            )
-        );
+            const estado =
+                item.querySelector(
+                    ".stop-state"
+                );
 
 
-    tempoChegada.textContent =
-        `${minutos} min`;
+            if (
+                index <
+                indiceAtual
+            ) {
 
+                item.classList.add(
+                    "passed"
+                );
 
-    statusOnibus.textContent =
-        `Em movimento • ${Math.round(
-            velocidade
-        )} km/h`;
-
-
-    const agora =
-        new Date();
-
-
-    ultimaAtualizacao.textContent =
-        agora.toLocaleTimeString(
-            "pt-BR"
-        );
-
-
-    atualizarListaParadas();
-
-}
-
-
-/* =====================================================
-   LISTA DE PARADAS
-===================================================== */
-
-function atualizarListaParadas() {
-
-    listaParadas.innerHTML = "";
-
-
-    rotaAtual.paradas.forEach(
-        (parada, index) => {
-
-            let classe;
-
-            let texto;
-
-
-            if (index <= indiceAtual) {
-
-                classe = "passou";
-
-                texto = "Já passou";
+                estado.textContent =
+                    "✓";
 
             }
 
             else if (
                 index ===
-                indiceAtual + 1
+                indiceAtual
             ) {
 
-                classe = "proxima";
+                item.classList.add(
+                    "next"
+                );
 
-                texto = "Próxima parada";
+                estado.textContent =
+                    "🟢";
 
             }
 
             else {
 
-                classe = "futura";
-
-                texto = "Ainda vai passar";
-
-            }
-
-
-            /*
-             * Caso o ônibus esteja no
-             * último trecho da rota.
-             */
-
-            if (
-                indiceAtual ===
-                rotaAtual.paradas.length - 1
-                &&
-                index === 0
-            ) {
-
-                classe = "proxima";
-
-                texto = "Próxima parada";
+                estado.textContent =
+                    "🔵";
 
             }
-
-
-            const elemento =
-                document.createElement("div");
-
-
-            elemento.className =
-                "parada-item";
-
-
-            elemento.innerHTML = `
-
-                <div class="numero-parada">
-                    ${index + 1}
-                </div>
-
-                <div class="parada-info">
-
-                    <strong>
-                        ${parada.nome}
-                    </strong>
-
-                    <small>
-                        Parada ${index + 1}
-                    </small>
-
-                </div>
-
-                <span class="status ${classe}">
-                    ${texto}
-                </span>
-
-            `;
-
-
-            listaParadas.appendChild(
-                elemento
-            );
 
         }
     );
 
+
+    const proxima =
+        paradas[indiceAtual];
+
+
+    if (proxima) {
+
+        document.getElementById(
+            "nextStop"
+        ).textContent =
+            proxima.nome;
+
+    }
+
+
+    document.getElementById(
+        "stopCounter"
+    ).textContent =
+        `${Math.min(
+            indiceAtual,
+            paradas.length
+        )} / ${paradas.length}`;
+
 }
 
 
-/* =====================================================
-   CALCULAR DISTÂNCIA
-   Fórmula de Haversine
-===================================================== */
+/* ======================================================
+   ENCONTRAR PONTO MAIS PRÓXIMO
+====================================================== */
 
-function calcularDistancia(
-    lat1,
-    lon1,
-    lat2,
-    lon2
+function encontrarIndiceRota(
+    coordenadas
 ) {
 
-    const R = 6371;
+    if (!routeCoordinates.length) {
+        return 0;
+    }
 
 
-    const dLat =
-        grausParaRad(
-            lat2 - lat1
+    let menorDistancia =
+        Infinity;
+
+    let indice = 0;
+
+
+    routeCoordinates.forEach(
+        (ponto, i) => {
+
+            const distancia =
+                distanciaMetros(
+                    coordenadas,
+                    ponto
+                );
+
+
+            if (
+                distancia <
+                menorDistancia
+            ) {
+
+                menorDistancia =
+                    distancia;
+
+                indice = i;
+
+            }
+
+        }
+    );
+
+
+    return indice;
+
+}
+
+
+/* ======================================================
+   ANIMAÇÃO DO ÔNIBUS
+====================================================== */
+
+function iniciarAnimacao(paradas) {
+
+    if (!routeCoordinates.length) {
+        return;
+    }
+
+
+    animationIndex = 0;
+
+
+    function animar() {
+
+        if (
+            !simulationRunning
+        ) {
+
+            animationFrame =
+                requestAnimationFrame(
+                    animar
+                );
+
+            return;
+
+        }
+
+
+        if (
+            animationIndex >=
+            routeCoordinates.length
+        ) {
+
+            animationIndex = 0;
+
+        }
+
+
+        const posicao =
+            routeCoordinates[
+                Math.floor(
+                    animationIndex
+                )
+            ];
+
+
+        busMarker.setLatLng(
+            posicao
         );
 
 
-    const dLon =
-        grausParaRad(
-            lon2 - lon1
+        const indiceParada =
+            encontrarParadaMaisProxima(
+                posicao,
+                paradas
+            );
+
+
+        atualizarEstadoParadas(
+            paradas,
+            indiceParada
         );
 
 
-    const a =
-        Math.sin(dLat / 2) *
-        Math.sin(dLat / 2) +
+        atualizarDistancia(
+            posicao,
+            paradas,
+            indiceParada
+        );
 
-        Math.cos(
-            grausParaRad(lat1)
-        ) *
 
-        Math.cos(
-            grausParaRad(lat2)
-        ) *
+        animationIndex += .45;
 
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+
+        animationFrame =
+            requestAnimationFrame(
+                animar
+            );
+
+    }
+
+
+    if (animationFrame) {
+
+        cancelAnimationFrame(
+            animationFrame
+        );
+
+    }
+
+
+    animationFrame =
+        requestAnimationFrame(
+            animar
+        );
+
+}
+
+
+/* ======================================================
+   PARADA MAIS PRÓXIMA
+====================================================== */
+
+function encontrarParadaMaisProxima(
+    posicao,
+    paradas
+) {
+
+    let menor =
+        Infinity;
+
+    let indice =
+        0;
+
+
+    paradas.forEach(
+        (parada, index) => {
+
+            const distancia =
+                distanciaMetros(
+                    posicao,
+                    parada.coordenadas
+                );
+
+
+            if (
+                distancia <
+                menor
+            ) {
+
+                menor =
+                    distancia;
+
+                indice =
+                    index;
+
+            }
+
+        }
+    );
+
+
+    return indice;
+
+}
+
+
+/* ======================================================
+   DISTÂNCIA
+====================================================== */
+
+function atualizarDistancia(
+    posicao,
+    paradas,
+    indice
+) {
+
+    if (!paradas[indice]) {
+        return;
+    }
+
+
+    const distancia =
+        distanciaMetros(
+            posicao,
+            paradas[indice]
+                .coordenadas
+        );
+
+
+    document.getElementById(
+        "distance"
+    ).textContent =
+        formatarDistancia(
+            distancia
+        );
+
+}
+
+
+/* ======================================================
+   HAVERSINE
+====================================================== */
+
+function distanciaMetros(
+    a,
+    b
+) {
+
+    const R =
+        6371000;
+
+
+    const lat1 =
+        a[0] *
+        Math.PI /
+        180;
+
+    const lat2 =
+        b[0] *
+        Math.PI /
+        180;
+
+
+    const deltaLat =
+        (b[0] - a[0]) *
+        Math.PI /
+        180;
+
+
+    const deltaLon =
+        (b[1] - a[1]) *
+        Math.PI /
+        180;
+
+
+    const x =
+        Math.sin(
+            deltaLat / 2
+        ) ** 2;
+
+
+    const y =
+        Math.cos(lat1) *
+        Math.cos(lat2) *
+        Math.sin(
+            deltaLon / 2
+        ) ** 2;
 
 
     const c =
         2 *
         Math.atan2(
-            Math.sqrt(a),
-            Math.sqrt(1 - a)
+            Math.sqrt(
+                x + y
+            ),
+            Math.sqrt(
+                1 - x - y
+            )
         );
 
 
@@ -770,121 +1191,307 @@ function calcularDistancia(
 }
 
 
-/* =====================================================
-   GRAUS → RADIANOS
-===================================================== */
+/* ======================================================
+   FORMATAR DISTÂNCIA
+====================================================== */
 
-function grausParaRad(graus) {
+function formatarDistancia(
+    metros
+) {
 
-    return graus *
-        Math.PI /
-        180;
+    if (
+        !Number.isFinite(
+            metros
+        )
+    ) {
+
+        return "--";
+
+    }
+
+
+    if (
+        metros < 1000
+    ) {
+
+        return `${Math.round(metros)} m`;
+
+    }
+
+
+    return `${(
+        metros / 1000
+    ).toFixed(1)} km`;
 
 }
 
 
-/* =====================================================
-   LIMPAR MAPA
-===================================================== */
+/* ======================================================
+   TROCAR LINHA
+====================================================== */
 
-function limparMapa() {
+async function carregarLinha(
+    lineId
+) {
 
-    pararSimulacao();
+    currentLine =
+        lineId;
 
-
-    if (linhaMapa) {
-
-        mapa.removeLayer(
-            linhaMapa
-        );
-
-        linhaMapa = null;
-
-    }
+    routeReady =
+        false;
 
 
-    if (marcadorOnibus) {
-
-        mapa.removeLayer(
-            marcadorOnibus
-        );
-
-        marcadorOnibus = null;
-
-    }
+    const linha =
+        linhas[lineId];
 
 
-    marcadoresParadas.forEach(
-        marcador => {
+    document.getElementById(
+        "routeName"
+    ).textContent =
+        `Linha ${lineId} — ${linha.nome}`;
 
-            mapa.removeLayer(
-                marcador
+
+    document.getElementById(
+        "speed"
+    ).textContent =
+        `${linha.velocidade} km/h`;
+
+
+    document.getElementById(
+        "stopList"
+    ).textContent =
+        "Localizando escolas e paradas...";
+
+
+    try {
+
+        const paradas =
+            await prepararParadas(
+                lineId
+            );
+
+
+        if (
+            paradas.length < 2
+        ) {
+
+            throw new Error(
+                "Não existem pontos suficientes para criar a rota."
             );
 
         }
-    );
 
 
-    marcadoresParadas = [];
-
-
-    rotaAtual = null;
-
-    indiceAtual = 0;
-
-    progresso = 0;
-
-
-    nomeLinha.textContent =
-        "Nenhuma linha selecionada";
-
-    tipoLinha.textContent =
-        "—";
-
-    busId.textContent =
-        "---";
-
-    proximaParada.textContent =
-        "—";
-
-    tempoChegada.textContent =
-        "—";
-
-    statusOnibus.textContent =
-        "Aguardando...";
-
-    contadorParadas.textContent =
-        "0 paradas";
-
-
-    listaParadas.innerHTML = `
-
-        <div class="sem-dados">
-
-            Selecione uma linha
-            para visualizar as paradas.
-
-        </div>
-
-    `;
-
-}
-
-
-/* =====================================================
-   PARAR SIMULAÇÃO
-===================================================== */
-
-function pararSimulacao() {
-
-    if (intervaloMovimento) {
-
-        clearInterval(
-            intervaloMovimento
+        atualizarLista(
+            paradas
         );
 
-        intervaloMovimento = null;
+
+        desenharParadas(
+            paradas
+        );
+
+
+        const route =
+            await calcularRota(
+                paradas
+            );
+
+
+        desenharRota(
+            route
+        );
+
+
+        iniciarAnimacao(
+            paradas
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        document.getElementById(
+            "stopList"
+        ).innerHTML = `
+
+            <div style="
+                color:#fca5a5;
+                font-size:12px;
+                line-height:1.5;
+            ">
+
+                Não foi possível montar
+                a rota automaticamente.
+
+                <br><br>
+
+                Verifique sua conexão
+                com a internet e tente
+                novamente.
+
+            </div>
+
+        `;
 
     }
 
 }
+
+
+/* ======================================================
+   BOTÕES
+====================================================== */
+
+function configurarBotoes() {
+
+    document
+        .getElementById(
+            "lineSelect"
+        )
+        .addEventListener(
+            "change",
+            event => {
+
+                carregarLinha(
+                    event.target.value
+                );
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            "centerBus"
+        )
+        .addEventListener(
+            "click",
+            () => {
+
+                if (
+                    busMarker
+                ) {
+
+                    mapa.setView(
+                        busMarker.getLatLng(),
+                        16
+                    );
+
+                    busMarker.openPopup();
+
+                }
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            "fitRoute"
+        )
+        .addEventListener(
+            "click",
+            () => {
+
+                if (
+                    rotaLayer
+                ) {
+
+                    mapa.fitBounds(
+                        rotaLayer.getBounds(),
+                        {
+                            padding:
+                                [40, 40]
+                        }
+                    );
+
+                }
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            "toggleSimulation"
+        )
+        .addEventListener(
+            "click",
+            event => {
+
+                simulationRunning =
+                    !simulationRunning;
+
+
+                event.target.textContent =
+                    simulationRunning
+                        ? "⏸ Pausar simulação"
+                        : "▶ Continuar simulação";
+
+            }
+        );
+
+}
+
+
+/* ======================================================
+   UTILITÁRIOS
+====================================================== */
+
+function esperar(
+    ms
+) {
+
+    return new Promise(
+        resolve =>
+            setTimeout(
+                resolve,
+                ms
+            )
+    );
+
+}
+
+
+function escaparHTML(
+    texto
+) {
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+    div.textContent =
+        texto;
+
+    return div.innerHTML;
+
+}
+
+
+/* ======================================================
+   INICIALIZAÇÃO
+====================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
+
+        iniciarMapa();
+
+        configurarBotoes();
+
+        await carregarLinha(
+            "ESC-01"
+        );
+
+    }
+);
