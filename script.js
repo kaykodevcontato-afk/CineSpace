@@ -1,18 +1,20 @@
 /*
 =========================================================
  ARCOVERDE BUS
- Sistema de transporte escolar / público
- Protótipo
 
- Tecnologias:
- - Leaflet
- - OpenStreetMap
- - Nominatim
- - OSRM
+ DOIS SISTEMAS:
 
- IMPORTANTE:
- As linhas deste arquivo são SIMULAÇÕES.
- Não representam itinerários oficiais.
+ 1. TRANSPORTE ESCOLAR
+    - Escolas
+    - Paradas escolares
+    - Rotas escolares
+
+ 2. TRANSPORTE PÚBLICO
+    - Bairros
+    - Paradas de ônibus
+    - Rotas públicas
+
+ As rotas são SIMULAÇÕES.
 =========================================================
 */
 
@@ -31,149 +33,130 @@ const OSRM_URL =
 
 
 /* ======================================================
-   ESCOLAS REAIS DA RELAÇÃO DA PREFEITURA
+   ESCOLAS
 ====================================================== */
 
-const escolas = [
+const escolas = {
 
-    {
-        id: "gumercindo",
-        nome: "Escola Municipal Gumercindo Cavalcanti",
-        endereco: "Rua Magalhães Porto, 08, Tamboril, Arcoverde, PE"
-    },
-
-    {
-        id: "antonio-costa",
-        nome: "Escola Municipal Antônio Costa Leitão",
-        endereco: "Rua Vicente Gomes, Tamboril, Arcoverde, PE"
-    },
-
-    {
-        id: "freire",
-        nome: "Escola Municipal Freire Filho",
-        endereco: "Rua João Gonçalves de Lima, 145, São Geraldo, Arcoverde, PE"
-    },
-
-    {
-        id: "jose-medeiros",
-        nome: "Escola Municipal José Medeiros da Fonseca",
-        endereco: "Rua José Ferreira de Lima, S/N, Sucupira, Arcoverde, PE"
-    },
-
-    {
-        id: "euclides",
-        nome: "Escola Municipal Euclides da Cunha",
-        endereco: "Rua Leonardo José Guimarães, S/N, Centro, Arcoverde, PE"
-    },
-
-    {
-        id: "olga",
-        nome: "Escola Municipal Olga Gueiros Leite",
-        endereco: "Rua Joaquim Bezerra, S/N, Centro, Arcoverde, PE"
-    },
-
-    {
-        id: "barao",
-        nome: "Escola Municipal Barão do Rio Branco",
-        endereco: "Rua Serafim de Brito, Centro, Arcoverde, PE"
-    },
-
-    {
-        id: "joao-batista",
-        nome: "Escola Municipal João Batista Cruz Barros",
-        endereco: "Rua Manoel Bezerra, S/N, Cidade Jardim, Arcoverde, PE"
-    },
-
-    {
-        id: "ivany",
-        nome: "CEI Ivany Rodrigues Bradley",
-        endereco: "Rua Dr. Manoel Borba, S/N, Tamboril, Arcoverde, PE"
-    },
-
-    {
-        id: "rotary",
+    rotary: {
         nome: "Escola Municipal Rotary",
-        endereco: "Rua Teixeira de Freitas, 319, São Cristóvão, Arcoverde, PE"
+        endereco:
+            "Rua Teixeira de Freitas, 319, São Cristóvão, Arcoverde, PE"
     },
 
-    {
-        id: "alfabeto",
+    alfabeto: {
         nome: "Escola Municipal Alfabeto",
-        endereco: "Rua Gumercindo Cavalcanti, S/N, São Cristóvão, Arcoverde, PE"
+        endereco:
+            "Rua Gumercindo Cavalcanti, São Cristóvão, Arcoverde, PE"
     },
 
-    {
-        id: "sebastiao",
-        nome: "Escola Municipal Sebastião Luiz Cavalcanti",
-        endereco: "Rua Corália de Siqueira, 120, São Cristóvão, Arcoverde, PE"
+    sebastiao: {
+        nome:
+            "Escola Municipal Sebastião Luiz Cavalcanti",
+        endereco:
+            "Rua Corália de Siqueira, 120, São Cristóvão, Arcoverde, PE"
     },
 
-    {
-        id: "adalgiza",
-        nome: "Escola Municipal Adalgiza Cavalcanti de Barros Correia",
-        endereco: "Rua José Lopes, S/N, Vila São Francisco, Arcoverde, PE"
+    gumercindo: {
+        nome:
+            "Escola Municipal Gumercindo Cavalcanti",
+        endereco:
+            "Rua Magalhães Porto, Tamboril, Arcoverde, PE"
     },
 
-    {
-        id: "antonio-joaquim",
-        nome: "Escola Municipal Antônio Joaquim da Silva",
-        endereco: "Rua James Pacheco, Boa Vista, Arcoverde, PE"
+    antonioCosta: {
+        nome:
+            "Escola Municipal Antônio Costa Leitão",
+        endereco:
+            "Tamboril, Arcoverde, PE"
+    },
+
+    joseMedeiros: {
+        nome:
+            "Escola Municipal José Medeiros da Fonseca",
+        endereco:
+            "Sucupira, Arcoverde, PE"
+    },
+
+    antonioJoaquim: {
+        nome:
+            "Escola Municipal Antônio Joaquim da Silva",
+        endereco:
+            "Boa Vista, Arcoverde, PE"
+    },
+
+    olga: {
+        nome:
+            "Escola Municipal Olga Gueiros Leite",
+        endereco:
+            "Centro, Arcoverde, PE"
+    },
+
+    barao: {
+        nome:
+            "Escola Municipal Barão do Rio Branco",
+        endereco:
+            "Centro, Arcoverde, PE"
     }
 
-];
+};
 
 
 /* ======================================================
-   LINHAS DE SIMULAÇÃO
+   ROTAS ESCOLARES
 ====================================================== */
 
-const linhas = {
+const linhasEscolares = {
 
     "ESC-01": {
 
-        nome: "Escolar São Cristóvão",
+        nome:
+            "Escolar São Cristóvão",
 
-        tipo: "escolar",
+        velocidade:
+            30,
 
-        velocidade: 32,
-
-        paradas: [
+        pontos: [
 
             {
                 tipo: "bairro",
                 nome: "São Cristóvão",
-                busca: "São Cristóvão, Arcoverde, Pernambuco"
+                busca:
+                    "São Cristóvão, Arcoverde, Pernambuco"
+            },
+
+            {
+                tipo: "parada",
+                nome:
+                    "Parada São Cristóvão",
+                busca:
+                    "São Cristóvão, Arcoverde, Pernambuco"
             },
 
             {
                 tipo: "escola",
-                escolaId: "rotary"
+                escola:
+                    "rotary"
             },
 
             {
                 tipo: "escola",
-                escolaId: "alfabeto"
+                escola:
+                    "alfabeto"
             },
 
             {
                 tipo: "escola",
-                escolaId: "sebastiao"
+                escola:
+                    "sebastiao"
             },
 
             {
-                tipo: "bairro",
-                nome: "Centro",
-                busca: "Centro, Arcoverde, Pernambuco"
-            },
-
-            {
-                tipo: "escola",
-                escolaId: "olga"
-            },
-
-            {
-                tipo: "escola",
-                escolaId: "barao"
+                tipo: "parada",
+                nome:
+                    "Parada Centro",
+                busca:
+                    "Centro, Arcoverde, Pernambuco"
             }
 
         ]
@@ -183,56 +166,62 @@ const linhas = {
 
     "ESC-02": {
 
-        nome: "Escolar Centro",
+        nome:
+            "Escolar Boa Vista / Centro",
 
-        tipo: "escolar",
+        velocidade:
+            28,
 
-        velocidade: 30,
-
-        paradas: [
+        pontos: [
 
             {
                 tipo: "bairro",
-                nome: "Boa Vista",
-                busca: "Boa Vista, Arcoverde, Pernambuco"
+                nome:
+                    "Boa Vista",
+                busca:
+                    "Boa Vista, Arcoverde, Pernambuco"
+            },
+
+            {
+                tipo: "parada",
+                nome:
+                    "Parada Boa Vista",
+                busca:
+                    "Boa Vista, Arcoverde, Pernambuco"
             },
 
             {
                 tipo: "escola",
-                escolaId: "antonio-joaquim"
+                escola:
+                    "antonioJoaquim"
             },
 
             {
                 tipo: "bairro",
-                nome: "Sucupira",
-                busca: "Sucupira, Arcoverde, Pernambuco"
+                nome:
+                    "Sucupira",
+                busca:
+                    "Sucupira, Arcoverde, Pernambuco"
             },
 
             {
                 tipo: "escola",
-                escolaId: "jose-medeiros"
+                escola:
+                    "joseMedeiros"
             },
 
             {
                 tipo: "bairro",
-                nome: "Centro",
-                busca: "Centro, Arcoverde, Pernambuco"
+                nome:
+                    "Centro",
+                busca:
+                    "Centro, Arcoverde, Pernambuco"
             },
 
             {
                 tipo: "escola",
-                escolaId: "euclides"
-            },
-
-            {
-                tipo: "bairro",
-                nome: "Tamboril",
-                busca: "Tamboril, Arcoverde, Pernambuco"
-            },
-
-            {
-                tipo: "escola",
-                escolaId: "gumercindo"
+                escola:
+                    "olga"
             }
 
         ]
@@ -243,7 +232,188 @@ const linhas = {
 
 
 /* ======================================================
-   VARIÁVEIS
+   ROTAS TRANSPORTE PÚBLICO
+====================================================== */
+
+const linhasPublicas = {
+
+    "PUB-01": {
+
+        nome:
+            "Centro → São Cristóvão",
+
+        velocidade:
+            35,
+
+        pontos: [
+
+            {
+                tipo: "bairro",
+                nome:
+                    "Centro",
+                busca:
+                    "Centro, Arcoverde, Pernambuco"
+            },
+
+            {
+                tipo: "parada",
+                nome:
+                    "Parada Terminal Centro",
+                busca:
+                    "Centro, Arcoverde, Pernambuco"
+            },
+
+            {
+                tipo: "bairro",
+                nome:
+                    "São Geraldo",
+                busca:
+                    "São Geraldo, Arcoverde, Pernambuco"
+            },
+
+            {
+                tipo: "parada",
+                nome:
+                    "Parada São Geraldo",
+                busca:
+                    "São Geraldo, Arcoverde, Pernambuco"
+            },
+
+            {
+                tipo: "bairro",
+                nome:
+                    "São Cristóvão",
+                busca:
+                    "São Cristóvão, Arcoverde, Pernambuco"
+            },
+
+            {
+                tipo: "parada",
+                nome:
+                    "Parada São Cristóvão",
+                busca:
+                    "São Cristóvão, Arcoverde, Pernambuco"
+            }
+
+        ]
+
+    },
+
+
+    "PUB-02": {
+
+        nome:
+            "Centro → Tamboril",
+
+        velocidade:
+            32,
+
+        pontos: [
+
+            {
+                tipo: "bairro",
+                nome:
+                    "Centro",
+                busca:
+                    "Centro, Arcoverde, Pernambuco"
+            },
+
+            {
+                tipo: "parada",
+                nome:
+                    "Parada Centro",
+                busca:
+                    "Centro, Arcoverde, Pernambuco"
+            },
+
+            {
+                tipo: "bairro",
+                nome:
+                    "Tamboril",
+                busca:
+                    "Tamboril, Arcoverde, Pernambuco"
+            },
+
+            {
+                tipo: "parada",
+                nome:
+                    "Parada Tamboril",
+                busca:
+                    "Tamboril, Arcoverde, Pernambuco"
+            }
+
+        ]
+
+    },
+
+
+    "PUB-03": {
+
+        nome:
+            "Boa Vista → Centro → Sucupira",
+
+        velocidade:
+            30,
+
+        pontos: [
+
+            {
+                tipo: "bairro",
+                nome:
+                    "Boa Vista",
+                busca:
+                    "Boa Vista, Arcoverde, Pernambuco"
+            },
+
+            {
+                tipo: "parada",
+                nome:
+                    "Parada Boa Vista",
+                busca:
+                    "Boa Vista, Arcoverde, Pernambuco"
+            },
+
+            {
+                tipo: "bairro",
+                nome:
+                    "Centro",
+                busca:
+                    "Centro, Arcoverde, Pernambuco"
+            },
+
+            {
+                tipo: "parada",
+                nome:
+                    "Parada Centro",
+                busca:
+                    "Centro, Arcoverde, Pernambuco"
+            },
+
+            {
+                tipo: "bairro",
+                nome:
+                    "Sucupira",
+                busca:
+                    "Sucupira, Arcoverde, Pernambuco"
+            },
+
+            {
+                tipo: "parada",
+                nome:
+                    "Parada Sucupira",
+                busca:
+                    "Sucupira, Arcoverde, Pernambuco"
+            }
+
+        ]
+
+    }
+
+};
+
+
+/* ======================================================
+   ESTADO
 ====================================================== */
 
 let mapa;
@@ -262,86 +432,101 @@ let animationIndex = 0;
 
 let simulationRunning = true;
 
-let currentLine = "ESC-01";
+let tipoAtual = "escolar";
 
-let routeReady = false;
+let linhaAtual = "ESC-01";
+
+let pontosAtuais = [];
 
 
 /* ======================================================
-   INICIAR MAPA
+   MAPA
 ====================================================== */
 
 function iniciarMapa() {
 
-    mapa = L.map("map", {
-
-        zoomControl: true,
-
-        preferCanvas: true
-
-    }).setView(ARCOVERDE, 13);
+    mapa =
+        L.map("map")
+        .setView(
+            ARCOVERDE,
+            13
+        );
 
 
     L.tileLayer(
         "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
         {
+
             maxZoom: 19,
 
             attribution:
                 '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+
         }
     ).addTo(mapa);
 
 
-    criarIconeOnibus();
+    criarOnibus();
 
 }
 
 
 /* ======================================================
-   ÍCONE DO ÔNIBUS
+   ÍCONE ÔNIBUS
 ====================================================== */
 
-function criarIconeOnibus() {
+function criarOnibus() {
 
-    const busIcon = L.divIcon({
+    busMarker =
+        L.marker(
+            ARCOVERDE,
+            {
+                icon:
+                    criarIconeOnibus(
+                        "escolar"
+                    ),
 
-        className: "",
-
-        html:
-            '<div class="bus-marker">🚌</div>',
-
-        iconSize: [42, 42],
-
-        iconAnchor: [21, 21],
-
-        popupAnchor: [0, -22]
-
-    });
-
-
-    busMarker = L.marker(
-
-        ARCOVERDE,
-
-        {
-            icon: busIcon,
-
-            zIndexOffset: 1000
-        }
-
-    ).addTo(mapa);
+                zIndexOffset:
+                    1000
+            }
+        )
+        .addTo(mapa);
 
 
     busMarker.bindPopup(`
         <div class="popup-title">
-            🚌 ESC-01
+            🚌 Ônibus
         </div>
 
         <div class="popup-subtitle">
-            Ônibus escolar em simulação
+            Veículo em simulação
         </div>
     `);
+
+}
+
+
+function criarIconeOnibus(tipo) {
+
+    return L.divIcon({
+
+        className: "",
+
+        html:
+            `<div class="bus-marker ${tipo}">
+                🚌
+            </div>`,
+
+        iconSize:
+            [42, 42],
+
+        iconAnchor:
+            [21, 21],
+
+        popupAnchor:
+            [0, -22]
+
+    });
 
 }
 
@@ -350,53 +535,46 @@ function criarIconeOnibus() {
    GEOCODIFICAÇÃO
 ====================================================== */
 
-async function geocodificar(endereco) {
+async function geocodificar(
+    endereco
+) {
 
-    const params = new URLSearchParams({
+    const params =
+        new URLSearchParams({
 
-        q: endereco,
+            q: endereco,
 
-        format: "json",
+            format: "json",
 
-        limit: "1",
+            limit: "1",
 
-        countrycodes: "br",
+            countrycodes: "br"
 
-        addressdetails: "1"
-
-    });
+        });
 
 
     try {
 
-        const response = await fetch(
-            `${NOMINATIM_URL}?${params.toString()}`,
-            {
-                headers: {
-                    "Accept": "application/json"
-                }
-            }
-        );
+        const response =
+            await fetch(
+                `${NOMINATIM_URL}?${params}`
+            );
 
 
         if (!response.ok) {
 
             throw new Error(
-                "Falha na geocodificação"
+                "Erro Nominatim"
             );
 
         }
 
 
-        const data = await response.json();
+        const data =
+            await response.json();
 
 
         if (!data.length) {
-
-            console.warn(
-                "Local não encontrado:",
-                endereco
-            );
 
             return null;
 
@@ -405,9 +583,13 @@ async function geocodificar(endereco) {
 
         return [
 
-            Number(data[0].lat),
+            Number(
+                data[0].lat
+            ),
 
-            Number(data[0].lon)
+            Number(
+                data[0].lon
+            )
 
         ];
 
@@ -416,7 +598,6 @@ async function geocodificar(endereco) {
     catch (error) {
 
         console.error(
-            "Erro Nominatim:",
             error
         );
 
@@ -428,53 +609,67 @@ async function geocodificar(endereco) {
 
 
 /* ======================================================
-   PREPARAR PARADAS
+   PREPARAR PONTOS
 ====================================================== */
 
-async function prepararParadas(lineId) {
-
-    const linha = linhas[lineId];
+async function prepararPontos(
+    linha
+) {
 
     const resultado = [];
 
 
-    for (const parada of linha.paradas) {
+    for (
+        const ponto of linha.pontos
+    ) {
 
-        let nome = parada.nome;
+        let nome =
+            ponto.nome;
 
-        let endereco = parada.busca;
+        let endereco =
+            ponto.busca;
 
-        let coordenadas = null;
 
+        /*
+        ESCOLA
+        */
 
-        if (parada.tipo === "escola") {
+        if (
+            ponto.tipo === "escola"
+        ) {
 
-            const escola = escolas.find(
-                item =>
-                    item.id === parada.escolaId
-            );
+            const escola =
+                escolas[
+                    ponto.escola
+                ];
 
 
             if (!escola) {
+
                 continue;
+
             }
 
 
-            nome = escola.nome;
+            nome =
+                escola.nome;
 
-            endereco = escola.endereco;
+            endereco =
+                escola.endereco;
 
         }
 
 
-        coordenadas =
-            await geocodificar(endereco);
+        const coordenadas =
+            await geocodificar(
+                endereco
+            );
 
 
         if (!coordenadas) {
 
             console.warn(
-                "Não foi possível localizar:",
+                "Ponto não localizado:",
                 nome
             );
 
@@ -487,7 +682,8 @@ async function prepararParadas(lineId) {
 
             nome,
 
-            tipo: parada.tipo,
+            tipo:
+                ponto.tipo,
 
             coordenadas,
 
@@ -497,11 +693,13 @@ async function prepararParadas(lineId) {
 
 
         /*
-        Nominatim deve ser utilizado
-        com intervalo entre requisições.
+        Respeita intervalo
+        do Nominatim.
         */
 
-        await esperar(1100);
+        await esperar(
+            1100
+        );
 
     }
 
@@ -512,24 +710,18 @@ async function prepararParadas(lineId) {
 
 
 /* ======================================================
-   ROTA OSRM
+   CALCULAR ROTA REAL
 ====================================================== */
 
-async function calcularRota(paradas) {
+async function calcularRota(
+    pontos
+) {
 
-    if (paradas.length < 2) {
-
-        throw new Error(
-            "São necessárias pelo menos duas paradas."
-        );
-
-    }
-
-
-    const coordenadas = paradas
+    const coordenadas =
+        pontos
         .map(
-            parada =>
-                `${parada.coordenadas[1]},${parada.coordenadas[0]}`
+            ponto =>
+                `${ponto.coordenadas[1]},${ponto.coordenadas[0]}`
         )
         .join(";");
 
@@ -541,13 +733,15 @@ async function calcularRota(paradas) {
 
 
     const response =
-        await fetch(url);
+        await fetch(
+            url
+        );
 
 
     if (!response.ok) {
 
         throw new Error(
-            "Erro ao calcular rota."
+            "Falha no roteamento"
         );
 
     }
@@ -559,12 +753,11 @@ async function calcularRota(paradas) {
 
     if (
         data.code !== "Ok" ||
-        !data.routes ||
         !data.routes.length
     ) {
 
         throw new Error(
-            "A rota não pôde ser calculada."
+            "Rota não encontrada"
         );
 
     }
@@ -576,99 +769,12 @@ async function calcularRota(paradas) {
 
 
 /* ======================================================
-   DESENHAR PARADAS
-====================================================== */
-
-function desenharParadas(paradas) {
-
-    stopMarkers.forEach(
-        marker =>
-            mapa.removeLayer(marker)
-    );
-
-
-    stopMarkers = [];
-
-
-    paradas.forEach(
-        (parada, index) => {
-
-            const icon = L.divIcon({
-
-                className: "",
-
-                html: `
-                    <div style="
-                        width:28px;
-                        height:28px;
-                        border-radius:50%;
-                        background:#0b1726;
-                        border:3px solid ${
-                            parada.tipo === "escola"
-                                ? "#facc15"
-                                : "#168cff"
-                        };
-                        display:grid;
-                        place-items:center;
-                        font-size:13px;
-                    ">
-                        ${
-                            parada.tipo === "escola"
-                                ? "🏫"
-                                : "📍"
-                        }
-                    </div>
-                `,
-
-                iconSize: [28, 28],
-
-                iconAnchor: [14, 14]
-
-            });
-
-
-            const marker =
-                L.marker(
-                    parada.coordenadas,
-                    {
-                        icon
-                    }
-                ).addTo(mapa);
-
-
-            marker.bindPopup(`
-                <div class="popup-title">
-                    ${
-                        parada.tipo === "escola"
-                            ? "🏫"
-                            : "📍"
-                    }
-                    ${escaparHTML(parada.nome)}
-                </div>
-
-                <div class="popup-subtitle">
-                    ${
-                        parada.tipo === "escola"
-                            ? "Escola"
-                            : "Parada / bairro"
-                    }
-                </div>
-            `);
-
-
-            stopMarkers.push(marker);
-
-        }
-    );
-
-}
-
-
-/* ======================================================
    DESENHAR ROTA
 ====================================================== */
 
-function desenharRota(route) {
+function desenharRota(
+    route
+) {
 
     if (rotaLayer) {
 
@@ -679,104 +785,265 @@ function desenharRota(route) {
     }
 
 
-    const latlngs =
-        route.geometry.coordinates.map(
-            coord => [
-                coord[1],
-                coord[0]
+    routeCoordinates =
+        route.geometry.coordinates
+        .map(
+            ponto => [
+                ponto[1],
+                ponto[0]
             ]
         );
 
 
-    routeCoordinates =
-        latlngs;
+    const cor =
+        tipoAtual === "escolar"
+            ? "#f59e0b"
+            : "#168cff";
 
 
     rotaLayer =
         L.polyline(
-
-            latlngs,
-
+            routeCoordinates,
             {
-                color: "#168cff",
 
-                weight: 6,
+                color: cor,
+
+                weight: 7,
 
                 opacity: .9,
 
-                lineJoin: "round"
-            }
+                lineJoin:
+                    "round"
 
-        ).addTo(mapa);
+            }
+        )
+        .addTo(mapa);
 
 
     mapa.fitBounds(
         rotaLayer.getBounds(),
         {
-            padding: [40, 40]
+            padding:
+                [40, 40]
         }
     );
-
-
-    routeReady = true;
 
 }
 
 
 /* ======================================================
-   ATUALIZAR LISTA
+   MARCADORES
 ====================================================== */
 
-function atualizarLista(paradas) {
+function desenharPontos(
+    pontos
+) {
 
-    const container =
+    stopMarkers.forEach(
+        marker =>
+            mapa.removeLayer(
+                marker
+            )
+    );
+
+
+    stopMarkers = [];
+
+
+    pontos.forEach(
+        (ponto) => {
+
+            let emoji =
+                "📍";
+
+            let border =
+                "#168cff";
+
+
+            if (
+                ponto.tipo ===
+                "escola"
+            ) {
+
+                emoji =
+                    "🏫";
+
+                border =
+                    "#f59e0b";
+
+            }
+
+
+            if (
+                ponto.tipo ===
+                "bairro"
+            ) {
+
+                emoji =
+                    "🏘️";
+
+                border =
+                    "#168cff";
+
+            }
+
+
+            const icon =
+                L.divIcon({
+
+                    className: "",
+
+                    html: `
+                        <div style="
+                            width:30px;
+                            height:30px;
+                            border-radius:50%;
+                            background:#0b1726;
+                            border:3px solid ${border};
+                            display:grid;
+                            place-items:center;
+                            font-size:13px;
+                        ">
+                            ${emoji}
+                        </div>
+                    `,
+
+                    iconSize:
+                        [30, 30],
+
+                    iconAnchor:
+                        [15, 15]
+
+                });
+
+
+            const marker =
+                L.marker(
+                    ponto.coordenadas,
+                    {
+                        icon
+                    }
+                )
+                .addTo(mapa);
+
+
+            marker.bindPopup(`
+                <div class="popup-title">
+                    ${emoji}
+                    ${escaparHTML(
+                        ponto.nome
+                    )}
+                </div>
+
+                <div class="popup-subtitle">
+
+                    ${
+                        ponto.tipo === "escola"
+                            ? "Escola"
+                            : ponto.tipo === "bairro"
+                                ? "Bairro"
+                                : "Parada de ônibus"
+                    }
+
+                </div>
+            `);
+
+
+            stopMarkers.push(
+                marker
+            );
+
+        }
+    );
+
+}
+
+
+/* ======================================================
+   LISTA DE PONTOS
+====================================================== */
+
+function atualizarLista(
+    pontos
+) {
+
+    const lista =
         document.getElementById(
             "stopList"
         );
 
 
-    container.innerHTML = "";
+    lista.innerHTML = "";
 
 
-    paradas.forEach(
-        (parada, index) => {
+    pontos.forEach(
+        (ponto, index) => {
 
-            const div =
+            const item =
                 document.createElement(
                     "div"
                 );
 
 
-            div.className =
+            item.className =
                 "stop-item";
 
 
-            div.dataset.index =
+            item.dataset.index =
                 index;
 
 
-            div.innerHTML = `
+            let emoji =
+                "📍";
+
+            let tipo =
+                "Parada";
+
+
+            if (
+                ponto.tipo ===
+                "escola"
+            ) {
+
+                emoji =
+                    "🏫";
+
+                tipo =
+                    "Escola";
+
+            }
+
+
+            if (
+                ponto.tipo ===
+                "bairro"
+            ) {
+
+                emoji =
+                    "🏘️";
+
+                tipo =
+                    "Bairro";
+
+            }
+
+
+            item.innerHTML = `
 
                 <div class="stop-icon">
-                    ${
-                        parada.tipo === "escola"
-                            ? "🏫"
-                            : "📍"
-                    }
+                    ${emoji}
                 </div>
 
                 <div>
 
                     <div class="stop-name">
-                        ${escaparHTML(parada.nome)}
+                        ${escaparHTML(
+                            ponto.nome
+                        )}
                     </div>
 
                     <span class="stop-type">
-                        ${
-                            parada.tipo === "escola"
-                                ? "Escola"
-                                : "Parada"
-                        }
+                        ${tipo}
                     </span>
 
                 </div>
@@ -788,8 +1055,8 @@ function atualizarLista(paradas) {
             `;
 
 
-            container.appendChild(
-                div
+            lista.appendChild(
+                item
             );
 
         }
@@ -799,12 +1066,12 @@ function atualizarLista(paradas) {
 
 
 /* ======================================================
-   ESTADO DAS PARADAS
+   ATUALIZAR ESTADOS
 ====================================================== */
 
-function atualizarEstadoParadas(
-    paradas,
-    indiceAtual
+function atualizarEstados(
+    pontos,
+    indice
 ) {
 
     const itens =
@@ -814,7 +1081,7 @@ function atualizarEstadoParadas(
 
 
     itens.forEach(
-        (item, index) => {
+        (item, i) => {
 
             item.classList.remove(
                 "next",
@@ -829,8 +1096,7 @@ function atualizarEstadoParadas(
 
 
             if (
-                index <
-                indiceAtual
+                i < indice
             ) {
 
                 item.classList.add(
@@ -843,8 +1109,7 @@ function atualizarEstadoParadas(
             }
 
             else if (
-                index ===
-                indiceAtual
+                i === indice
             ) {
 
                 item.classList.add(
@@ -867,16 +1132,14 @@ function atualizarEstadoParadas(
     );
 
 
-    const proxima =
-        paradas[indiceAtual];
-
-
-    if (proxima) {
+    if (
+        pontos[indice]
+    ) {
 
         document.getElementById(
             "nextStop"
         ).textContent =
-            proxima.nome;
+            pontos[indice].nome;
 
     }
 
@@ -885,75 +1148,41 @@ function atualizarEstadoParadas(
         "stopCounter"
     ).textContent =
         `${Math.min(
-            indiceAtual,
-            paradas.length
-        )} / ${paradas.length}`;
+            indice,
+            pontos.length
+        )} / ${pontos.length}`;
 
 }
 
 
 /* ======================================================
-   ENCONTRAR PONTO MAIS PRÓXIMO
+   ANIMAÇÃO
 ====================================================== */
 
-function encontrarIndiceRota(
-    coordenadas
+function iniciarAnimacao(
+    pontos
 ) {
 
-    if (!routeCoordinates.length) {
-        return 0;
-    }
+    if (
+        !routeCoordinates.length
+    ) {
 
-
-    let menorDistancia =
-        Infinity;
-
-    let indice = 0;
-
-
-    routeCoordinates.forEach(
-        (ponto, i) => {
-
-            const distancia =
-                distanciaMetros(
-                    coordenadas,
-                    ponto
-                );
-
-
-            if (
-                distancia <
-                menorDistancia
-            ) {
-
-                menorDistancia =
-                    distancia;
-
-                indice = i;
-
-            }
-
-        }
-    );
-
-
-    return indice;
-
-}
-
-
-/* ======================================================
-   ANIMAÇÃO DO ÔNIBUS
-====================================================== */
-
-function iniciarAnimacao(paradas) {
-
-    if (!routeCoordinates.length) {
         return;
+
     }
 
 
-    animationIndex = 0;
+    if (animationFrame) {
+
+        cancelAnimationFrame(
+            animationFrame
+        );
+
+    }
+
+
+    animationIndex =
+        0;
 
 
     function animar() {
@@ -977,7 +1206,8 @@ function iniciarAnimacao(paradas) {
             routeCoordinates.length
         ) {
 
-            animationIndex = 0;
+            animationIndex =
+                0;
 
         }
 
@@ -995,42 +1225,33 @@ function iniciarAnimacao(paradas) {
         );
 
 
-        const indiceParada =
-            encontrarParadaMaisProxima(
+        const indice =
+            encontrarPontoMaisProximo(
                 posicao,
-                paradas
+                pontos
             );
 
 
-        atualizarEstadoParadas(
-            paradas,
-            indiceParada
+        atualizarEstados(
+            pontos,
+            indice
         );
 
 
         atualizarDistancia(
             posicao,
-            paradas,
-            indiceParada
+            pontos[indice]
         );
 
 
-        animationIndex += .45;
+        animationIndex +=
+            .45;
 
 
         animationFrame =
             requestAnimationFrame(
                 animar
             );
-
-    }
-
-
-    if (animationFrame) {
-
-        cancelAnimationFrame(
-            animationFrame
-        );
 
     }
 
@@ -1044,12 +1265,12 @@ function iniciarAnimacao(paradas) {
 
 
 /* ======================================================
-   PARADA MAIS PRÓXIMA
+   PONTO MAIS PRÓXIMO
 ====================================================== */
 
-function encontrarParadaMaisProxima(
+function encontrarPontoMaisProximo(
     posicao,
-    paradas
+    pontos
 ) {
 
     let menor =
@@ -1059,13 +1280,13 @@ function encontrarParadaMaisProxima(
         0;
 
 
-    paradas.forEach(
-        (parada, index) => {
+    pontos.forEach(
+        (ponto, i) => {
 
             const distancia =
                 distanciaMetros(
                     posicao,
-                    parada.coordenadas
+                    ponto.coordenadas
                 );
 
 
@@ -1078,7 +1299,7 @@ function encontrarParadaMaisProxima(
                     distancia;
 
                 indice =
-                    index;
+                    i;
 
             }
 
@@ -1097,20 +1318,20 @@ function encontrarParadaMaisProxima(
 
 function atualizarDistancia(
     posicao,
-    paradas,
-    indice
+    ponto
 ) {
 
-    if (!paradas[indice]) {
+    if (!ponto) {
+
         return;
+
     }
 
 
     const distancia =
         distanciaMetros(
             posicao,
-            paradas[indice]
-                .coordenadas
+            ponto.coordenadas
         );
 
 
@@ -1142,19 +1363,20 @@ function distanciaMetros(
         Math.PI /
         180;
 
+
     const lat2 =
         b[0] *
         Math.PI /
         180;
 
 
-    const deltaLat =
+    const dLat =
         (b[0] - a[0]) *
         Math.PI /
         180;
 
 
-    const deltaLon =
+    const dLon =
         (b[1] - a[1]) *
         Math.PI /
         180;
@@ -1162,7 +1384,7 @@ function distanciaMetros(
 
     const x =
         Math.sin(
-            deltaLat / 2
+            dLat / 2
         ) ** 2;
 
 
@@ -1170,7 +1392,7 @@ function distanciaMetros(
         Math.cos(lat1) *
         Math.cos(lat2) *
         Math.sin(
-            deltaLon / 2
+            dLon / 2
         ) ** 2;
 
 
@@ -1192,7 +1414,7 @@ function distanciaMetros(
 
 
 /* ======================================================
-   FORMATAR DISTÂNCIA
+   FORMATAÇÃO
 ====================================================== */
 
 function formatarDistancia(
@@ -1214,7 +1436,9 @@ function formatarDistancia(
         metros < 1000
     ) {
 
-        return `${Math.round(metros)} m`;
+        return `${Math.round(
+            metros
+        )} m`;
 
     }
 
@@ -1227,28 +1451,174 @@ function formatarDistancia(
 
 
 /* ======================================================
-   TROCAR LINHA
+   CARREGAR SELECT
+====================================================== */
+
+function atualizarSelect() {
+
+    const select =
+        document.getElementById(
+            "lineSelect"
+        );
+
+
+    select.innerHTML = "";
+
+
+    const linhas =
+        tipoAtual === "escolar"
+            ? linhasEscolares
+            : linhasPublicas;
+
+
+    Object.entries(
+        linhas
+    ).forEach(
+        ([id, linha]) => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                id;
+
+
+            option.textContent =
+                `${id} — ${linha.nome}`;
+
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    linhaAtual =
+        Object.keys(
+            linhas
+        )[0];
+
+
+    select.value =
+        linhaAtual;
+
+}
+
+
+/* ======================================================
+   ATUALIZAR INTERFACE
+====================================================== */
+
+function atualizarInterface() {
+
+    const escolar =
+        tipoAtual ===
+        "escolar";
+
+
+    const btnEscolar =
+        document.getElementById(
+            "btnEscolar"
+        );
+
+
+    const btnPublico =
+        document.getElementById(
+            "btnPublico"
+        );
+
+
+    btnEscolar.classList.toggle(
+        "active",
+        escolar
+    );
+
+
+    btnPublico.classList.toggle(
+        "active",
+        !escolar
+    );
+
+
+    document
+        .getElementById(
+            "schoolLegend"
+        )
+        .classList.toggle(
+            "hidden",
+            !escolar
+        );
+
+
+    document
+        .getElementById(
+            "neighborhoodLegend"
+        )
+        .classList.toggle(
+            "hidden",
+            escolar
+        );
+
+
+    atualizarSelect();
+
+}
+
+
+/* ======================================================
+   CARREGAR LINHA
 ====================================================== */
 
 async function carregarLinha(
-    lineId
+    id
 ) {
 
-    currentLine =
-        lineId;
+    linhaAtual =
+        id;
 
-    routeReady =
-        false;
+
+    const linhas =
+        tipoAtual === "escolar"
+            ? linhasEscolares
+            : linhasPublicas;
 
 
     const linha =
-        linhas[lineId];
+        linhas[id];
+
+
+    if (!linha) {
+
+        return;
+
+    }
 
 
     document.getElementById(
-        "routeName"
+        "lineBadge"
     ).textContent =
-        `Linha ${lineId} — ${linha.nome}`;
+        id;
+
+
+    document.getElementById(
+        "lineBadge"
+    ).className =
+        `line-badge ${
+            tipoAtual
+        }`;
+
+
+    document.getElementById(
+        "busType"
+    ).textContent =
+        tipoAtual === "escolar"
+            ? "Ônibus Escolar"
+            : "Ônibus Público";
 
 
     document.getElementById(
@@ -1258,55 +1628,89 @@ async function carregarLinha(
 
 
     document.getElementById(
+        "routeName"
+    ).textContent =
+        `${id} — ${linha.nome}`;
+
+
+    document.getElementById(
+        "routeMode"
+    ).textContent =
+        tipoAtual === "escolar"
+            ? "🏫 Rota escolar"
+            : "🚌 Rota transporte público";
+
+
+    document.getElementById(
+        "routeMode"
+    ).className =
+        `map-mode ${
+            tipoAtual === "escolar"
+                ? "escolar-mode"
+                : "publico-mode"
+        }`;
+
+
+    busMarker.setIcon(
+        criarIconeOnibus(
+            tipoAtual
+        )
+    );
+
+
+    document.getElementById(
         "stopList"
     ).textContent =
-        "Localizando escolas e paradas...";
+        "Localizando pontos...";
 
 
     try {
 
-        const paradas =
-            await prepararParadas(
-                lineId
+        const pontos =
+            await prepararPontos(
+                linha
             );
 
 
         if (
-            paradas.length < 2
+            pontos.length < 2
         ) {
 
             throw new Error(
-                "Não existem pontos suficientes para criar a rota."
+                "Poucos pontos encontrados."
             );
 
         }
 
 
+        pontosAtuais =
+            pontos;
+
+
         atualizarLista(
-            paradas
+            pontos
         );
 
 
-        desenharParadas(
-            paradas
+        desenharPontos(
+            pontos
         );
 
 
-        const route =
+        const rota =
             await calcularRota(
-                paradas
+                pontos
             );
 
 
         desenharRota(
-            route
+            rota
         );
 
 
         iniciarAnimacao(
-            paradas
+            pontos
         );
-
 
     }
 
@@ -1327,14 +1731,13 @@ async function carregarLinha(
                 line-height:1.5;
             ">
 
-                Não foi possível montar
-                a rota automaticamente.
+                Não foi possível
+                montar esta rota.
 
                 <br><br>
 
                 Verifique sua conexão
-                com a internet e tente
-                novamente.
+                com a internet.
 
             </div>
 
@@ -1346,10 +1749,52 @@ async function carregarLinha(
 
 
 /* ======================================================
-   BOTÕES
+   EVENTOS
 ====================================================== */
 
-function configurarBotoes() {
+function configurarEventos() {
+
+    document
+        .getElementById(
+            "btnEscolar"
+        )
+        .addEventListener(
+            "click",
+            async () => {
+
+                tipoAtual =
+                    "escolar";
+
+                atualizarInterface();
+
+                await carregarLinha(
+                    "ESC-01"
+                );
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            "btnPublico"
+        )
+        .addEventListener(
+            "click",
+            async () => {
+
+                tipoAtual =
+                    "publico";
+
+                atualizarInterface();
+
+                await carregarLinha(
+                    "PUB-01"
+                );
+
+            }
+        );
+
 
     document
         .getElementById(
@@ -1357,9 +1802,9 @@ function configurarBotoes() {
         )
         .addEventListener(
             "change",
-            event => {
+            async event => {
 
-                carregarLinha(
+                await carregarLinha(
                     event.target.value
                 );
 
@@ -1375,18 +1820,12 @@ function configurarBotoes() {
             "click",
             () => {
 
-                if (
-                    busMarker
-                ) {
+                mapa.setView(
+                    busMarker.getLatLng(),
+                    16
+                );
 
-                    mapa.setView(
-                        busMarker.getLatLng(),
-                        16
-                    );
-
-                    busMarker.openPopup();
-
-                }
+                busMarker.openPopup();
 
             }
         );
@@ -1469,8 +1908,10 @@ function escaparHTML(
             "div"
         );
 
+
     div.textContent =
         texto;
+
 
     return div.innerHTML;
 
@@ -1478,7 +1919,7 @@ function escaparHTML(
 
 
 /* ======================================================
-   INICIALIZAÇÃO
+   INICIAR
 ====================================================== */
 
 document.addEventListener(
@@ -1487,7 +1928,9 @@ document.addEventListener(
 
         iniciarMapa();
 
-        configurarBotoes();
+        configurarEventos();
+
+        atualizarInterface();
 
         await carregarLinha(
             "ESC-01"
