@@ -11,7 +11,7 @@
 // Coloque aqui o número do WhatsApp
 // Exemplo: 5587999999999
 
-const WHATSAPP = "5587999999999";
+const WHATSAPP = "5511930758262";
 
 
 /* =====================================
