@@ -1,171 +1,192 @@
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Arcoverde Bus - Localizador de Ônibus</title>
+    <title>Arcoverde Bus - Transporte Inteligente</title>
 
-    <link rel="stylesheet"
-          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <!-- Leaflet -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
 
+    <!-- CSS do projeto -->
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<header class="topo">
+<header class="topbar">
+    <div class="brand">
+        <div class="brand-icon">🚌</div>
 
-    <div class="logo">
-        <span>🚌</span>
         <div>
             <h1>Arcoverde Bus</h1>
-            <p>Localizador de ônibus</p>
+            <span>Transporte Inteligente</span>
         </div>
     </div>
 
-    <div class="status-online">
-        <span></span>
+    <div class="status">
+        <span class="status-dot"></span>
         Sistema online
     </div>
-
 </header>
 
 
-<main class="container">
+<main class="app">
 
-    <section class="painel">
+    <!-- PAINEL -->
+    <aside class="sidebar">
 
-        <h2>📍 Encontre seu ônibus</h2>
+        <section class="panel">
+            <div class="panel-title">
+                <span>🚌</span>
+                Linhas
+            </div>
 
-        <label for="linhaSelect">
-            Escolha a linha
-        </label>
+            <label for="lineSelect">Escolha uma linha</label>
 
-        <select id="linhaSelect">
-            <option value="">Selecione uma linha...</option>
-        </select>
+            <select id="lineSelect">
+                <option value="ESC-01">
+                    ESC-01 — Escolar São Cristóvão
+                </option>
+
+                <option value="ESC-02">
+                    ESC-02 — Escolar Centro
+                </option>
+            </select>
+        </section>
 
 
-        <div id="informacoesLinha" class="info-linha">
+        <section class="panel bus-card">
 
-            <div class="linha-header">
+            <div class="bus-header">
+                <div class="bus-number">ESC-01</div>
 
                 <div>
-                    <span id="tipoLinha" class="badge">
-                        —
-                    </span>
-
-                    <h3 id="nomeLinha">
-                        Nenhuma linha selecionada
-                    </h3>
+                    <strong>Ônibus Escolar</strong>
+                    <small>Simulação</small>
                 </div>
-
-                <div class="bus-id">
-                    🚌 <span id="busId">---</span>
-                </div>
-
             </div>
 
+            <div class="bus-status">
+                <span class="live-dot"></span>
+                Em circulação
+            </div>
 
-            <div class="status-onibus">
+            <div class="info-grid">
 
-                <div class="status-icon">
-                    🚌
+                <div>
+                    <span>Velocidade</span>
+                    <strong id="speed">32 km/h</strong>
                 </div>
 
                 <div>
-                    <strong id="statusOnibus">
-                        Aguardando...
-                    </strong>
+                    <span>Próxima</span>
+                    <strong id="nextStop">Calculando...</strong>
+                </div>
 
-                    <small>
-                        Última atualização:
-                        <span id="ultimaAtualizacao">
-                            —
-                        </span>
-                    </small>
+                <div>
+                    <span>Paradas</span>
+                    <strong id="stopCounter">0 / 0</strong>
+                </div>
+
+                <div>
+                    <span>Distância</span>
+                    <strong id="distance">--</strong>
                 </div>
 
             </div>
 
+        </section>
 
-            <div class="proxima-parada">
 
-                <span>PRÓXIMA PARADA</span>
+        <section class="panel">
 
-                <strong id="proximaParada">
-                    —
-                </strong>
-
-                <div class="tempo">
-
-                    <span>
-                        ⏱️ Chegada estimada
-                    </span>
-
-                    <strong id="tempoChegada">
-                        —
-                    </strong>
-
-                </div>
-
+            <div class="panel-title">
+                <span>📍</span>
+                Próximos pontos
             </div>
 
-        </div>
+            <div id="stopList" class="stop-list">
+                Carregando...
+            </div>
 
-    </section>
+        </section>
 
 
-    <section class="mapa-container">
+        <section class="panel legend">
 
-        <div id="map"></div>
+            <div class="panel-title">
+                <span>Legenda</span>
+            </div>
 
-        <div class="legenda">
+            <div class="legend-item">
+                <span class="legend-dot green"></span>
+                Próxima parada
+            </div>
 
-            <div>
-                <span class="bolinha onibus"></span>
+            <div class="legend-item">
+                <span class="legend-dot blue"></span>
+                Ainda vai passar
+            </div>
+
+            <div class="legend-item">
+                <span class="legend-dot gray"></span>
+                Já passou
+            </div>
+
+            <div class="legend-item">
+                <span>🏫</span>
+                Escola
+            </div>
+
+            <div class="legend-item">
+                <span>🚌</span>
                 Ônibus
             </div>
 
-            <div>
-                <span class="bolinha parada"></span>
-                Parada
-            </div>
+        </section>
+
+
+        <section class="panel actions">
+
+            <button id="centerBus">
+                🚌 Centralizar ônibus
+            </button>
+
+            <button id="toggleSimulation">
+                ⏸ Pausar simulação
+            </button>
+
+            <button id="fitRoute">
+                🗺️ Mostrar rota completa
+            </button>
+
+        </section>
+
+    </aside>
+
+
+    <!-- MAPA -->
+    <section class="map-area">
+
+        <div id="map"></div>
+
+        <div class="map-overlay">
 
             <div>
-                <span class="linha-legenda"></span>
-                Rota
+                <strong>Arcoverde - PE</strong>
+                <span id="routeName">
+                    Linha Escolar ESC-01
+                </span>
             </div>
 
-        </div>
-
-    </section>
-
-
-    <section class="paradas-container">
-
-        <div class="titulo-paradas">
-
-            <div>
-                <h2>📍 Paradas da linha</h2>
-
-                <p>
-                    Acompanhe o ônibus em tempo real
-                </p>
-            </div>
-
-            <div id="contadorParadas">
-                0 paradas
-            </div>
-
-        </div>
-
-
-        <div id="listaParadas" class="lista-paradas">
-
-            <div class="sem-dados">
-                Selecione uma linha para visualizar as paradas.
+            <div class="map-mode">
+                🛣️ Rota pelas ruas
             </div>
 
         </div>
@@ -176,19 +197,23 @@
 
 
 <footer>
-
-    <strong>Arcoverde Bus</strong>
+    <span>Arcoverde Bus — Protótipo</span>
 
     <span>
-        Protótipo de transporte inteligente
+        © OpenStreetMap contributors
     </span>
-
 </footer>
 
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Leaflet -->
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
 
+<!-- JavaScript do projeto -->
 <script src="script.js"></script>
 
 </body>
 </html>
+```
+
