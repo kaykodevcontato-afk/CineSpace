@@ -4,133 +4,213 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Arcoverde Bus - Transporte Inteligente</title>
+    <title>Arcoverde Bus</title>
 
-    <!-- Leaflet -->
     <link
         rel="stylesheet"
         href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     >
 
-    <!-- CSS do projeto -->
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <header class="topbar">
+
     <div class="brand">
         <div class="brand-icon">🚌</div>
 
         <div>
             <h1>Arcoverde Bus</h1>
-            <span>Transporte Inteligente</span>
+            <span>Sistema de Transporte Inteligente</span>
         </div>
     </div>
 
-    <div class="status">
-        <span class="status-dot"></span>
+    <div class="online">
+        <span></span>
         Sistema online
     </div>
+
 </header>
 
 
 <main class="app">
 
-    <!-- PAINEL -->
     <aside class="sidebar">
 
+        <!-- TIPO DE TRANSPORTE -->
+
         <section class="panel">
+
             <div class="panel-title">
-                <span>🚌</span>
-                Linhas
+                🚍 Tipo de transporte
             </div>
 
-            <label for="lineSelect">Escolha uma linha</label>
+            <div class="transport-buttons">
 
-            <select id="lineSelect">
-                <option value="ESC-01">
-                    ESC-01 — Escolar São Cristóvão
-                </option>
+                <button
+                    id="btnEscolar"
+                    class="transport-btn active escolar"
+                    type="button">
 
-                <option value="ESC-02">
-                    ESC-02 — Escolar Centro
-                </option>
-            </select>
+                    🏫
+                    <strong>Escolar</strong>
+                    <small>Escolas e paradas</small>
+
+                </button>
+
+                <button
+                    id="btnPublico"
+                    class="transport-btn publico"
+                    type="button">
+
+                    🚌
+                    <strong>Público</strong>
+                    <small>Bairros e paradas</small>
+
+                </button>
+
+            </div>
+
         </section>
 
+
+        <!-- LINHAS -->
+
+        <section class="panel">
+
+            <div class="panel-title">
+                🛣️ Linha selecionada
+            </div>
+
+            <label for="lineSelect">
+                Escolha a linha
+            </label>
+
+            <select id="lineSelect">
+            </select>
+
+        </section>
+
+
+        <!-- ÔNIBUS -->
 
         <section class="panel bus-card">
 
             <div class="bus-header">
-                <div class="bus-number">ESC-01</div>
+
+                <div
+                    id="lineBadge"
+                    class="line-badge escolar">
+                    ESC-01
+                </div>
 
                 <div>
-                    <strong>Ônibus Escolar</strong>
-                    <small>Simulação</small>
+
+                    <strong id="busType">
+                        Ônibus Escolar
+                    </strong>
+
+                    <small id="simulationLabel">
+                        Simulação
+                    </small>
+
                 </div>
+
             </div>
 
+
             <div class="bus-status">
+
                 <span class="live-dot"></span>
+
                 Em circulação
+
             </div>
+
 
             <div class="info-grid">
 
                 <div>
+
                     <span>Velocidade</span>
-                    <strong id="speed">32 km/h</strong>
+
+                    <strong id="speed">
+                        30 km/h
+                    </strong>
+
                 </div>
 
-                <div>
-                    <span>Próxima</span>
-                    <strong id="nextStop">Calculando...</strong>
-                </div>
 
                 <div>
-                    <span>Paradas</span>
-                    <strong id="stopCounter">0 / 0</strong>
+
+                    <span>Próximo ponto</span>
+
+                    <strong id="nextStop">
+                        Calculando...
+                    </strong>
+
                 </div>
 
+
                 <div>
+
+                    <span>Pontos</span>
+
+                    <strong id="stopCounter">
+                        0 / 0
+                    </strong>
+
+                </div>
+
+
+                <div>
+
                     <span>Distância</span>
-                    <strong id="distance">--</strong>
+
+                    <strong id="distance">
+                        --
+                    </strong>
+
                 </div>
 
             </div>
 
         </section>
 
+
+        <!-- PRÓXIMOS PONTOS -->
 
         <section class="panel">
 
             <div class="panel-title">
-                <span>📍</span>
-                Próximos pontos
+                📍 Pontos da rota
             </div>
 
             <div id="stopList" class="stop-list">
-                Carregando...
+                Carregando rota...
             </div>
 
         </section>
 
 
-        <section class="panel legend">
+        <!-- LEGENDA -->
+
+        <section class="panel">
 
             <div class="panel-title">
-                <span>Legenda</span>
+                Legenda
             </div>
 
             <div class="legend-item">
                 <span class="legend-dot green"></span>
-                Próxima parada
+                Próximo ponto
             </div>
 
             <div class="legend-item">
                 <span class="legend-dot blue"></span>
-                Ainda vai passar
+                Próximos pontos
             </div>
 
             <div class="legend-item">
@@ -138,31 +218,49 @@
                 Já passou
             </div>
 
-            <div class="legend-item">
-                <span>🏫</span>
-                Escola
+            <div id="schoolLegend" class="legend-item">
+                🏫 Escola
+            </div>
+
+            <div id="neighborhoodLegend" class="legend-item hidden">
+                🏘️ Bairro
             </div>
 
             <div class="legend-item">
-                <span>🚌</span>
-                Ônibus
+                🚌 Ônibus
             </div>
 
         </section>
 
 
+        <!-- CONTROLES -->
+
         <section class="panel actions">
 
-            <button id="centerBus">
+            <button
+                id="centerBus"
+                type="button">
+
                 🚌 Centralizar ônibus
+
             </button>
 
-            <button id="toggleSimulation">
+
+            <button
+                id="toggleSimulation"
+                type="button">
+
                 ⏸ Pausar simulação
+
             </button>
 
-            <button id="fitRoute">
+
+            <button
+                id="fitRoute"
+                type="button">
+
                 🗺️ Mostrar rota completa
+
             </button>
 
         </section>
@@ -171,21 +269,33 @@
 
 
     <!-- MAPA -->
+
     <section class="map-area">
 
         <div id="map"></div>
 
+
         <div class="map-overlay">
 
             <div>
-                <strong>Arcoverde - PE</strong>
+
+                <strong id="cityTitle">
+                    Arcoverde - PE
+                </strong>
+
                 <span id="routeName">
-                    Linha Escolar ESC-01
+                    Linha Escolar
                 </span>
+
             </div>
 
-            <div class="map-mode">
-                🛣️ Rota pelas ruas
+
+            <div
+                id="routeMode"
+                class="map-mode escolar-mode">
+
+                🏫 Rota escolar
+
             </div>
 
         </div>
@@ -196,22 +306,23 @@
 
 
 <footer>
-    <span>Arcoverde Bus — Protótipo</span>
+
+    <span>
+        Arcoverde Bus — Protótipo
+    </span>
 
     <span>
         © OpenStreetMap contributors
     </span>
+
 </footer>
 
 
-<!-- Leaflet -->
 <script
     src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
 </script>
 
-<!-- JavaScript do projeto -->
 <script src="script.js"></script>
 
 </body>
 </html>
-
