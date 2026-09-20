@@ -4,10 +4,35 @@
     padding: 0;
 }
 
+:root {
+    --bg: #07111f;
+    --panel: #0d1b2d;
+    --panel-light: #12243a;
+
+    --text: #f5f7fa;
+    --muted: #8fa4ba;
+
+    --blue: #168cff;
+    --cyan: #00d4ff;
+
+    --green: #22c55e;
+    --yellow: #facc15;
+    --red: #ef4444;
+
+    --border: rgba(255,255,255,.08);
+}
+
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #f4f7fa;
-    color: #17212b;
+    font-family:
+        Inter,
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background: var(--bg);
+    color: var(--text);
+
+    min-height: 100vh;
 }
 
 
@@ -15,130 +40,149 @@ body {
    TOPO
 ========================= */
 
-.topo {
-    background: #ffffff;
-    border-bottom: 1px solid #dfe5ea;
-
-    min-height: 75px;
+.topbar {
+    height: 70px;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    padding: 12px 5%;
+    padding: 0 22px;
 
-    position: sticky;
-    top: 0;
+    background: #091827;
 
-    z-index: 1000;
+    border-bottom: 1px solid var(--border);
 }
 
-.logo {
+.brand {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-.logo > span {
-    font-size: 38px;
+.brand-icon {
+    width: 44px;
+    height: 44px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 12px;
+
+    background: linear-gradient(
+        135deg,
+        var(--blue),
+        var(--cyan)
+    );
+
+    font-size: 23px;
 }
 
-.logo h1 {
-    font-size: 21px;
-    color: #087f5b;
+.brand h1 {
+    font-size: 20px;
+    line-height: 1.1;
 }
 
-.logo p {
+.brand span {
+    color: var(--muted);
     font-size: 12px;
-    color: #718096;
-    margin-top: 3px;
 }
 
-.status-online {
+.status {
     display: flex;
     align-items: center;
     gap: 7px;
 
     font-size: 13px;
-    color: #087f5b;
 
-    font-weight: bold;
+    color: #b8c7d8;
 }
 
-.status-online span {
+.status-dot {
     width: 9px;
     height: 9px;
 
     border-radius: 50%;
 
-    background: #20c997;
+    background: var(--green);
 
-    box-shadow: 0 0 8px #20c997;
+    box-shadow:
+        0 0 10px rgba(34,197,94,.8);
 }
 
 
 /* =========================
-   CONTAINER
+   APP
 ========================= */
 
-.container {
-    width: 92%;
-    max-width: 1300px;
-
-    margin: 25px auto;
-
+.app {
     display: grid;
 
-    grid-template-columns: 360px 1fr;
+    grid-template-columns: 340px 1fr;
 
-    gap: 20px;
+    height: calc(100vh - 110px);
 }
 
 
 /* =========================
-   PAINEL
+   SIDEBAR
 ========================= */
 
-.painel {
-    background: white;
+.sidebar {
+    padding: 15px;
 
-    border-radius: 15px;
+    overflow-y: auto;
 
-    padding: 22px;
+    background: #081523;
 
-    box-shadow: 0 4px 18px rgba(0,0,0,0.06);
-
-    height: fit-content;
+    border-right: 1px solid var(--border);
 }
 
-.painel h2 {
-    font-size: 19px;
+.panel {
+    background: var(--panel);
 
-    margin-bottom: 20px;
+    border: 1px solid var(--border);
+
+    border-radius: 14px;
+
+    padding: 15px;
+
+    margin-bottom: 13px;
 }
 
-.painel label {
+.panel-title {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    margin-bottom: 14px;
+
+    font-weight: 700;
+}
+
+label {
     display: block;
 
-    font-size: 13px;
-
-    font-weight: bold;
-
     margin-bottom: 7px;
+
+    font-size: 12px;
+
+    color: var(--muted);
 }
 
 select {
     width: 100%;
 
-    padding: 13px;
-
-    border: 1px solid #d5dce2;
+    padding: 11px 12px;
 
     border-radius: 9px;
 
-    background: white;
+    border: 1px solid #203650;
 
-    font-size: 14px;
+    background: var(--panel-light);
+
+    color: var(--text);
 
     outline: none;
 
@@ -146,7 +190,65 @@ select {
 }
 
 select:focus {
-    border-color: #087f5b;
+    border-color: var(--blue);
+}
+
+
+/* =========================
+   BUS CARD
+========================= */
+
+.bus-header {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+}
+
+.bus-number {
+    padding: 8px 10px;
+
+    border-radius: 8px;
+
+    background: var(--blue);
+
+    font-weight: 800;
+
+    font-size: 13px;
+}
+
+.bus-header strong {
+    display: block;
+
+    font-size: 14px;
+}
+
+.bus-header small {
+    color: var(--muted);
+
+    font-size: 11px;
+}
+
+.bus-status {
+    margin-top: 13px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+
+    font-size: 12px;
+
+    color: #a9bdcf;
+}
+
+.live-dot {
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: var(--green);
 }
 
 
@@ -154,244 +256,44 @@ select:focus {
    INFORMAÇÕES
 ========================= */
 
-.info-linha {
-    margin-top: 22px;
+.info-grid {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 8px;
+
+    margin-top: 14px;
 }
 
-.linha-header {
-    display: flex;
+.info-grid div {
+    background: var(--panel-light);
 
-    justify-content: space-between;
+    border-radius: 9px;
 
-    align-items: flex-start;
-
-    gap: 10px;
+    padding: 10px;
 }
 
-.badge {
-    display: inline-block;
-
-    padding: 5px 9px;
-
-    background: #e6fcf5;
-
-    color: #087f5b;
-
-    border-radius: 20px;
-
-    font-size: 11px;
-
-    font-weight: bold;
-}
-
-.linha-header h3 {
-    margin-top: 7px;
-
-    font-size: 17px;
-}
-
-.bus-id {
-    font-size: 12px;
-
-    color: #68737d;
-
-    white-space: nowrap;
-}
-
-
-/* =========================
-   STATUS ÔNIBUS
-========================= */
-
-.status-onibus {
-    margin-top: 20px;
-
-    padding: 14px;
-
-    background: #f5f7f9;
-
-    border-radius: 10px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
-}
-
-.status-icon {
-    width: 43px;
-    height: 43px;
-
-    border-radius: 50%;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: #087f5b;
-
-    font-size: 22px;
-}
-
-.status-onibus strong {
+.info-grid span {
     display: block;
 
-    font-size: 14px;
+    color: var(--muted);
 
-    color: #087f5b;
-}
-
-.status-onibus small {
-    display: block;
-
-    margin-top: 5px;
-
-    font-size: 11px;
-
-    color: #7b8790;
-}
-
-
-/* =========================
-   PRÓXIMA PARADA
-========================= */
-
-.proxima-parada {
-    margin-top: 15px;
-
-    padding: 17px;
-
-    background: #087f5b;
-
-    color: white;
-
-    border-radius: 12px;
-}
-
-.proxima-parada > span {
     font-size: 10px;
 
-    font-weight: bold;
-
-    opacity: .8;
+    margin-bottom: 4px;
 }
 
-.proxima-parada > strong {
+.info-grid strong {
     display: block;
 
-    margin-top: 7px;
+    font-size: 12px;
 
-    font-size: 18px;
-}
-
-.tempo {
-    margin-top: 14px;
-
-    padding-top: 12px;
-
-    border-top: 1px solid rgba(255,255,255,.25);
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-}
-
-.tempo span {
-    font-size: 11px;
-}
-
-.tempo strong {
-    font-size: 16px;
-}
-
-
-/* =========================
-   MAPA
-========================= */
-
-.mapa-container {
-    position: relative;
-
-    min-height: 550px;
-
-    background: white;
-
-    border-radius: 15px;
+    white-space: nowrap;
 
     overflow: hidden;
 
-    box-shadow: 0 4px 18px rgba(0,0,0,0.06);
-}
-
-#map {
-    width: 100%;
-
-    height: 550px;
-}
-
-
-/* =========================
-   LEGENDA
-========================= */
-
-.legenda {
-    position: absolute;
-
-    bottom: 15px;
-    left: 15px;
-
-    z-index: 500;
-
-    background: white;
-
-    padding: 10px 13px;
-
-    border-radius: 10px;
-
-    box-shadow: 0 3px 12px rgba(0,0,0,.15);
-
-    font-size: 11px;
-}
-
-.legenda div {
-    display: flex;
-
-    align-items: center;
-
-    gap: 7px;
-
-    margin: 5px 0;
-}
-
-.bolinha {
-    width: 12px;
-    height: 12px;
-
-    border-radius: 50%;
-
-    display: inline-block;
-}
-
-.bolinha.onibus {
-    background: #087f5b;
-}
-
-.bolinha.parada {
-    background: #ff922b;
-}
-
-.linha-legenda {
-    width: 22px;
-    height: 4px;
-
-    background: #087f5b;
-
-    display: inline-block;
-
-    border-radius: 4px;
+    text-overflow: ellipsis;
 }
 
 
@@ -399,190 +301,316 @@ select:focus {
    PARADAS
 ========================= */
 
-.paradas-container {
-    grid-column: 1 / -1;
-
-    background: white;
-
-    border-radius: 15px;
-
-    padding: 22px;
-
-    box-shadow: 0 4px 18px rgba(0,0,0,0.06);
-}
-
-.titulo-paradas {
+.stop-list {
     display: flex;
 
-    justify-content: space-between;
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.stop-item {
+    display: grid;
+
+    grid-template-columns: 25px 1fr auto;
 
     align-items: center;
 
-    margin-bottom: 18px;
+    gap: 8px;
+
+    padding: 9px;
+
+    border-radius: 9px;
+
+    background: var(--panel-light);
+
+    border: 1px solid transparent;
 }
 
-.titulo-paradas h2 {
-    font-size: 19px;
+.stop-item.next {
+    border-color: var(--green);
+
+    background:
+        rgba(34,197,94,.08);
 }
 
-.titulo-paradas p {
-    margin-top: 5px;
-
-    font-size: 12px;
-
-    color: #7b8790;
+.stop-item.passed {
+    opacity: .45;
 }
 
-#contadorParadas {
-    font-size: 12px;
+.stop-icon {
+    width: 23px;
+    height: 23px;
 
-    background: #f1f3f5;
+    display: grid;
 
-    padding: 8px 12px;
+    place-items: center;
 
-    border-radius: 20px;
+    border-radius: 50%;
 
-    color: #68737d;
+    font-size: 11px;
+
+    background: #23364d;
+}
+
+.stop-name {
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+.stop-type {
+    display: block;
+
+    color: var(--muted);
+
+    font-size: 9px;
+
+    margin-top: 2px;
+}
+
+.stop-state {
+    font-size: 9px;
+
+    color: var(--muted);
+
+    text-align: right;
 }
 
 
 /* =========================
-   LISTA
+   LEGENDA
 ========================= */
 
-.lista-paradas {
-    display: grid;
-
-    grid-template-columns: repeat(2, 1fr);
-
-    gap: 10px;
-}
-
-.parada-item {
-    border: 1px solid #e4e8eb;
-
-    border-radius: 10px;
-
-    padding: 14px;
-
+.legend-item {
     display: flex;
 
     align-items: center;
 
-    gap: 12px;
+    gap: 9px;
+
+    margin-top: 8px;
+
+    color: #b4c2d1;
+
+    font-size: 11px;
+}
+
+.legend-dot {
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+}
+
+.green {
+    background: var(--green);
+}
+
+.blue {
+    background: var(--blue);
+}
+
+.gray {
+    background: #64748b;
+}
+
+
+/* =========================
+   BOTÕES
+========================= */
+
+.actions {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+button {
+    width: 100%;
+
+    min-height: 42px;
+
+    padding: 9px 12px;
+
+    border-radius: 9px;
+
+    border: 1px solid #24415f;
+
+    background: var(--panel-light);
+
+    color: var(--text);
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+    font-size: 12px;
 
     transition: .2s;
 }
 
-.parada-item:hover {
-    transform: translateY(-2px);
+button:hover {
+    background: #1b3550;
 
-    box-shadow: 0 4px 12px rgba(0,0,0,.07);
+    border-color: var(--blue);
 }
 
-.numero-parada {
-    min-width: 35px;
-    height: 35px;
+button:active {
+    transform: scale(.98);
+}
 
-    border-radius: 50%;
+
+/* =========================
+   MAPA
+========================= */
+
+.map-area {
+    position: relative;
+
+    min-width: 0;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+
+    background: #dbeafe;
+}
+
+.map-overlay {
+    position: absolute;
+
+    top: 15px;
+    left: 15px;
+
+    z-index: 1000;
 
     display: flex;
 
     align-items: center;
-    justify-content: center;
 
-    font-weight: bold;
+    gap: 14px;
 
-    background: #f1f3f5;
+    padding: 10px 14px;
 
-    color: #495057;
+    border-radius: 10px;
+
+    background: rgba(7,17,31,.94);
+
+    border: 1px solid rgba(255,255,255,.1);
+
+    backdrop-filter: blur(10px);
+
+    pointer-events: none;
 }
 
-.parada-info {
-    flex: 1;
-}
-
-.parada-info strong {
+.map-overlay strong {
     display: block;
 
     font-size: 13px;
 }
 
-.parada-info small {
+.map-overlay span {
     display: block;
 
-    margin-top: 4px;
+    margin-top: 2px;
 
-    color: #868e96;
+    color: var(--muted);
 
-    font-size: 11px;
-}
-
-.status {
     font-size: 10px;
-
-    font-weight: bold;
-
-    padding: 5px 8px;
-
-    border-radius: 20px;
-
-    white-space: nowrap;
 }
 
-.status.passou {
-    background: #f1f3f5;
+.map-mode {
+    padding-left: 12px;
 
-    color: #868e96;
-}
+    border-left: 1px solid #34465b;
 
-.status.proxima {
-    background: #d3f9d8;
+    color: #8fb8dc;
 
-    color: #2b8a3e;
-}
-
-.status.futura {
-    background: #e7f5ff;
-
-    color: #1971c2;
-}
-
-.sem-dados {
-    padding: 30px;
-
-    text-align: center;
-
-    color: #868e96;
-
-    grid-column: 1 / -1;
+    font-size: 10px;
 }
 
 
 /* =========================
-   FOOTER
+   ÍCONE DO ÔNIBUS
 ========================= */
 
-footer {
-    margin-top: 30px;
+.bus-marker {
+    width: 42px;
+    height: 42px;
 
-    padding: 25px;
+    display: grid;
 
-    background: #17212b;
+    place-items: center;
+
+    border-radius: 50%;
+
+    background: #0b1726;
+
+    border: 3px solid var(--blue);
+
+    box-shadow:
+        0 3px 14px rgba(0,0,0,.4),
+        0 0 12px rgba(22,140,255,.5);
+
+    font-size: 21px;
+}
+
+
+/* =========================
+   POPUP
+========================= */
+
+.leaflet-popup-content-wrapper {
+    background: #0b1726;
 
     color: white;
 
-    display: flex;
-
-    justify-content: center;
-
-    gap: 15px;
-
-    font-size: 12px;
+    border-radius: 10px;
 }
 
-footer span {
-    color: #adb5bd;
+.leaflet-popup-tip {
+    background: #0b1726;
+}
+
+.popup-title {
+    font-weight: 800;
+
+    margin-bottom: 4px;
+}
+
+.popup-subtitle {
+    color: #9eb1c4;
+
+    font-size: 11px;
+}
+
+
+/* =========================
+   RODAPÉ
+========================= */
+
+footer {
+    height: 40px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 20px;
+
+    background: #07111f;
+
+    border-top: 1px solid var(--border);
+
+    color: #70869c;
+
+    font-size: 10px;
 }
 
 
@@ -592,67 +620,37 @@ footer span {
 
 @media (max-width: 850px) {
 
-    .container {
-        grid-template-columns: 1fr;
+    .app {
+        display: flex;
+
+        flex-direction: column;
+
+        height: auto;
     }
 
-    .mapa-container {
-        grid-row: 1;
+    .sidebar {
+        order: 2;
+
+        border-right: 0;
     }
 
-    .painel {
-        grid-row: 2;
+    .map-area {
+        order: 1;
+
+        height: 60vh;
+
+        min-height: 420px;
     }
 
-    .paradas-container {
-        grid-row: 3;
+    .topbar {
+        padding: 0 12px;
     }
 
-    #map {
-        height: 430px;
-    }
-
-    .mapa-container {
-        min-height: 430px;
-    }
-
-    .lista-paradas {
-        grid-template-columns: 1fr;
-    }
-}
-
-
-@media (max-width: 500px) {
-
-    .topo {
-        padding: 12px 4%;
-    }
-
-    .logo h1 {
-        font-size: 18px;
-    }
-
-    .status-online {
-        font-size: 10px;
-    }
-
-    .container {
-        width: 95%;
-        margin-top: 15px;
-    }
-
-    .painel,
-    .paradas-container {
-        padding: 16px;
-    }
-
-    .linha-header h3 {
-        font-size: 15px;
+    .status {
+        display: none;
     }
 
     footer {
-        flex-direction: column;
-
-        text-align: center;
+        font-size: 9px;
     }
 }
