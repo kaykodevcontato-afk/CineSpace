@@ -5,6 +5,7 @@
 }
 
 :root {
+
     --bg: #07111f;
     --panel: #0d1b2d;
     --panel-light: #12243a;
@@ -15,14 +16,16 @@
     --blue: #168cff;
     --cyan: #00d4ff;
 
+    --school: #f59e0b;
+    --public: #168cff;
+
     --green: #22c55e;
-    --yellow: #facc15;
-    --red: #ef4444;
 
     --border: rgba(255,255,255,.08);
 }
 
 body {
+
     font-family:
         Inter,
         Arial,
@@ -41,6 +44,7 @@ body {
 ========================= */
 
 .topbar {
+
     height: 70px;
 
     display: flex;
@@ -55,12 +59,15 @@ body {
 }
 
 .brand {
+
     display: flex;
     align-items: center;
+
     gap: 12px;
 }
 
 .brand-icon {
+
     width: 44px;
     height: 44px;
 
@@ -69,36 +76,44 @@ body {
 
     border-radius: 12px;
 
-    background: linear-gradient(
-        135deg,
-        var(--blue),
-        var(--cyan)
-    );
+    background:
+        linear-gradient(
+            135deg,
+            var(--blue),
+            var(--cyan)
+        );
 
     font-size: 23px;
 }
 
 .brand h1 {
+
     font-size: 20px;
+
     line-height: 1.1;
 }
 
 .brand span {
+
     color: var(--muted);
+
     font-size: 12px;
 }
 
-.status {
+.online {
+
     display: flex;
     align-items: center;
+
     gap: 7px;
 
-    font-size: 13px;
-
     color: #b8c7d8;
+
+    font-size: 13px;
 }
 
-.status-dot {
+.online span {
+
     width: 9px;
     height: 9px;
 
@@ -107,15 +122,17 @@ body {
     background: var(--green);
 
     box-shadow:
-        0 0 10px rgba(34,197,94,.8);
+        0 0 10px
+        rgba(34,197,94,.8);
 }
 
 
 /* =========================
-   APP
+   APLICAÇÃO
 ========================= */
 
 .app {
+
     display: grid;
 
     grid-template-columns: 340px 1fr;
@@ -129,19 +146,23 @@ body {
 ========================= */
 
 .sidebar {
+
     padding: 15px;
 
     overflow-y: auto;
 
     background: #081523;
 
-    border-right: 1px solid var(--border);
+    border-right:
+        1px solid var(--border);
 }
 
 .panel {
+
     background: var(--panel);
 
-    border: 1px solid var(--border);
+    border:
+        1px solid var(--border);
 
     border-radius: 14px;
 
@@ -151,6 +172,7 @@ body {
 }
 
 .panel-title {
+
     display: flex;
     align-items: center;
 
@@ -161,24 +183,110 @@ body {
     font-weight: 700;
 }
 
-label {
-    display: block;
 
-    margin-bottom: 7px;
+/* =========================
+   TRANSPORTES
+========================= */
+
+.transport-buttons {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 8px;
+}
+
+.transport-btn {
+
+    min-height: 85px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 3px;
+
+    border:
+        1px solid #263b51;
+
+    background: var(--panel-light);
+
+    border-radius: 11px;
+
+    color: var(--muted);
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.transport-btn strong {
+
+    color: var(--text);
 
     font-size: 12px;
+}
+
+.transport-btn small {
+
+    font-size: 9px;
 
     color: var(--muted);
 }
 
+.transport-btn.active.escolar {
+
+    border-color: var(--school);
+
+    background:
+        rgba(245,158,11,.12);
+}
+
+.transport-btn.active.publico {
+
+    border-color: var(--public);
+
+    background:
+        rgba(22,140,255,.12);
+}
+
+.transport-btn:hover {
+
+    border-color: var(--blue);
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================
+   SELECT
+========================= */
+
+label {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: var(--muted);
+
+    font-size: 12px;
+}
+
 select {
+
     width: 100%;
 
     padding: 11px 12px;
 
     border-radius: 9px;
 
-    border: 1px solid #203650;
+    border:
+        1px solid #203650;
 
     background: var(--panel-light);
 
@@ -190,46 +298,62 @@ select {
 }
 
 select:focus {
+
     border-color: var(--blue);
 }
 
 
 /* =========================
-   BUS CARD
+   ÔNIBUS
 ========================= */
 
 .bus-header {
+
     display: flex;
     align-items: center;
 
     gap: 12px;
 }
 
-.bus-number {
+.line-badge {
+
     padding: 8px 10px;
 
     border-radius: 8px;
 
-    background: var(--blue);
+    color: white;
 
     font-weight: 800;
 
-    font-size: 13px;
+    font-size: 12px;
+}
+
+.line-badge.escolar {
+
+    background: var(--school);
+}
+
+.line-badge.publico {
+
+    background: var(--public);
 }
 
 .bus-header strong {
+
     display: block;
 
     font-size: 14px;
 }
 
 .bus-header small {
+
     color: var(--muted);
 
     font-size: 11px;
 }
 
 .bus-status {
+
     margin-top: 13px;
 
     display: flex;
@@ -237,12 +361,13 @@ select:focus {
 
     gap: 7px;
 
-    font-size: 12px;
-
     color: #a9bdcf;
+
+    font-size: 12px;
 }
 
 .live-dot {
+
     width: 8px;
     height: 8px;
 
@@ -257,9 +382,11 @@ select:focus {
 ========================= */
 
 .info-grid {
+
     display: grid;
 
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns:
+        1fr 1fr;
 
     gap: 8px;
 
@@ -267,6 +394,7 @@ select:focus {
 }
 
 .info-grid div {
+
     background: var(--panel-light);
 
     border-radius: 9px;
@@ -275,6 +403,7 @@ select:focus {
 }
 
 .info-grid span {
+
     display: block;
 
     color: var(--muted);
@@ -285,6 +414,7 @@ select:focus {
 }
 
 .info-grid strong {
+
     display: block;
 
     font-size: 12px;
@@ -298,10 +428,11 @@ select:focus {
 
 
 /* =========================
-   PARADAS
+   LISTA
 ========================= */
 
 .stop-list {
+
     display: flex;
 
     flex-direction: column;
@@ -310,9 +441,11 @@ select:focus {
 }
 
 .stop-item {
+
     display: grid;
 
-    grid-template-columns: 25px 1fr auto;
+    grid-template-columns:
+        28px 1fr auto;
 
     align-items: center;
 
@@ -324,42 +457,48 @@ select:focus {
 
     background: var(--panel-light);
 
-    border: 1px solid transparent;
+    border:
+        1px solid transparent;
 }
 
 .stop-item.next {
-    border-color: var(--green);
+
+    border-color:
+        var(--green);
 
     background:
         rgba(34,197,94,.08);
 }
 
 .stop-item.passed {
+
     opacity: .45;
 }
 
 .stop-icon {
-    width: 23px;
-    height: 23px;
+
+    width: 25px;
+    height: 25px;
 
     display: grid;
-
     place-items: center;
 
     border-radius: 50%;
 
-    font-size: 11px;
-
     background: #23364d;
+
+    font-size: 12px;
 }
 
 .stop-name {
+
     font-size: 11px;
 
     font-weight: 600;
 }
 
 .stop-type {
+
     display: block;
 
     color: var(--muted);
@@ -370,9 +509,10 @@ select:focus {
 }
 
 .stop-state {
-    font-size: 9px;
 
     color: var(--muted);
+
+    font-size: 9px;
 
     text-align: right;
 }
@@ -383,8 +523,8 @@ select:focus {
 ========================= */
 
 .legend-item {
-    display: flex;
 
+    display: flex;
     align-items: center;
 
     gap: 9px;
@@ -397,6 +537,7 @@ select:focus {
 }
 
 .legend-dot {
+
     width: 10px;
     height: 10px;
 
@@ -404,15 +545,23 @@ select:focus {
 }
 
 .green {
+
     background: var(--green);
 }
 
 .blue {
+
     background: var(--blue);
 }
 
 .gray {
+
     background: #64748b;
+}
+
+.hidden {
+
+    display: none !important;
 }
 
 
@@ -421,6 +570,7 @@ select:focus {
 ========================= */
 
 .actions {
+
     display: flex;
 
     flex-direction: column;
@@ -428,7 +578,8 @@ select:focus {
     gap: 8px;
 }
 
-button {
+.actions button {
+
     width: 100%;
 
     min-height: 42px;
@@ -437,7 +588,8 @@ button {
 
     border-radius: 9px;
 
-    border: 1px solid #24415f;
+    border:
+        1px solid #24415f;
 
     background: var(--panel-light);
 
@@ -452,14 +604,11 @@ button {
     transition: .2s;
 }
 
-button:hover {
+.actions button:hover {
+
     background: #1b3550;
 
     border-color: var(--blue);
-}
-
-button:active {
-    transform: scale(.98);
 }
 
 
@@ -468,12 +617,14 @@ button:active {
 ========================= */
 
 .map-area {
+
     position: relative;
 
     min-width: 0;
 }
 
 #map {
+
     width: 100%;
     height: 100%;
 
@@ -481,6 +632,7 @@ button:active {
 }
 
 .map-overlay {
+
     position: absolute;
 
     top: 15px;
@@ -489,7 +641,6 @@ button:active {
     z-index: 1000;
 
     display: flex;
-
     align-items: center;
 
     gap: 14px;
@@ -498,9 +649,11 @@ button:active {
 
     border-radius: 10px;
 
-    background: rgba(7,17,31,.94);
+    background:
+        rgba(7,17,31,.94);
 
-    border: 1px solid rgba(255,255,255,.1);
+    border:
+        1px solid rgba(255,255,255,.1);
 
     backdrop-filter: blur(10px);
 
@@ -508,12 +661,14 @@ button:active {
 }
 
 .map-overlay strong {
+
     display: block;
 
     font-size: 13px;
 }
 
 .map-overlay span {
+
     display: block;
 
     margin-top: 2px;
@@ -524,39 +679,61 @@ button:active {
 }
 
 .map-mode {
+
     padding-left: 12px;
 
-    border-left: 1px solid #34465b;
-
-    color: #8fb8dc;
+    border-left:
+        1px solid #34465b;
 
     font-size: 10px;
 }
 
+.escolar-mode {
+
+    color: #fbbf24;
+}
+
+.publico-mode {
+
+    color: #60a5fa;
+}
+
 
 /* =========================
-   ÍCONE DO ÔNIBUS
+   ÔNIBUS NO MAPA
 ========================= */
 
 .bus-marker {
+
     width: 42px;
     height: 42px;
 
     display: grid;
-
     place-items: center;
 
     border-radius: 50%;
 
     background: #0b1726;
 
-    border: 3px solid var(--blue);
+    border: 3px solid var(--public);
 
     box-shadow:
-        0 3px 14px rgba(0,0,0,.4),
-        0 0 12px rgba(22,140,255,.5);
+        0 3px 14px
+        rgba(0,0,0,.4),
+
+        0 0 12px
+        rgba(22,140,255,.5);
 
     font-size: 21px;
+}
+
+.bus-marker.escolar {
+
+    border-color: var(--school);
+
+    box-shadow:
+        0 0 12px
+        rgba(245,158,11,.55);
 }
 
 
@@ -565,6 +742,7 @@ button:active {
 ========================= */
 
 .leaflet-popup-content-wrapper {
+
     background: #0b1726;
 
     color: white;
@@ -573,16 +751,19 @@ button:active {
 }
 
 .leaflet-popup-tip {
+
     background: #0b1726;
 }
 
 .popup-title {
+
     font-weight: 800;
 
     margin-bottom: 4px;
 }
 
 .popup-subtitle {
+
     color: #9eb1c4;
 
     font-size: 11px;
@@ -594,10 +775,10 @@ button:active {
 ========================= */
 
 footer {
+
     height: 40px;
 
     display: flex;
-
     align-items: center;
 
     justify-content: space-between;
@@ -606,7 +787,8 @@ footer {
 
     background: #07111f;
 
-    border-top: 1px solid var(--border);
+    border-top:
+        1px solid var(--border);
 
     color: #70869c;
 
@@ -615,12 +797,13 @@ footer {
 
 
 /* =========================
-   RESPONSIVO
+   MOBILE
 ========================= */
 
 @media (max-width: 850px) {
 
     .app {
+
         display: flex;
 
         flex-direction: column;
@@ -629,12 +812,14 @@ footer {
     }
 
     .sidebar {
+
         order: 2;
 
         border-right: 0;
     }
 
     .map-area {
+
         order: 1;
 
         height: 60vh;
@@ -643,14 +828,24 @@ footer {
     }
 
     .topbar {
+
         padding: 0 12px;
     }
 
-    .status {
+    .online {
+
         display: none;
     }
 
+    .map-overlay {
+
+        right: 10px;
+
+        flex-wrap: wrap;
+    }
+
     footer {
+
         font-size: 9px;
     }
 }
