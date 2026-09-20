@@ -4,415 +4,168 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Arcoverde Mobilidade</title>
+    <title>Arcoverde Bus - Localizador de Ônibus</title>
 
-    <meta
-        name="description"
-        content="Mobilidade urbana em Arcoverde - Pernambuco"
-    >
-
-    <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    >
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<header class="header">
+<header class="topo">
 
     <div class="logo">
-
-        <div class="logo-icon">
-            🚗
-        </div>
-
+        <span>🚌</span>
         <div>
-            <h1>Arcoverde</h1>
-            <span>Mobilidade</span>
+            <h1>Arcoverde Bus</h1>
+            <p>Localizador de ônibus</p>
         </div>
-
     </div>
 
-    <button class="menu-btn" id="menuBtn">
-        ☰
-    </button>
+    <div class="status-online">
+        <span></span>
+        Sistema online
+    </div>
 
 </header>
 
 
-<nav class="menu" id="menu">
+<main class="container">
 
-    <a href="#inicio">🏠 Início</a>
+    <section class="painel">
 
-    <a href="#corrida">
-        🚗 Solicitar corrida
-    </a>
+        <h2>📍 Encontre seu ônibus</h2>
 
-    <a href="#motorista">
-        👨‍✈️ Seja motorista
-    </a>
+        <label for="linhaSelect">
+            Escolha a linha
+        </label>
 
-    <a href="#sobre">
-        ℹ️ Sobre
-    </a>
-
-</nav>
+        <select id="linhaSelect">
+            <option value="">Selecione uma linha...</option>
+        </select>
 
 
-<main id="inicio">
+        <div id="informacoesLinha" class="info-linha">
 
-    <!-- MAPA -->
+            <div class="linha-header">
 
-    <section class="map-section">
+                <div>
+                    <span id="tipoLinha" class="badge">
+                        —
+                    </span>
+
+                    <h3 id="nomeLinha">
+                        Nenhuma linha selecionada
+                    </h3>
+                </div>
+
+                <div class="bus-id">
+                    🚌 <span id="busId">---</span>
+                </div>
+
+            </div>
+
+
+            <div class="status-onibus">
+
+                <div class="status-icon">
+                    🚌
+                </div>
+
+                <div>
+                    <strong id="statusOnibus">
+                        Aguardando...
+                    </strong>
+
+                    <small>
+                        Última atualização:
+                        <span id="ultimaAtualizacao">
+                            —
+                        </span>
+                    </small>
+                </div>
+
+            </div>
+
+
+            <div class="proxima-parada">
+
+                <span>PRÓXIMA PARADA</span>
+
+                <strong id="proximaParada">
+                    —
+                </strong>
+
+                <div class="tempo">
+
+                    <span>
+                        ⏱️ Chegada estimada
+                    </span>
+
+                    <strong id="tempoChegada">
+                        —
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="mapa-container">
 
         <div id="map"></div>
 
-        <div class="map-status">
+        <div class="legenda">
 
-            <span class="status-dot"></span>
+            <div>
+                <span class="bolinha onibus"></span>
+                Ônibus
+            </div>
 
-            Motoristas próximos
+            <div>
+                <span class="bolinha parada"></span>
+                Parada
+            </div>
+
+            <div>
+                <span class="linha-legenda"></span>
+                Rota
+            </div>
 
         </div>
 
     </section>
 
 
-    <!-- CORRIDA -->
+    <section class="paradas-container">
 
-    <section class="ride-card" id="corrida">
-
-        <div class="card-header">
+        <div class="titulo-paradas">
 
             <div>
+                <h2>📍 Paradas da linha</h2>
 
-                <span class="small-title">
-                    SOLICITAR CORRIDA
-                </span>
-
-                <h2>
-                    Para onde você vai?
-                </h2>
-
+                <p>
+                    Acompanhe o ônibus em tempo real
+                </p>
             </div>
 
-            <div class="user-icon">
-                👤
+            <div id="contadorParadas">
+                0 paradas
             </div>
 
         </div>
 
 
-        <!-- ORIGEM -->
+        <div id="listaParadas" class="lista-paradas">
 
-        <div class="location-input">
-
-            <div class="location-icon origin">
-                ●
-            </div>
-
-            <div class="input-content">
-
-                <label>
-                    LOCAL DE PARTIDA
-                </label>
-
-                <input
-                    type="text"
-                    id="origem"
-                    placeholder="Ex.: Praça da Bandeira, Arcoverde"
-                >
-
-            </div>
-
-        </div>
-
-
-        <!-- DESTINO -->
-
-        <div class="location-input">
-
-            <div class="location-icon destination">
-                📍
-            </div>
-
-            <div class="input-content">
-
-                <label>
-                    DESTINO
-                </label>
-
-                <input
-                    type="text"
-                    id="destino"
-                    placeholder="Ex.: São Cristóvão, Arcoverde"
-                >
-
-            </div>
-
-        </div>
-
-
-        <!-- LOCALIZAÇÃO -->
-
-        <button
-            class="location-btn"
-            id="locationBtn"
-        >
-            📍 Usar minha localização como origem
-        </button>
-
-
-        <!-- VEÍCULOS -->
-
-        <div class="ride-types">
-
-            <h3>
-                Escolha seu transporte
-            </h3>
-
-            <div class="ride-options">
-
-
-                <button
-                    class="ride-option active"
-                    data-type="carro"
-                    data-price="2.50"
-                >
-
-                    <div class="vehicle">
-                        🚗
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            Carro
-                        </strong>
-
-                        <span>
-                            Confortável
-                        </span>
-
-                    </div>
-
-                    <div class="price">
-                        R$ 2,50/km
-                    </div>
-
-                </button>
-
-
-                <button
-                    class="ride-option"
-                    data-type="moto"
-                    data-price="1.80"
-                >
-
-                    <div class="vehicle">
-                        🏍️
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            Moto
-                        </strong>
-
-                        <span>
-                            Mais rápida
-                        </span>
-
-                    </div>
-
-                    <div class="price">
-                        R$ 1,80/km
-                    </div>
-
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <!-- ESTIMATIVA -->
-
-        <div class="estimate">
-
-            <div>
-
-                <span>
-                    Distância
-                </span>
-
-                <strong id="distance">
-                    —
-                </strong>
-
-            </div>
-
-
-            <div>
-
-                <span>
-                    Tempo
-                </span>
-
-                <strong id="duration">
-                    —
-                </strong>
-
-            </div>
-
-
-            <div>
-
-                <span>
-                    Estimativa
-                </span>
-
-                <strong id="price">
-                    —
-                </strong>
-
-            </div>
-
-        </div>
-
-
-        <!-- CALCULAR -->
-
-        <button
-            class="calculate-btn"
-            id="calculateBtn"
-        >
-            🧭 CALCULAR CORRIDA
-        </button>
-
-
-        <!-- SOLICITAR -->
-
-        <button
-            class="request-btn"
-            id="requestBtn"
-            disabled
-        >
-            🚗 SOLICITAR CORRIDA
-        </button>
-
-
-        <p class="notice">
-            O valor é uma estimativa baseada na distância da rota.
-        </p>
-
-    </section>
-
-
-    <!-- MOTORISTA -->
-
-    <section
-        class="driver-section"
-        id="motorista"
-    >
-
-        <div class="driver-content">
-
-            <span class="small-title">
-                PARA MOTORISTAS
-            </span>
-
-            <h2>
-                Quer ganhar dinheiro dirigindo?
-            </h2>
-
-            <p>
-                Cadastre-se como motorista e faça parte
-                da mobilidade de Arcoverde.
-            </p>
-
-            <button id="driverBtn">
-                👨‍✈️ Quero ser motorista
-            </button>
-
-        </div>
-
-        <div class="driver-image">
-            🚗
-        </div>
-
-    </section>
-
-
-    <!-- SOBRE -->
-
-    <section
-        class="about"
-        id="sobre"
-    >
-
-        <span class="small-title">
-            SOBRE O PROJETO
-        </span>
-
-        <h2>
-            Mobilidade feita para Arcoverde
-        </h2>
-
-        <p>
-            O Arcoverde Mobilidade é um projeto experimental
-            de plataforma de transporte urbano criada para
-            conectar passageiros e motoristas.
-        </p>
-
-
-        <div class="features">
-
-            <div>
-
-                <span>📍</span>
-
-                <strong>
-                    Rota real
-                </strong>
-
-                <small>
-                    Distância pelas ruas
-                </small>
-
-            </div>
-
-
-            <div>
-
-                <span>💰</span>
-
-                <strong>
-                    Preço por km
-                </strong>
-
-                <small>
-                    Cálculo automático
-                </small>
-
-            </div>
-
-
-            <div>
-
-                <span>💬</span>
-
-                <strong>
-                    WhatsApp
-                </strong>
-
-                <small>
-                    Solicitação rápida
-                </small>
-
+            <div class="sem-dados">
+                Selecione uma linha para visualizar as paradas.
             </div>
 
         </div>
@@ -424,24 +177,16 @@
 
 <footer>
 
-    <div class="footer-logo">
-        🚗 Arcoverde Mobilidade
-    </div>
+    <strong>Arcoverde Bus</strong>
 
-    <p>
-        Projeto independente • Arcoverde - PE
-    </p>
-
-    <p class="copyright">
-        © 2026 Arcoverde Mobilidade
-    </p>
+    <span>
+        Protótipo de transporte inteligente
+    </span>
 
 </footer>
 
 
-<script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
-</script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script src="script.js"></script>
 
