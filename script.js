@@ -19,6 +19,7 @@ const products = [
         price: 39.90,
         creator: "Lucas Voice",
         location: "Recife - PE",
+        gender: "masculina",
         description:
             "Voz masculina para personagens de ação, soldados, policiais e protagonistas de jogos.",
         tags: ["Masculina", "Ação", "Game"],
@@ -35,6 +36,7 @@ const products = [
         price: 44.90,
         creator: "Ana Voice",
         location: "Caruaru - PE",
+        gender: "feminina",
         description:
             "Voz feminina para narrativas, trailers, histórias e personagens.",
         tags: ["Feminina", "Narrativa", "Trailer"],
@@ -51,6 +53,7 @@ const products = [
         price: 59.90,
         creator: "Studio Nordeste",
         location: "Arcoverde - PE",
+        gender: "masculina",
         description:
             "Pacote demonstrativo de falas para personagens de RPG e fantasia.",
         tags: ["RPG", "Fantasia", "Personagem"],
@@ -95,6 +98,7 @@ const products = [
         price: 49.90,
         creator: "Cyber Voice",
         location: "São Paulo - SP",
+        gender: "robotica",
         description:
             "Estilo de voz tecnológica para robôs, inteligência artificial e ficção científica.",
         tags: ["IA", "Robô", "Sci-Fi"],
@@ -140,7 +144,6 @@ const products = [
 let currentCategory = "todos";
 let searchTerm = "";
 let cart = [];
-
 let selectedProduct = null;
 
 
@@ -188,11 +191,25 @@ function formatPrice(value) {
 function escapeHTML(text) {
 
     return String(text)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+/* =========================================================
+   ESCAPE PARA ATRIBUTO JAVASCRIPT
+   ========================================================= */
+
+function escapeForAttribute(text) {
+
+    return String(text)
+        .replace(/\\/g, "\\\\")
+        .replace(/'/g, "\\'")
+        .replace(/\r?\n/g, " ");
 
 }
 
@@ -225,19 +242,25 @@ function renderProducts() {
     });
 
 
-    /* Ordenação */
+    /* =====================================================
+       ORDENAÇÃO
+       ===================================================== */
 
     const sort = sortSelect.value;
 
     if (sort === "low") {
 
-        filtered.sort((a, b) => a.price - b.price);
+        filtered.sort((a, b) =>
+            a.price - b.price
+        );
 
     }
 
     if (sort === "high") {
 
-        filtered.sort((a, b) => b.price - a.price);
+        filtered.sort((a, b) =>
+            b.price - a.price
+        );
 
     }
 
@@ -265,12 +288,18 @@ function renderProducts() {
 
     }
 
+
     emptyState.style.display = "none";
 
 
+    /* =====================================================
+       CRIAR CARDS
+       ===================================================== */
+
     filtered.forEach(product => {
 
-        const card = document.createElement("article");
+        const card =
+            document.createElement("article");
 
         card.className = "product-card";
 
@@ -289,20 +318,24 @@ function renderProducts() {
 
             </div>
 
+
             <div class="product-body">
 
                 <h3>
                     ${escapeHTML(product.title)}
                 </h3>
 
+
                 <p class="product-description">
                     ${escapeHTML(product.description)}
                 </p>
+
 
                 <div class="product-creator">
                     👤 ${escapeHTML(product.creator)}
                     · 📍 ${escapeHTML(product.location)}
                 </div>
+
 
                 <div class="product-bottom">
 
@@ -310,21 +343,26 @@ function renderProducts() {
                         ${formatPrice(product.price)}
                     </span>
 
+
                     <div class="product-actions">
 
                         <button
+                            class="details-button"
                             title="Ver detalhes"
-                            onclick="openProduct(${product.id})"
+                            data-product-id="${product.id}"
                         >
                             👁
                         </button>
+
 
                         ${
                             product.voiceText
                                 ? `
                                 <button
+                                    class="product-voice-button"
                                     title="Ouvir demonstração"
-                                    onclick="ouvirVoz('${escapeForAttribute(product.voiceText)}')"
+                                    data-voice-text="${escapeHTML(product.voiceText)}"
+                                    data-voice-gender="${escapeHTML(product.gender || "masculina")}"
                                 >
                                     ▶
                                 </button>
@@ -332,10 +370,11 @@ function renderProducts() {
                                 : ""
                         }
 
+
                         <button
                             class="buy"
                             title="Adicionar ao carrinho"
-                            onclick="addToCart(${product.id})"
+                            data-buy-id="${product.id}"
                         >
                             +
                         </button>
@@ -345,6 +384,7 @@ function renderProducts() {
                 </div>
 
             </div>
+
         `;
 
 
@@ -352,19 +392,60 @@ function renderProducts() {
 
     });
 
-}
+
+    /* =====================================================
+       EVENTOS DOS BOTÕES DOS CARDS
+       ===================================================== */
+
+    productsGrid
+        .querySelectorAll(".details-button")
+        .forEach(button => {
+
+            button.addEventListener("click", () => {
+
+                const id =
+                    Number(button.dataset.productId);
+
+                openProduct(id);
+
+            });
+
+        });
 
 
-/* =========================================================
-   ESCAPE PARA ATRIBUTO JAVASCRIPT
-   ========================================================= */
+    productsGrid
+        .querySelectorAll(".product-voice-button")
+        .forEach(button => {
 
-function escapeForAttribute(text) {
+            button.addEventListener("click", () => {
 
-    return String(text)
-        .replaceAll("\\", "\\\\")
-        .replaceAll("'", "\\'")
-        .replaceAll("\n", " ");
+                const text =
+                    button.dataset.voiceText;
+
+                const gender =
+                    button.dataset.voiceGender;
+
+                ouvirVoz(text, gender);
+
+            });
+
+        });
+
+
+    productsGrid
+        .querySelectorAll("[data-buy-id]")
+        .forEach(button => {
+
+            button.addEventListener("click", () => {
+
+                const id =
+                    Number(button.dataset.buyId);
+
+                addToCart(id);
+
+            });
+
+        });
 
 }
 
@@ -373,71 +454,101 @@ function escapeForAttribute(text) {
    FILTROS DE CATEGORIA
    ========================================================= */
 
-document.querySelectorAll(".category-card").forEach(button => {
+document
+    .querySelectorAll(".category-card")
+    .forEach(button => {
 
-    button.addEventListener("click", () => {
+        button.addEventListener("click", () => {
 
-        document
-            .querySelectorAll(".category-card")
-            .forEach(item => item.classList.remove("active"));
+            document
+                .querySelectorAll(".category-card")
+                .forEach(item =>
+                    item.classList.remove("active")
+                );
 
-        button.classList.add("active");
 
-        currentCategory =
-            button.dataset.category;
+            button.classList.add("active");
 
-        renderProducts();
+
+            currentCategory =
+                button.dataset.category;
+
+
+            renderProducts();
+
+        });
 
     });
-
-});
 
 
 /* =========================================================
    BUSCA
    ========================================================= */
 
-searchInput.addEventListener("input", event => {
+searchInput.addEventListener(
+    "input",
+    event => {
 
-    searchTerm = event.target.value;
+        searchTerm =
+            event.target.value;
 
-    renderProducts();
+        renderProducts();
 
-});
+    }
+);
 
 
 /* =========================================================
    ORDENAÇÃO
    ========================================================= */
 
-sortSelect.addEventListener("change", renderProducts);
+sortSelect.addEventListener(
+    "change",
+    renderProducts
+);
 
 
 /* =========================================================
    LIMPAR FILTROS
    ========================================================= */
 
-clearFilters.addEventListener("click", () => {
+clearFilters.addEventListener(
+    "click",
+    () => {
 
-    searchInput.value = "";
+        searchInput.value = "";
 
-    searchTerm = "";
+        searchTerm = "";
 
-    currentCategory = "todos";
+        currentCategory = "todos";
 
-    sortSelect.value = "default";
+        sortSelect.value = "default";
 
-    document
-        .querySelectorAll(".category-card")
-        .forEach(item => item.classList.remove("active"));
 
-    document
-        .querySelector('[data-category="todos"]')
-        .classList.add("active");
+        document
+            .querySelectorAll(".category-card")
+            .forEach(item =>
+                item.classList.remove("active")
+            );
 
-    renderProducts();
 
-});
+        const allCategory =
+            document.querySelector(
+                '[data-category="todos"]'
+            );
+
+
+        if (allCategory) {
+
+            allCategory.classList.add("active");
+
+        }
+
+
+        renderProducts();
+
+    }
+);
 
 
 /* =========================================================
@@ -447,21 +558,40 @@ clearFilters.addEventListener("click", () => {
 let availableVoices = [];
 
 
+/* =========================================================
+   CARREGAR VOZES
+   ========================================================= */
+
 function carregarVozes() {
 
     if (!("speechSynthesis" in window)) {
         return;
     }
 
+
     availableVoices =
-        window.speechSynthesis.getVoices();
+        speechSynthesis.getVoices();
+
+
+    console.log(
+        "Vozes encontradas:",
+        availableVoices.map(voice => ({
+            nome: voice.name,
+            idioma: voice.lang
+        }))
+    );
 
 }
 
 
+/* =========================================================
+   INICIALIZAR VOZES
+   ========================================================= */
+
 if ("speechSynthesis" in window) {
 
     carregarVozes();
+
 
     speechSynthesis.onvoiceschanged =
         carregarVozes;
@@ -469,43 +599,151 @@ if ("speechSynthesis" in window) {
 }
 
 
-function escolherVoz() {
+/* =========================================================
+   PROCURAR VOZ
+   ========================================================= */
+
+function procurarVoz(preferencias) {
 
     if (!availableVoices.length) {
+
+        carregarVozes();
+
+    }
+
+
+    if (!availableVoices.length) {
+
         return null;
-    }
-
-
-    /* Primeiro tenta português do Brasil */
-
-    let voice =
-        availableVoices.find(
-            item =>
-                item.lang &&
-                item.lang.toLowerCase() === "pt-br"
-        );
-
-
-    /* Depois qualquer português */
-
-    if (!voice) {
-
-        voice =
-            availableVoices.find(
-                item =>
-                    item.lang &&
-                    item.lang.toLowerCase().startsWith("pt")
-            );
 
     }
 
 
-    return voice || availableVoices[0];
+    /*
+       Primeiro tenta encontrar
+       exatamente pelos nomes conhecidos.
+    */
+
+    for (const nome of preferencias) {
+
+        const encontrada =
+            availableVoices.find(voice => {
+
+                const voiceName =
+                    voice.name.toLowerCase();
+
+                const voiceLang =
+                    voice.lang.toLowerCase();
+
+
+                return (
+                    voiceName.includes(
+                        nome.toLowerCase()
+                    ) &&
+                    voiceLang.startsWith("pt")
+                );
+
+            });
+
+
+        if (encontrada) {
+
+            return encontrada;
+
+        }
+
+    }
+
+
+    /*
+       Depois procura qualquer voz
+       em português.
+    */
+
+    return availableVoices.find(
+        voice =>
+            voice.lang &&
+            voice.lang
+                .toLowerCase()
+                .startsWith("pt")
+    ) || null;
 
 }
 
 
-function ouvirVoz(texto) {
+/* =========================================================
+   VOZ MASCULINA
+   ========================================================= */
+
+function escolherVozMasculina() {
+
+    return procurarVoz([
+
+        "Daniel",
+        "Felipe",
+        "Ricardo",
+        "Guilherme",
+        "João",
+        "Joao",
+        "Antonio",
+        "Antônio",
+        "Microsoft Daniel",
+        "Google português do Brasil"
+
+    ]);
+
+}
+
+
+/* =========================================================
+   VOZ FEMININA
+   ========================================================= */
+
+function escolherVozFeminina() {
+
+    return procurarVoz([
+
+        "Maria",
+        "Francisca",
+        "Camila",
+        "Ana",
+        "Luciana",
+        "Fernanda",
+        "Mariana",
+        "Microsoft Maria",
+        "Microsoft Francisca"
+
+    ]);
+
+}
+
+
+/* =========================================================
+   VOZ ROBÓTICA
+   ========================================================= */
+
+function escolherVozRobotica() {
+
+    return procurarVoz([
+
+        "Daniel",
+        "Felipe",
+        "Maria",
+        "Francisca",
+        "Microsoft Daniel",
+        "Microsoft Maria",
+        "Google português do Brasil"
+
+    ]);
+
+}
+
+
+/* =========================================================
+   FALAR
+   ========================================================= */
+
+function ouvirVoz(texto, genero = "masculina") {
 
     if (!("speechSynthesis" in window)) {
 
@@ -514,6 +752,7 @@ function ouvirVoz(texto) {
         );
 
         return;
+
     }
 
 
@@ -524,24 +763,123 @@ function ouvirVoz(texto) {
         new SpeechSynthesisUtterance(texto);
 
 
-    const voice = escolherVoz();
+    let voice = null;
 
-    if (voice) {
-        utterance.voice = voice;
+
+    /* =====================================================
+       MASCULINA
+       ===================================================== */
+
+    if (genero === "masculina") {
+
+        voice =
+            escolherVozMasculina();
+
+
+        utterance.pitch = 0.80;
+
+        utterance.rate = 0.90;
+
     }
 
 
-    utterance.lang = "pt-BR";
+    /* =====================================================
+       FEMININA
+       ===================================================== */
 
-    utterance.rate = 0.92;
+    else if (genero === "feminina") {
 
-    utterance.pitch = 1;
+        voice =
+            escolherVozFeminina();
 
 
-    speechSynthesis.speak(utterance);
+        utterance.pitch = 1.25;
+
+        utterance.rate = 0.92;
+
+    }
+
+
+    /* =====================================================
+       ROBÓTICA
+       ===================================================== */
+
+    else if (genero === "robotica") {
+
+        voice =
+            escolherVozRobotica();
+
+
+        utterance.pitch = 0.55;
+
+        utterance.rate = 0.82;
+
+    }
+
+
+    /* =====================================================
+       OUTROS
+       ===================================================== */
+
+    else {
+
+        voice =
+            escolherVozMasculina();
+
+
+        utterance.pitch = 0.90;
+
+        utterance.rate = 0.88;
+
+    }
+
+
+    /* =====================================================
+       APLICAR VOZ
+       ===================================================== */
+
+    if (voice) {
+
+        utterance.voice = voice;
+
+        utterance.lang = voice.lang;
+
+
+        console.log(
+            "Demonstração:",
+            genero,
+            "| Voz:",
+            voice.name,
+            "| Idioma:",
+            voice.lang
+        );
+
+    } else {
+
+        utterance.lang = "pt-BR";
+
+
+        console.warn(
+            "Nenhuma voz específica encontrada para:",
+            genero
+        );
+
+    }
+
+
+    utterance.volume = 1;
+
+
+    speechSynthesis.speak(
+        utterance
+    );
 
 }
 
+
+/* =========================================================
+   PARAR VOZ
+   ========================================================= */
 
 function pararVoz() {
 
@@ -561,10 +899,15 @@ function pararVoz() {
 function openProduct(id) {
 
     selectedProduct =
-        products.find(product => product.id === id);
+        products.find(
+            product => product.id === id
+        );
+
 
     if (!selectedProduct) {
+
         return;
+
     }
 
 
@@ -574,37 +917,63 @@ function openProduct(id) {
             ${selectedProduct.symbol}
         </div>
 
+
         <span class="eyebrow">
-            ${escapeHTML(selectedProduct.categoryName)}
+            ${escapeHTML(
+                selectedProduct.categoryName
+            )}
         </span>
 
+
         <h2>
-            ${escapeHTML(selectedProduct.title)}
+            ${escapeHTML(
+                selectedProduct.title
+            )}
         </h2>
 
-        <p class="modal-description">
-            ${escapeHTML(selectedProduct.description)}
-        </p>
 
         <p class="modal-description">
+            ${escapeHTML(
+                selectedProduct.description
+            )}
+        </p>
+
+
+        <p class="modal-description">
+
             👤 Criador:
+
             <strong>
-                ${escapeHTML(selectedProduct.creator)}
+                ${escapeHTML(
+                    selectedProduct.creator
+                )}
             </strong>
+
         </p>
 
+
         <p class="modal-description">
+
             📍 Localização aproximada:
-            ${escapeHTML(selectedProduct.location)}
+
+            ${escapeHTML(
+                selectedProduct.location
+            )}
+
         </p>
+
 
         ${
             selectedProduct.voiceText
                 ? `
                 <button
+                    id="modalVoiceButton"
                     class="modal-buy"
-                    style="margin-top:15px;background:#171f2d;color:white;"
-                    onclick="ouvirVoz('${escapeForAttribute(selectedProduct.voiceText)}')"
+                    style="
+                        margin-top:15px;
+                        background:#171f2d;
+                        color:white;
+                    "
                 >
                     ▶ Ouvir demonstração
                 </button>
@@ -612,13 +981,19 @@ function openProduct(id) {
                 : ""
         }
 
+
         <div class="modal-price">
-            ${formatPrice(selectedProduct.price)}
+
+            ${formatPrice(
+                selectedProduct.price
+            )}
+
         </div>
 
+
         <button
+            id="modalAddCart"
             class="modal-buy"
-            onclick="addToCart(${selectedProduct.id}); closeProductModal();"
         >
             🛒 Adicionar ao carrinho
         </button>
@@ -628,12 +1003,74 @@ function openProduct(id) {
 
     productModal.classList.add("active");
 
+
+    /* =====================================================
+       BOTÃO DE VOZ DO MODAL
+       ===================================================== */
+
+    const modalVoiceButton =
+        document.getElementById(
+            "modalVoiceButton"
+        );
+
+
+    if (modalVoiceButton) {
+
+        modalVoiceButton.addEventListener(
+            "click",
+            () => {
+
+                ouvirVoz(
+                    selectedProduct.voiceText,
+                    selectedProduct.gender ||
+                    "masculina"
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       BOTÃO ADICIONAR AO CARRINHO
+       ===================================================== */
+
+    const modalAddCart =
+        document.getElementById(
+            "modalAddCart"
+        );
+
+
+    if (modalAddCart) {
+
+        modalAddCart.addEventListener(
+            "click",
+            () => {
+
+                addToCart(
+                    selectedProduct.id
+                );
+
+                closeProductModal();
+
+            }
+        );
+
+    }
+
 }
 
 
+/* =========================================================
+   FECHAR MODAL
+   ========================================================= */
+
 function closeProductModal() {
 
-    productModal.classList.remove("active");
+    productModal.classList.remove(
+        "active"
+    );
 
 }
 
@@ -644,18 +1081,26 @@ function closeProductModal() {
 
 document
     .getElementById("closeModal")
-    .addEventListener("click", closeProductModal);
+    .addEventListener(
+        "click",
+        closeProductModal
+    );
 
 
-productModal.addEventListener("click", event => {
+productModal.addEventListener(
+    "click",
+    event => {
 
-    if (event.target === productModal) {
+        if (
+            event.target === productModal
+        ) {
 
-        closeProductModal();
+            closeProductModal();
+
+        }
 
     }
-
-});
+);
 
 
 /* =========================================================
@@ -665,15 +1110,22 @@ productModal.addEventListener("click", event => {
 function addToCart(id) {
 
     const product =
-        products.find(item => item.id === id);
+        products.find(
+            item => item.id === id
+        );
+
 
     if (!product) {
+
         return;
+
     }
 
 
     const alreadyExists =
-        cart.some(item => item.id === id);
+        cart.some(
+            item => item.id === id
+        );
 
 
     if (!alreadyExists) {
@@ -690,15 +1142,26 @@ function addToCart(id) {
 }
 
 
+/* =========================================================
+   REMOVER DO CARRINHO
+   ========================================================= */
+
 function removeFromCart(id) {
 
     cart =
-        cart.filter(item => item.id !== id);
+        cart.filter(
+            item => item.id !== id
+        );
+
 
     updateCart();
 
 }
 
+
+/* =========================================================
+   ATUALIZAR CARRINHO
+   ========================================================= */
 
 function updateCart() {
 
@@ -712,15 +1175,23 @@ function updateCart() {
     if (cart.length === 0) {
 
         cartItems.innerHTML = `
+
             <div class="cart-empty">
+
                 🛒
+
                 <br><br>
+
                 Seu carrinho está vazio.
+
             </div>
+
         `;
+
 
         cartTotal.textContent =
             formatPrice(0);
+
 
         return;
 
@@ -738,30 +1209,45 @@ function updateCart() {
         const item =
             document.createElement("div");
 
-        item.className = "cart-item";
+
+        item.className =
+            "cart-item";
 
 
         item.innerHTML = `
 
             <div class="cart-item-symbol">
+
                 ${product.symbol}
+
             </div>
+
 
             <div class="cart-item-info">
 
                 <strong>
-                    ${escapeHTML(product.title)}
+
+                    ${escapeHTML(
+                        product.title
+                    )}
+
                 </strong>
 
+
                 <span>
-                    ${formatPrice(product.price)}
+
+                    ${formatPrice(
+                        product.price
+                    )}
+
                 </span>
 
             </div>
 
+
             <button
                 class="cart-remove"
-                onclick="removeFromCart(${product.id})"
+                data-remove-id="${product.id}"
             >
                 ×
             </button>
@@ -774,6 +1260,30 @@ function updateCart() {
     });
 
 
+    /* =====================================================
+       BOTÕES REMOVER
+       ===================================================== */
+
+    cartItems
+        .querySelectorAll("[data-remove-id]")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    removeFromCart(
+                        Number(
+                            button.dataset.removeId
+                        )
+                    );
+
+                }
+            );
+
+        });
+
+
     cartTotal.textContent =
         formatPrice(total);
 
@@ -781,35 +1291,57 @@ function updateCart() {
 
 
 /* =========================================================
-   ABRIR / FECHAR CARRINHO
+   ABRIR CARRINHO
    ========================================================= */
 
 function openCart() {
 
-    cartDrawer.classList.add("active");
+    cartDrawer.classList.add(
+        "active"
+    );
 
-    cartBackdrop.classList.add("active");
+    cartBackdrop.classList.add(
+        "active"
+    );
 
 }
 
+
+/* =========================================================
+   FECHAR CARRINHO
+   ========================================================= */
 
 function closeCart() {
 
-    cartDrawer.classList.remove("active");
+    cartDrawer.classList.remove(
+        "active"
+    );
 
-    cartBackdrop.classList.remove("active");
+    cartBackdrop.classList.remove(
+        "active"
+    );
 
 }
 
 
+/* =========================================================
+   EVENTOS CARRINHO
+   ========================================================= */
+
 document
     .getElementById("openCart")
-    .addEventListener("click", openCart);
+    .addEventListener(
+        "click",
+        openCart
+    );
 
 
 document
     .getElementById("closeCart")
-    .addEventListener("click", closeCart);
+    .addEventListener(
+        "click",
+        closeCart
+    );
 
 
 cartBackdrop.addEventListener(
@@ -824,25 +1356,29 @@ cartBackdrop.addEventListener(
 
 document
     .getElementById("checkoutButton")
-    .addEventListener("click", () => {
+    .addEventListener(
+        "click",
+        () => {
 
-        if (cart.length === 0) {
+            if (cart.length === 0) {
+
+                alert(
+                    "Adicione pelo menos um asset ao carrinho."
+                );
+
+                return;
+
+            }
+
 
             alert(
-                "Adicione pelo menos um asset ao carrinho."
+                "Checkout demonstrativo.\n\n" +
+                "Em uma versão real, esta etapa poderá integrar " +
+                "PIX, cartão, boleto e entrega automática dos arquivos."
             );
 
-            return;
         }
-
-
-        alert(
-            "Checkout demonstrativo.\n\n" +
-            "Em uma versão real, esta etapa poderá integrar " +
-            "PIX, cartão, boleto e entrega automática dos arquivos."
-        );
-
-    });
+    );
 
 
 /* =========================================================
@@ -856,17 +1392,20 @@ function initMap() {
 
 
     if (!mapElement) {
+
         return;
+
     }
 
 
-    /*
-       Verifica se o Leaflet carregou.
-    */
+    /* =====================================================
+       VERIFICAR LEAFLET
+       ===================================================== */
 
     if (typeof L === "undefined") {
 
         mapElement.innerHTML = `
+
             <div style="
                 height:100%;
                 display:grid;
@@ -876,7 +1415,9 @@ function initMap() {
                 color:#8d96a8;
                 background:#101721;
             ">
+
                 <div>
+
                     <strong style="color:white;">
                         Mapa indisponível
                     </strong>
@@ -885,47 +1426,66 @@ function initMap() {
 
                     O Leaflet não foi carregado.
                     Verifique sua conexão com a internet.
+
                 </div>
+
             </div>
+
         `;
 
         return;
+
     }
 
 
-    /*
-       Coordenadas aproximadas de cidades.
-       Não são endereços exatos.
-    */
+    /* =====================================================
+       CRIADORES
+       ===================================================== */
 
     const creators = [
 
         {
             name: "Lucas Voice",
             city: "Recife - PE",
-            position: [-8.0476, -34.8770]
+            position: [
+                -8.0476,
+                -34.8770
+            ]
         },
 
         {
             name: "Studio Nordeste",
             city: "Arcoverde - PE",
-            position: [-8.4189, -37.0539]
+            position: [
+                -8.4189,
+                -37.0539
+            ]
         },
 
         {
             name: "Ana Voice",
             city: "Caruaru - PE",
-            position: [-8.2830, -35.9761]
+            position: [
+                -8.2830,
+                -35.9761
+            ]
         },
 
         {
             name: "Cyber Voice",
             city: "São Paulo - SP",
-            position: [-23.5505, -46.6333]
+            position: [
+                -23.5505,
+                -46.6333
+            ]
         }
 
     ];
 
+
+    /* =====================================================
+       CRIAR MAPA
+       ===================================================== */
 
     const map =
         L.map("map", {
@@ -936,30 +1496,33 @@ function initMap() {
         );
 
 
-    /*
-       OpenStreetMap
-    */
+    /* =====================================================
+       OPEN STREET MAP
+       ===================================================== */
 
     L.tileLayer(
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         {
+
             maxZoom: 19,
 
             attribution:
                 '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors'
+
         }
     ).addTo(map);
 
 
-    /*
-       Marcadores
-    */
+    /* =====================================================
+       MARCADORES
+       ===================================================== */
 
     creators.forEach(creator => {
 
         const marker =
-            L.marker(creator.position)
-                .addTo(map);
+            L.marker(
+                creator.position
+            ).addTo(map);
 
 
         marker.bindPopup(`
@@ -970,23 +1533,35 @@ function initMap() {
             ">
 
                 <strong>
-                    ${escapeHTML(creator.name)}
+
+                    ${escapeHTML(
+                        creator.name
+                    )}
+
                 </strong>
 
                 <br>
 
                 <small>
-                    ${escapeHTML(creator.city)}
+
+                    ${escapeHTML(
+                        creator.city
+                    )}
+
                 </small>
 
                 <br><br>
 
                 <span>
+
                     🎙️ Vozes
                     <br>
+
                     🎭 Dublagem
                     <br>
+
                     🎧 Áudios
+
                 </span>
 
             </div>
@@ -996,10 +1571,9 @@ function initMap() {
     });
 
 
-    /*
-       Corrige o problema clássico de
-       mapa aparecer cortado/cinza.
-    */
+    /* =====================================================
+       CORRIGIR TAMANHO DO MAPA
+       ===================================================== */
 
     setTimeout(() => {
 
@@ -1026,3 +1600,4 @@ document.addEventListener(
 
     }
 );
+
