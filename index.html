@@ -1,1 +1,1063 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
 
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>GameVoice Hub — Assets para Games</title>
+
+    <meta
+        name="description"
+        content="Marketplace de vozes, fotos e áudios para desenvolvedores de jogos."
+    >
+
+    <!-- FONTES -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- LEAFLET -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
+
+    <!-- CSS DO PROJETO -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- =====================================================
+     TOPBAR
+===================================================== -->
+
+<div class="topbar">
+
+    <div>
+        🎮 GameVoice Hub
+    </div>
+
+    <span>
+        Assets licenciados para desenvolvedores
+    </span>
+
+</div>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="header">
+
+    <a
+        href="#inicio"
+        class="brand"
+    >
+
+        <div class="brand-mark">
+            GV
+        </div>
+
+        <div>
+            <strong>GAMEVOICE</strong>
+            <small>HUB</small>
+        </div>
+
+    </a>
+
+
+    <nav class="main-nav">
+
+        <a href="#inicio">Início</a>
+
+        <a href="#explorar">Explorar</a>
+
+        <a href="#criadores">Criadores</a>
+
+        <a href="#mapa">Mapa</a>
+
+        <a href="#como-funciona">Como funciona</a>
+
+    </nav>
+
+
+    <div class="header-actions">
+
+        <button
+            class="icon-button"
+            id="favoritesButton"
+            title="Favoritos"
+        >
+            ♡
+            <span id="favoriteCount">0</span>
+        </button>
+
+
+        <button
+            class="cart-button"
+            id="cartButton"
+        >
+            🛒
+            <span>Carrinho</span>
+            <b id="cartCount">0</b>
+        </button>
+
+
+        <button
+            class="mobile-menu"
+            id="mobileMenu"
+        >
+            ☰
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     MOBILE NAV
+===================================================== -->
+
+<nav
+    class="mobile-nav"
+    id="mobileNav"
+>
+
+    <a href="#inicio">Início</a>
+
+    <a href="#explorar">Explorar</a>
+
+    <a href="#criadores">Criadores</a>
+
+    <a href="#mapa">Mapa</a>
+
+    <a href="#como-funciona">Como funciona</a>
+
+</nav>
+
+
+<main id="inicio">
+
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+
+<section class="hero">
+
+    <div class="hero-background"></div>
+
+    <div class="hero-content">
+
+        <div class="hero-label">
+            MARKETPLACE PARA GAME DEVELOPERS
+        </div>
+
+
+        <h1>
+
+            Construa mundos
+            <br>
+
+            com <span>voz, imagem</span>
+            <br>
+
+            e som.
+
+        </h1>
+
+
+        <p>
+
+            Encontre vozes, dublagens, fotografias,
+            efeitos sonoros e outros recursos para
+            transformar seus personagens e jogos.
+
+        </p>
+
+
+        <div class="hero-search">
+
+            <span>⌕</span>
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="O que você procura?"
+            >
+
+            <button id="searchButton">
+                Buscar
+            </button>
+
+        </div>
+
+
+        <div class="popular-searches">
+
+            <span>Popular:</span>
+
+            <button data-search="voz">Vozes</button>
+
+            <button data-search="policial">Policial</button>
+
+            <button data-search="passos">Passos</button>
+
+            <button data-search="personagem">Personagens</button>
+
+        </div>
+
+    </div>
+
+
+    <div class="hero-showcase">
+
+        <div class="showcase-card">
+
+            <div class="showcase-top">
+
+                <span>
+                    DESTAQUE
+                </span>
+
+                <button>
+                    ♡
+                </button>
+
+            </div>
+
+
+            <div class="showcase-person">
+
+                <div class="person-avatar">
+                    👨‍🚀
+                </div>
+
+            </div>
+
+
+            <div class="showcase-info">
+
+                <small>
+                    VOICE ACTOR
+                </small>
+
+                <h3>
+                    Lucas — Voz de Ação
+                </h3>
+
+                <div class="rating">
+                    ★★★★★
+                    <span>4.9</span>
+                </div>
+
+                <div class="showcase-price">
+                    a partir de
+                    <strong>R$ 19,90</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="floating-tag tag-one">
+            🎙️ 128 vozes
+        </div>
+
+        <div class="floating-tag tag-two">
+            🔊 540 SFX
+        </div>
+
+        <div class="floating-tag tag-three">
+            📸 86 modelos
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     CATEGORIAS
+===================================================== -->
+
+<section
+    class="section"
+    id="explorar"
+>
+
+    <div class="section-heading">
+
+        <div>
+
+            <span class="section-label">
+                CATEGORIAS
+            </span>
+
+            <h2>
+                Encontre o asset certo
+            </h2>
+
+        </div>
+
+        <p>
+            Explore recursos criados para jogos,
+            personagens e experiências digitais.
+        </p>
+
+    </div>
+
+
+    <div class="category-grid">
+
+        <button
+            class="category-card active"
+            data-category="todos"
+        >
+
+            <div class="category-icon">
+                ✦
+            </div>
+
+            <div>
+                <strong>Todos</strong>
+                <small>Ver catálogo completo</small>
+            </div>
+
+        </button>
+
+
+        <button
+            class="category-card"
+            data-category="voz"
+        >
+
+            <div class="category-icon">
+                🎙️
+            </div>
+
+            <div>
+                <strong>Vozes</strong>
+                <small>Dublagem e diálogos</small>
+            </div>
+
+        </button>
+
+
+        <button
+            class="category-card"
+            data-category="foto"
+        >
+
+            <div class="category-icon">
+                📸
+            </div>
+
+            <div>
+                <strong>Fotos</strong>
+                <small>Pessoas e referências</small>
+            </div>
+
+        </button>
+
+
+        <button
+            class="category-card"
+            data-category="audio"
+        >
+
+            <div class="category-icon">
+                🔊
+            </div>
+
+            <div>
+                <strong>Áudio</strong>
+                <small>SFX e ambientes</small>
+            </div>
+
+        </button>
+
+    </div>
+
+
+    <!-- FILTROS -->
+
+    <div class="catalog-toolbar">
+
+        <div>
+
+            <strong id="resultsCount">
+                0 assets
+            </strong>
+
+            <span>
+                encontrados
+            </span>
+
+        </div>
+
+
+        <select id="sortSelect">
+
+            <option value="relevance">
+                Mais relevantes
+            </option>
+
+            <option value="priceLow">
+                Menor preço
+            </option>
+
+            <option value="priceHigh">
+                Maior preço
+            </option>
+
+            <option value="rating">
+                Melhor avaliação
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <!-- PRODUTOS -->
+
+    <div
+        class="products-grid"
+        id="productsGrid"
+    ></div>
+
+
+    <div
+        class="empty-results"
+        id="emptyResults"
+    >
+
+        <div>
+            🔎
+        </div>
+
+        <h3>
+            Nenhum asset encontrado
+        </h3>
+
+        <p>
+            Tente outra categoria ou palavra-chave.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     CRIADORES
+===================================================== -->
+
+<section
+    class="section creators-section"
+    id="criadores"
+>
+
+    <div class="section-heading">
+
+        <div>
+
+            <span class="section-label">
+                TALENTOS
+            </span>
+
+            <h2>
+                Conheça os criadores
+            </h2>
+
+        </div>
+
+        <p>
+            Profissionais de voz, fotografia e áudio.
+        </p>
+
+    </div>
+
+
+    <div
+        class="creator-grid"
+        id="creatorGrid"
+    ></div>
+
+</section>
+
+
+<!-- =====================================================
+     MAPA
+===================================================== -->
+
+<section
+    class="map-section"
+    id="mapa"
+>
+
+    <div class="map-info">
+
+        <span class="section-label">
+            REDE DE CRIADORES
+        </span>
+
+        <h2>
+            Criadores pelo Brasil
+        </h2>
+
+        <p>
+
+            Veja regiões onde existem criadores
+            cadastrados no marketplace.
+
+        </p>
+
+
+        <div class="map-stats">
+
+            <div>
+
+                <strong>
+                    42
+                </strong>
+
+                <span>
+                    Criadores
+                </span>
+
+            </div>
+
+
+            <div>
+
+                <strong>
+                    12
+                </strong>
+
+                <span>
+                    Estados
+                </span>
+
+            </div>
+
+
+            <div>
+
+                <strong>
+                    86+
+                </strong>
+
+                <span>
+                    Assets
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="map-note">
+
+            🔒 A localização exibida é aproximada.
+            O endereço pessoal dos criadores não é
+            mostrado.
+
+        </div>
+
+    </div>
+
+
+    <div
+        id="map"
+        class="map"
+    ></div>
+
+</section>
+
+
+<!-- =====================================================
+     COMO FUNCIONA
+===================================================== -->
+
+<section
+    class="section"
+    id="como-funciona"
+>
+
+    <div class="section-heading center">
+
+        <span class="section-label">
+            SIMPLES
+        </span>
+
+        <h2>
+            Como funciona?
+        </h2>
+
+        <p>
+            Do catálogo ao seu projeto em poucos passos.
+        </p>
+
+    </div>
+
+
+    <div class="steps-grid">
+
+        <div class="step-card">
+
+            <span>
+                01
+            </span>
+
+            <div>
+                🔎
+            </div>
+
+            <h3>
+                Encontre
+            </h3>
+
+            <p>
+                Pesquise vozes, fotos e efeitos
+                para seu projeto.
+            </p>
+
+        </div>
+
+
+        <div class="step-card">
+
+            <span>
+                02
+            </span>
+
+            <div>
+                ▶
+            </div>
+
+            <h3>
+                Teste
+            </h3>
+
+            <p>
+                Escute demos e veja informações
+                antes de comprar.
+            </p>
+
+        </div>
+
+
+        <div class="step-card">
+
+            <span>
+                03
+            </span>
+
+            <div>
+                🛒
+            </div>
+
+            <h3>
+                Compre
+            </h3>
+
+            <p>
+                Adicione os assets ao carrinho.
+            </p>
+
+        </div>
+
+
+        <div class="step-card">
+
+            <span>
+                04
+            </span>
+
+            <div>
+                🎮
+            </div>
+
+            <h3>
+                Crie
+            </h3>
+
+            <p>
+                Utilize o asset conforme sua licença.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     CRIADOR CTA
+===================================================== -->
+
+<section class="creator-cta">
+
+    <div>
+
+        <span class="section-label">
+            PARA PROFISSIONAIS
+        </span>
+
+        <h2>
+            Você tem uma voz,
+            <br>
+            foto ou som?
+        </h2>
+
+        <p>
+            Cadastre seu trabalho e disponibilize
+            seus assets para desenvolvedores de games.
+        </p>
+
+        <button id="creatorButton">
+            QUERO SER CRIADOR →
+        </button>
+
+    </div>
+
+
+    <div class="cta-art">
+
+        <div class="cta-circle">
+            🎙️
+        </div>
+
+        <div class="cta-card cta-a">
+            📸 Fotografia
+        </div>
+
+        <div class="cta-card cta-b">
+            🔊 Sound Design
+        </div>
+
+        <div class="cta-card cta-c">
+            🎙️ Voice Acting
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer>
+
+    <div class="footer-main">
+
+        <div>
+
+            <a class="brand">
+
+                <div class="brand-mark">
+                    GV
+                </div>
+
+                <div>
+                    <strong>GAMEVOICE</strong>
+                    <small>HUB</small>
+                </div>
+
+            </a>
+
+            <p>
+                Assets digitais para a próxima geração
+                de jogos.
+            </p>
+
+        </div>
+
+
+        <div>
+
+            <h4>
+                Marketplace
+            </h4>
+
+            <a href="#explorar">
+                Explorar
+            </a>
+
+            <a href="#criadores">
+                Criadores
+            </a>
+
+            <a href="#mapa">
+                Mapa
+            </a>
+
+        </div>
+
+
+        <div>
+
+            <h4>
+                Categorias
+            </h4>
+
+            <a href="#explorar">
+                Vozes
+            </a>
+
+            <a href="#explorar">
+                Fotos
+            </a>
+
+            <a href="#explorar">
+                Áudios
+            </a>
+
+        </div>
+
+
+        <div>
+
+            <h4>
+                Projeto
+            </h4>
+
+            <a href="#">
+                Licenças
+            </a>
+
+            <a href="#">
+                Termos
+            </a>
+
+            <a href="#">
+                Privacidade
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+        <span>
+            © <span id="year"></span> GameVoice Hub
+        </span>
+
+        <span>
+            Projeto demonstrativo
+        </span>
+
+    </div>
+
+</footer>
+
+
+<!-- =====================================================
+     PRODUCT MODAL
+===================================================== -->
+
+<div
+    class="modal-overlay"
+    id="productModal"
+>
+
+    <div class="product-modal">
+
+        <button
+            class="modal-close"
+            data-close="productModal"
+        >
+            ×
+        </button>
+
+
+        <div
+            class="modal-image"
+            id="modalImage"
+        >
+        </div>
+
+
+        <div class="modal-info">
+
+            <span
+                class="modal-category"
+                id="modalCategory"
+            >
+            </span>
+
+
+            <h2 id="modalTitle">
+            </h2>
+
+
+            <div
+                class="modal-rating"
+                id="modalRating"
+            >
+            </div>
+
+
+            <p id="modalDescription">
+            </p>
+
+
+            <div
+                id="modalAudio"
+                class="modal-audio"
+            >
+            </div>
+
+
+            <div class="license">
+
+                <strong>
+                    📄 Licença de uso
+                </strong>
+
+                <p>
+                    O asset deve ser utilizado conforme
+                    os termos definidos pelo criador.
+                </p>
+
+            </div>
+
+
+            <div class="modal-buy">
+
+                <strong id="modalPrice">
+                </strong>
+
+                <button id="modalAdd">
+                    🛒 Adicionar ao carrinho
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     CART MODAL
+===================================================== -->
+
+<div
+    class="modal-overlay"
+    id="cartModal"
+>
+
+    <div class="cart-modal">
+
+        <button
+            class="modal-close"
+            data-close="cartModal"
+        >
+            ×
+        </button>
+
+
+        <h2>
+            🛒 Seu carrinho
+        </h2>
+
+
+        <div
+            id="cartItems"
+            class="cart-items"
+        >
+        </div>
+
+
+        <div
+            id="cartEmpty"
+            class="cart-empty"
+        >
+
+            <div>
+                🛒
+            </div>
+
+            <p>
+                Seu carrinho está vazio.
+            </p>
+
+        </div>
+
+
+        <div class="cart-total">
+
+            <span>
+                Total
+            </span>
+
+            <strong id="cartTotal">
+                R$ 0,00
+            </strong>
+
+        </div>
+
+
+        <button
+            class="checkout"
+            id="checkoutButton"
+        >
+            FINALIZAR PELO WHATSAPP
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     TOAST
+===================================================== -->
+
+<div
+    class="toast"
+    id="toast"
+>
+</div>
+
+
+<!-- =====================================================
+     LEAFLET JS
+===================================================== -->
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+></script>
+
+
+<!-- SCRIPT DO PROJETO -->
+
+<script src="script.js"></script>
+
+</body>
+</html>
