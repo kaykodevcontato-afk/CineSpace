@@ -1,378 +1,257 @@
-/* =====================================================
-   GAMEVOICE HUB
-   SCRIPT.JS
-===================================================== */
+/* =========================================================
+   GAMEASSETS MARKET
+   Marketplace demonstrativo
+   ========================================================= */
 
 
-/* =====================================================
+/* =========================================================
    DADOS DOS PRODUTOS
-===================================================== */
+   ========================================================= */
 
 const products = [
 
     {
         id: 1,
-        title: "Voz de Policial Brasileiro",
+        title: "Voz Masculina — Soldado",
         category: "voz",
-        categoryName: "VOZ / DUBLAGEM",
-        creator: "Lucas Almeida",
-        icon: "👮",
-        price: 19.90,
-        rating: 4.9,
+        categoryName: "VOZ",
+        symbol: "🎙️",
+        price: 39.90,
+        creator: "Lucas Voice",
+        location: "Recife - PE",
         description:
-            "Voz masculina para policiais, agentes e personagens de ação.",
-        audio: null
+            "Voz masculina para personagens de ação, soldados, policiais e protagonistas de jogos.",
+        tags: ["Masculina", "Ação", "Game"],
+        voiceText:
+            "Soldado, a área está segura. Podemos continuar a missão."
     },
 
     {
         id: 2,
-        title: "Voz de NPC Jovem",
+        title: "Voz Feminina — Narradora",
         category: "voz",
-        categoryName: "VOZ / DUBLAGEM",
-        creator: "Marina Costa",
-        icon: "🗣️",
-        price: 14.90,
-        rating: 4.8,
+        categoryName: "VOZ",
+        symbol: "🎙️",
+        price: 44.90,
+        creator: "Ana Voice",
+        location: "Caruaru - PE",
         description:
-            "Voz natural para personagens jovens e NPCs.",
-        audio: null
+            "Voz feminina para narrativas, trailers, histórias e personagens.",
+        tags: ["Feminina", "Narrativa", "Trailer"],
+        voiceText:
+            "A jornada está apenas começando. O destino deste mundo está em suas mãos."
     },
 
     {
         id: 3,
-        title: "Narrador Cinematográfico",
-        category: "voz",
-        categoryName: "VOZ / DUBLAGEM",
-        creator: "Rafael Souza",
-        icon: "🎧",
-        price: 29.90,
-        rating: 5.0,
+        title: "Dublagem — Personagem RPG",
+        category: "dublagem",
+        categoryName: "DUBLAGEM",
+        symbol: "🎭",
+        price: 59.90,
+        creator: "Studio Nordeste",
+        location: "Arcoverde - PE",
         description:
-            "Voz para trailers, introduções e narrativas de games.",
-        audio: null
+            "Pacote demonstrativo de falas para personagens de RPG e fantasia.",
+        tags: ["RPG", "Fantasia", "Personagem"],
+        voiceText:
+            "Você chegou tarde, aventureiro. A cidade já está sendo atacada."
     },
 
     {
         id: 4,
-        title: "Personagem Masculino",
+        title: "Foto — Personagem Jovem",
         category: "foto",
-        categoryName: "FOTOGRAFIA",
-        creator: "Studio Frame",
-        icon: "👨",
-        price: 24.90,
-        rating: 4.7,
+        categoryName: "FOTO",
+        symbol: "📸",
+        price: 29.90,
+        creator: "RealFace Studio",
+        location: "São Paulo - SP",
         description:
-            "Pacote demonstrativo de fotografias para referência visual.",
-        audio: null
+            "Foto demonstrativa de pessoa real para composição de personagem.",
+        tags: ["Pessoa", "Game", "Personagem"]
     },
 
     {
         id: 5,
-        title: "Personagem Feminino",
-        category: "foto",
-        categoryName: "FOTOGRAFIA",
-        creator: "Studio Frame",
-        icon: "👩",
-        price: 24.90,
-        rating: 4.9,
+        title: "Efeito Sonoro — Explosão",
+        category: "audio",
+        categoryName: "ÁUDIO",
+        symbol: "💥",
+        price: 14.90,
+        creator: "FX Lab",
+        location: "Recife - PE",
         description:
-            "Fotos de referência para criação de personagens.",
-        audio: null
+            "Efeito sonoro para explosões, combates e cenas de ação.",
+        tags: ["FX", "Explosão", "Ação"]
     },
 
     {
         id: 6,
-        title: "Expressões Faciais",
-        category: "foto",
-        categoryName: "FOTOGRAFIA",
-        creator: "FaceLab",
-        icon: "🎭",
-        price: 34.90,
-        rating: 4.8,
+        title: "Voz Robótica — IA",
+        category: "voz",
+        categoryName: "VOZ",
+        symbol: "🤖",
+        price: 49.90,
+        creator: "Cyber Voice",
+        location: "São Paulo - SP",
         description:
-            "Coleção demonstrativa de expressões para referência.",
-        audio: null
+            "Estilo de voz tecnológica para robôs, inteligência artificial e ficção científica.",
+        tags: ["IA", "Robô", "Sci-Fi"],
+        voiceText:
+            "Sistema operacional iniciado. Todos os módulos estão funcionando normalmente."
     },
 
     {
         id: 7,
-        title: "Passos em Concreto",
+        title: "Ambiente — Cidade",
         category: "audio",
-        categoryName: "SOUND EFFECT",
-        creator: "SoundLab BR",
-        icon: "👟",
-        price: 9.90,
-        rating: 4.9,
+        categoryName: "ÁUDIO",
+        symbol: "🏙️",
+        price: 19.90,
+        creator: "Sound City",
+        location: "Recife - PE",
         description:
-            "Efeitos sonoros de passos para personagens.",
-        audio: null
+            "Ambiente sonoro urbano para jogos, vídeos e experiências digitais.",
+        tags: ["Cidade", "Ambiente", "Game"]
     },
 
     {
         id: 8,
-        title: "Ambiente de Cidade",
-        category: "audio",
-        categoryName: "SOUND EFFECT",
-        creator: "SoundLab BR",
-        icon: "🌆",
-        price: 12.90,
-        rating: 4.7,
+        title: "Foto — Personagem de Ação",
+        category: "foto",
+        categoryName: "FOTO",
+        symbol: "📷",
+        price: 34.90,
+        creator: "Character Lab",
+        location: "Caruaru - PE",
         description:
-            "Ambiente urbano para mapas e cidades.",
-        audio: null
-    },
-
-    {
-        id: 9,
-        title: "Floresta Noturna",
-        category: "audio",
-        categoryName: "AMBIENTE",
-        creator: "Nature Audio",
-        icon: "🌲",
-        price: 16.90,
-        rating: 5.0,
-        description:
-            "Ambiente de floresta para jogos de sobrevivência.",
-        audio: null
+            "Material fotográfico demonstrativo para criação de personagens.",
+        tags: ["Ação", "Pessoa", "Personagem"]
     }
 
 ];
 
 
-/* =====================================================
-   CRIADORES
-===================================================== */
-
-const creators = [
-
-    {
-        name: "Lucas Almeida",
-        role: "Voice Actor",
-        location: "Pernambuco",
-        icon: "👨‍🎤"
-    },
-
-    {
-        name: "Marina Costa",
-        role: "Dubladora",
-        location: "São Paulo",
-        icon: "👩‍🎤"
-    },
-
-    {
-        name: "Studio Frame",
-        role: "Fotografia",
-        location: "Rio de Janeiro",
-        icon: "📸"
-    },
-
-    {
-        name: "SoundLab BR",
-        role: "Sound Designer",
-        location: "Minas Gerais",
-        icon: "🎧"
-    }
-
-];
-
-
-/* =====================================================
+/* =========================================================
    ESTADO
-===================================================== */
+   ========================================================= */
 
 let currentCategory = "todos";
+let searchTerm = "";
+let cart = [];
 
 let selectedProduct = null;
 
-let cart =
-    JSON.parse(
-        localStorage.getItem(
-            "gamevoice_cart"
-        )
-    ) || [];
 
-let favorites =
-    JSON.parse(
-        localStorage.getItem(
-            "gamevoice_favorites"
-        )
-    ) || [];
-
-
-/* =====================================================
+/* =========================================================
    ELEMENTOS
-===================================================== */
+   ========================================================= */
 
-const productsGrid =
-    document.getElementById(
-        "productsGrid"
-    );
+const productsGrid = document.getElementById("productsGrid");
+const resultsCount = document.getElementById("resultsCount");
+const emptyState = document.getElementById("emptyState");
 
-const creatorGrid =
-    document.getElementById(
-        "creatorGrid"
-    );
+const searchInput = document.getElementById("searchInput");
+const sortSelect = document.getElementById("sortSelect");
+const clearFilters = document.getElementById("clearFilters");
 
-const searchInput =
-    document.getElementById(
-        "searchInput"
-    );
+const cartCount = document.getElementById("cartCount");
+const cartItems = document.getElementById("cartItems");
+const cartTotal = document.getElementById("cartTotal");
 
-const searchButton =
-    document.getElementById(
-        "searchButton"
-    );
+const productModal = document.getElementById("productModal");
+const modalContent = document.getElementById("modalContent");
 
-const sortSelect =
-    document.getElementById(
-        "sortSelect"
-    );
-
-const resultsCount =
-    document.getElementById(
-        "resultsCount"
-    );
-
-const emptyResults =
-    document.getElementById(
-        "emptyResults"
-    );
-
-const cartCount =
-    document.getElementById(
-        "cartCount"
-    );
-
-const favoriteCount =
-    document.getElementById(
-        "favoriteCount"
-    );
-
-const cartModal =
-    document.getElementById(
-        "cartModal"
-    );
-
-const productModal =
-    document.getElementById(
-        "productModal"
-    );
-
-const toast =
-    document.getElementById(
-        "toast"
-    );
+const cartDrawer = document.getElementById("cartDrawer");
+const cartBackdrop = document.getElementById("cartBackdrop");
 
 
-/* =====================================================
+/* =========================================================
    FORMATAÇÃO
-===================================================== */
+   ========================================================= */
 
-function money(value) {
+function formatPrice(value) {
 
-    return value.toLocaleString(
-        "pt-BR",
-        {
-            style: "currency",
-            currency: "BRL"
-        }
-    );
+    return new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+    }).format(value);
 
 }
 
 
-/* =====================================================
+/* =========================================================
+   ESCAPE HTML
+   ========================================================= */
+
+function escapeHTML(text) {
+
+    return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+/* =========================================================
    RENDER PRODUTOS
-===================================================== */
+   ========================================================= */
 
 function renderProducts() {
 
-    const query =
-        searchInput.value
-            .toLowerCase()
-            .trim();
+    let filtered = products.filter(product => {
+
+        const categoryMatch =
+            currentCategory === "todos" ||
+            product.category === currentCategory;
+
+        const searchText = `
+            ${product.title}
+            ${product.description}
+            ${product.creator}
+            ${product.location}
+            ${product.tags.join(" ")}
+        `.toLowerCase();
+
+        const searchMatch =
+            searchText.includes(searchTerm.toLowerCase());
+
+        return categoryMatch && searchMatch;
+
+    });
 
 
-    let filtered =
-        products.filter(product => {
+    /* Ordenação */
 
-            const categoryMatch =
-                currentCategory === "todos" ||
-                product.category === currentCategory;
+    const sort = sortSelect.value;
 
+    if (sort === "low") {
 
-            const searchMatch =
-                !query ||
-
-                product.title
-                    .toLowerCase()
-                    .includes(query)
-
-                ||
-
-                product.description
-                    .toLowerCase()
-                    .includes(query)
-
-                ||
-
-                product.creator
-                    .toLowerCase()
-                    .includes(query)
-
-                ||
-
-                product.categoryName
-                    .toLowerCase()
-                    .includes(query);
-
-
-            return (
-                categoryMatch &&
-                searchMatch
-            );
-
-        });
-
-
-    /* ORDENAÇÃO */
-
-    const sort =
-        sortSelect.value;
-
-
-    if (sort === "priceLow") {
-
-        filtered.sort(
-            (a,b) =>
-                a.price - b.price
-        );
+        filtered.sort((a, b) => a.price - b.price);
 
     }
 
+    if (sort === "high") {
 
-    if (sort === "priceHigh") {
-
-        filtered.sort(
-            (a,b) =>
-                b.price - a.price
-        );
+        filtered.sort((a, b) => b.price - a.price);
 
     }
 
+    if (sort === "name") {
 
-    if (sort === "rating") {
-
-        filtered.sort(
-            (a,b) =>
-                b.rating - a.rating
+        filtered.sort((a, b) =>
+            a.title.localeCompare(b.title)
         );
 
     }
 
 
     resultsCount.textContent =
-        filtered.length + " assets";
+        `${filtered.length} asset${filtered.length !== 1 ? "s" : ""} encontrado${filtered.length !== 1 ? "s" : ""}`;
 
 
     productsGrid.innerHTML = "";
@@ -380,1322 +259,770 @@ function renderProducts() {
 
     if (filtered.length === 0) {
 
-        emptyResults.style.display =
-            "block";
+        emptyState.style.display = "block";
 
         return;
 
     }
 
-
-    emptyResults.style.display =
-        "none";
+    emptyState.style.display = "none";
 
 
-    filtered.forEach(
-        product => {
+    filtered.forEach(product => {
 
-            const isFavorite =
-                favorites.includes(
-                    product.id
-                );
+        const card = document.createElement("article");
+
+        card.className = "product-card";
 
 
-            const card =
-                document.createElement(
-                    "article"
-                );
+        card.innerHTML = `
 
+            <div class="product-visual">
 
-            card.className =
-                "product-card";
+                <span class="product-category">
+                    ${escapeHTML(product.categoryName)}
+                </span>
 
+                <span class="product-symbol">
+                    ${product.symbol}
+                </span>
 
-            card.innerHTML = `
+            </div>
 
-                <div class="product-cover">
+            <div class="product-body">
 
-                    <span class="product-cover-icon">
-                        ${product.icon}
+                <h3>
+                    ${escapeHTML(product.title)}
+                </h3>
+
+                <p class="product-description">
+                    ${escapeHTML(product.description)}
+                </p>
+
+                <div class="product-creator">
+                    👤 ${escapeHTML(product.creator)}
+                    · 📍 ${escapeHTML(product.location)}
+                </div>
+
+                <div class="product-bottom">
+
+                    <span class="price">
+                        ${formatPrice(product.price)}
                     </span>
 
-                    <span class="product-badge">
-                        ${product.categoryName}
-                    </span>
+                    <div class="product-actions">
 
-                    <button
-                        class="favorite-product ${
-                            isFavorite
-                                ? "active"
-                                : ""
-                        }"
-                        onclick="toggleFavorite(${product.id})"
-                    >
+                        <button
+                            title="Ver detalhes"
+                            onclick="openProduct(${product.id})"
+                        >
+                            👁
+                        </button>
+
                         ${
-                            isFavorite
-                                ? "♥"
-                                : "♡"
+                            product.voiceText
+                                ? `
+                                <button
+                                    title="Ouvir demonstração"
+                                    onclick="ouvirVoz('${escapeForAttribute(product.voiceText)}')"
+                                >
+                                    ▶
+                                </button>
+                                `
+                                : ""
                         }
-                    </button>
 
-                </div>
-
-
-                <div class="product-body">
-
-                    <span class="product-creator">
-                        ${product.creator}
-                    </span>
-
-                    <h3>
-                        ${product.title}
-                    </h3>
-
-                    <p>
-                        ${product.description}
-                    </p>
-
-                    <div class="product-rating">
-                        ★★★★★
-                        ${product.rating}
-                    </div>
-
-
-                    <div class="product-footer">
-
-                        <div class="product-price">
-
-                            <small>
-                                A partir de
-                            </small>
-
-                            <strong>
-                                ${money(product.price)}
-                            </strong>
-
-                        </div>
-
-
-                        <div class="product-buttons">
-
-                            <button
-                                onclick="openProduct(${product.id})"
-                            >
-                                VER
-                            </button>
-
-                            <button
-                                class="add"
-                                onclick="addToCart(${product.id})"
-                            >
-                                + 🛒
-                            </button>
-
-                        </div>
+                        <button
+                            class="buy"
+                            title="Adicionar ao carrinho"
+                            onclick="addToCart(${product.id})"
+                        >
+                            +
+                        </button>
 
                     </div>
 
                 </div>
 
-            `;
+            </div>
+        `;
 
 
-            productsGrid.appendChild(
-                card
-            );
+        productsGrid.appendChild(card);
 
-        }
-    );
+    });
 
 }
 
 
-/* =====================================================
-   CATEGORIAS
-===================================================== */
+/* =========================================================
+   ESCAPE PARA ATRIBUTO JAVASCRIPT
+   ========================================================= */
 
-document
-    .querySelectorAll(
-        ".category-card"
-    )
-    .forEach(button => {
+function escapeForAttribute(text) {
 
-        button.addEventListener(
-            "click",
-            () => {
+    return String(text)
+        .replaceAll("\\", "\\\\")
+        .replaceAll("'", "\\'")
+        .replaceAll("\n", " ");
 
-                document
-                    .querySelectorAll(
-                        ".category-card"
-                    )
-                    .forEach(
-                        item =>
-                            item.classList.remove(
-                                "active"
-                            )
-                    );
+}
 
 
-                button.classList.add(
-                    "active"
-                );
+/* =========================================================
+   FILTROS DE CATEGORIA
+   ========================================================= */
 
+document.querySelectorAll(".category-card").forEach(button => {
 
-                currentCategory =
-                    button.dataset.category;
-
-
-                renderProducts();
-
-            }
-        );
-
-    });
-
-
-/* =====================================================
-   PESQUISA
-===================================================== */
-
-searchInput.addEventListener(
-    "input",
-    renderProducts
-);
-
-
-searchButton.addEventListener(
-    "click",
-    () => {
+    button.addEventListener("click", () => {
 
         document
-            .getElementById(
-                "explorar"
-            )
-            .scrollIntoView({
-                behavior: "smooth"
-            });
+            .querySelectorAll(".category-card")
+            .forEach(item => item.classList.remove("active"));
+
+        button.classList.add("active");
+
+        currentCategory =
+            button.dataset.category;
 
         renderProducts();
 
-    }
-);
-
-
-/* =====================================================
-   BUSCAS POPULARES
-===================================================== */
-
-document
-    .querySelectorAll(
-        "[data-search]"
-    )
-    .forEach(button => {
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                searchInput.value =
-                    button.dataset.search;
-
-                currentCategory =
-                    "todos";
-
-
-                document
-                    .querySelectorAll(
-                        ".category-card"
-                    )
-                    .forEach(
-                        item =>
-                            item.classList.remove(
-                                "active"
-                            )
-                    );
-
-
-                document
-                    .querySelector(
-                        '[data-category="todos"]'
-                    )
-                    .classList.add(
-                        "active"
-                    );
-
-
-                renderProducts();
-
-
-                document
-                    .getElementById(
-                        "explorar"
-                    )
-                    .scrollIntoView({
-                        behavior: "smooth"
-                    });
-
-            }
-        );
-
     });
 
-
-/* =====================================================
-   ORDENAÇÃO
-===================================================== */
-
-sortSelect.addEventListener(
-    "change",
-    renderProducts
-);
+});
 
 
-/* =====================================================
-   FAVORITOS
-===================================================== */
+/* =========================================================
+   BUSCA
+   ========================================================= */
 
-function toggleFavorite(id) {
+searchInput.addEventListener("input", event => {
 
-    if (
-        favorites.includes(id)
-    ) {
-
-        favorites =
-            favorites.filter(
-                item => item !== id
-            );
-
-        showToast(
-            "Removido dos favoritos."
-        );
-
-    } else {
-
-        favorites.push(id);
-
-        showToast(
-            "♡ Adicionado aos favoritos."
-        );
-
-    }
-
-
-    localStorage.setItem(
-        "gamevoice_favorites",
-        JSON.stringify(
-            favorites
-        )
-    );
-
-
-    updateCounters();
+    searchTerm = event.target.value;
 
     renderProducts();
 
+});
+
+
+/* =========================================================
+   ORDENAÇÃO
+   ========================================================= */
+
+sortSelect.addEventListener("change", renderProducts);
+
+
+/* =========================================================
+   LIMPAR FILTROS
+   ========================================================= */
+
+clearFilters.addEventListener("click", () => {
+
+    searchInput.value = "";
+
+    searchTerm = "";
+
+    currentCategory = "todos";
+
+    sortSelect.value = "default";
+
+    document
+        .querySelectorAll(".category-card")
+        .forEach(item => item.classList.remove("active"));
+
+    document
+        .querySelector('[data-category="todos"]')
+        .classList.add("active");
+
+    renderProducts();
+
+});
+
+
+/* =========================================================
+   VOZES - SPEECH SYNTHESIS
+   ========================================================= */
+
+let availableVoices = [];
+
+
+function carregarVozes() {
+
+    if (!("speechSynthesis" in window)) {
+        return;
+    }
+
+    availableVoices =
+        window.speechSynthesis.getVoices();
+
 }
 
 
-document
-    .getElementById(
-        "favoritesButton"
-    )
-    .addEventListener(
-        "click",
-        () => {
+if ("speechSynthesis" in window) {
 
-            if (
-                favorites.length === 0
-            ) {
+    carregarVozes();
 
-                showToast(
-                    "Você ainda não possui favoritos."
-                );
+    speechSynthesis.onvoiceschanged =
+        carregarVozes;
 
-                return;
-
-            }
+}
 
 
-            searchInput.value = "";
+function escolherVoz() {
+
+    if (!availableVoices.length) {
+        return null;
+    }
 
 
-            const favoriteProducts =
-                products.filter(
-                    product =>
-                        favorites.includes(
-                            product.id
-                        )
-                );
+    /* Primeiro tenta português do Brasil */
 
-
-            productsGrid.innerHTML = "";
-
-
-            favoriteProducts.forEach(
-                product => {
-
-                    const card =
-                        document.createElement(
-                            "article"
-                        );
-
-                    card.className =
-                        "product-card";
-
-
-                    card.innerHTML = `
-
-                        <div class="product-cover">
-
-                            <span class="product-cover-icon">
-                                ${product.icon}
-                            </span>
-
-                        </div>
-
-                        <div class="product-body">
-
-                            <span class="product-creator">
-                                ${product.creator}
-                            </span>
-
-                            <h3>
-                                ${product.title}
-                            </h3>
-
-                            <p>
-                                ${product.description}
-                            </p>
-
-                            <div class="product-footer">
-
-                                <div class="product-price">
-
-                                    <strong>
-                                        ${money(product.price)}
-                                    </strong>
-
-                                </div>
-
-                                <div class="product-buttons">
-
-                                    <button
-                                        onclick="openProduct(${product.id})"
-                                    >
-                                        VER
-                                    </button>
-
-                                    <button
-                                        class="add"
-                                        onclick="addToCart(${product.id})"
-                                    >
-                                        + 🛒
-                                    </button>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    `;
-
-
-                    productsGrid.appendChild(
-                        card
-                    );
-
-                }
-            );
-
-
-            resultsCount.textContent =
-                favorites.length +
-                " favoritos";
-
-
-            emptyResults.style.display =
-                "none";
-
-
-            document
-                .getElementById(
-                    "explorar"
-                )
-                .scrollIntoView({
-                    behavior: "smooth"
-                });
-
-        }
-    );
-
-
-/* =====================================================
-   ABRIR PRODUTO
-===================================================== */
-
-function openProduct(id) {
-
-    const product =
-        products.find(
+    let voice =
+        availableVoices.find(
             item =>
-                item.id === id
+                item.lang &&
+                item.lang.toLowerCase() === "pt-br"
         );
 
 
-    if (!product) return;
+    /* Depois qualquer português */
 
+    if (!voice) {
 
-    selectedProduct =
-        product;
-
-
-    document.getElementById(
-        "modalImage"
-    ).textContent =
-        product.icon;
-
-
-    document.getElementById(
-        "modalCategory"
-    ).textContent =
-        product.categoryName;
-
-
-    document.getElementById(
-        "modalTitle"
-    ).textContent =
-        product.title;
-
-
-    document.getElementById(
-        "modalRating"
-    ).textContent =
-        `★★★★★ ${product.rating}`;
-
-
-    document.getElementById(
-        "modalDescription"
-    ).textContent =
-        product.description;
-
-
-    document.getElementById(
-        "modalPrice"
-    ).textContent =
-        money(product.price);
-
-
-    const audio =
-        document.getElementById(
-            "modalAudio"
-        );
-
-
-    if (product.audio) {
-
-        audio.innerHTML = `
-
-            <audio controls>
-
-                <source
-                    src="${product.audio}"
-                    type="audio/mpeg"
-                >
-
-                Seu navegador não suporta áudio.
-
-            </audio>
-
-        `;
-
-    } else {
-
-        audio.innerHTML = `
-
-            <div
-                style="
-                    padding:12px;
-                    border:1px solid rgba(255,255,255,.08);
-                    border-radius:9px;
-                    color:#929baa;
-                    font-size:11px;
-                "
-            >
-                🎧 Demo de áudio será adicionada
-                quando o arquivo estiver disponível.
-            </div>
-
-        `;
+        voice =
+            availableVoices.find(
+                item =>
+                    item.lang &&
+                    item.lang.toLowerCase().startsWith("pt")
+            );
 
     }
 
 
-    productModal.classList.add(
-        "active"
-    );
+    return voice || availableVoices[0];
 
 }
 
 
-/* =====================================================
-   MODAL
-===================================================== */
+function ouvirVoz(texto) {
 
-document
-    .querySelectorAll(
-        "[data-close]"
-    )
-    .forEach(button => {
+    if (!("speechSynthesis" in window)) {
 
-        button.addEventListener(
-            "click",
-            () => {
-
-                document
-                    .getElementById(
-                        button.dataset.close
-                    )
-                    .classList.remove(
-                        "active"
-                    );
-
-            }
+        alert(
+            "Seu navegador não possui suporte à demonstração de voz."
         );
 
-    });
+        return;
+    }
 
+
+    pararVoz();
+
+
+    const utterance =
+        new SpeechSynthesisUtterance(texto);
+
+
+    const voice = escolherVoz();
+
+    if (voice) {
+        utterance.voice = voice;
+    }
+
+
+    utterance.lang = "pt-BR";
+
+    utterance.rate = 0.92;
+
+    utterance.pitch = 1;
+
+
+    speechSynthesis.speak(utterance);
+
+}
+
+
+function pararVoz() {
+
+    if ("speechSynthesis" in window) {
+
+        speechSynthesis.cancel();
+
+    }
+
+}
+
+
+/* =========================================================
+   MODAL DE PRODUTO
+   ========================================================= */
+
+function openProduct(id) {
+
+    selectedProduct =
+        products.find(product => product.id === id);
+
+    if (!selectedProduct) {
+        return;
+    }
+
+
+    modalContent.innerHTML = `
+
+        <div class="modal-product-symbol">
+            ${selectedProduct.symbol}
+        </div>
+
+        <span class="eyebrow">
+            ${escapeHTML(selectedProduct.categoryName)}
+        </span>
+
+        <h2>
+            ${escapeHTML(selectedProduct.title)}
+        </h2>
+
+        <p class="modal-description">
+            ${escapeHTML(selectedProduct.description)}
+        </p>
+
+        <p class="modal-description">
+            👤 Criador:
+            <strong>
+                ${escapeHTML(selectedProduct.creator)}
+            </strong>
+        </p>
+
+        <p class="modal-description">
+            📍 Localização aproximada:
+            ${escapeHTML(selectedProduct.location)}
+        </p>
+
+        ${
+            selectedProduct.voiceText
+                ? `
+                <button
+                    class="modal-buy"
+                    style="margin-top:15px;background:#171f2d;color:white;"
+                    onclick="ouvirVoz('${escapeForAttribute(selectedProduct.voiceText)}')"
+                >
+                    ▶ Ouvir demonstração
+                </button>
+                `
+                : ""
+        }
+
+        <div class="modal-price">
+            ${formatPrice(selectedProduct.price)}
+        </div>
+
+        <button
+            class="modal-buy"
+            onclick="addToCart(${selectedProduct.id}); closeProductModal();"
+        >
+            🛒 Adicionar ao carrinho
+        </button>
+
+    `;
+
+
+    productModal.classList.add("active");
+
+}
+
+
+function closeProductModal() {
+
+    productModal.classList.remove("active");
+
+}
+
+
+/* =========================================================
+   EVENTOS MODAL
+   ========================================================= */
 
 document
-    .querySelectorAll(
-        ".modal-overlay"
-    )
-    .forEach(modal => {
-
-        modal.addEventListener(
-            "click",
-            event => {
-
-                if (
-                    event.target === modal
-                ) {
-
-                    modal.classList.remove(
-                        "active"
-                    );
-
-                }
-
-            }
-        );
-
-    });
+    .getElementById("closeModal")
+    .addEventListener("click", closeProductModal);
 
 
-/* =====================================================
-   ADICIONAR AO CARRINHO
-===================================================== */
+productModal.addEventListener("click", event => {
+
+    if (event.target === productModal) {
+
+        closeProductModal();
+
+    }
+
+});
+
+
+/* =========================================================
+   CARRINHO
+   ========================================================= */
 
 function addToCart(id) {
 
     const product =
-        products.find(
-            item =>
-                item.id === id
-        );
+        products.find(item => item.id === id);
 
-
-    if (!product) return;
-
-
-    if (
-        cart.some(
-            item =>
-                item.id === id
-        )
-    ) {
-
-        showToast(
-            "Esse asset já está no carrinho."
-        );
-
+    if (!product) {
         return;
+    }
+
+
+    const alreadyExists =
+        cart.some(item => item.id === id);
+
+
+    if (!alreadyExists) {
+
+        cart.push(product);
 
     }
 
 
-    cart.push(
-        product
-    );
+    updateCart();
 
-
-    saveCart();
-
-    updateCounters();
-
-    showToast(
-        "🛒 Asset adicionado ao carrinho."
-    );
+    openCart();
 
 }
 
-
-/* =====================================================
-   SALVAR CARRINHO
-===================================================== */
-
-function saveCart() {
-
-    localStorage.setItem(
-        "gamevoice_cart",
-        JSON.stringify(
-            cart
-        )
-    );
-
-}
-
-
-/* =====================================================
-   CARRINHO
-===================================================== */
-
-function renderCart() {
-
-    const container =
-        document.getElementById(
-            "cartItems"
-        );
-
-    const empty =
-        document.getElementById(
-            "cartEmpty"
-        );
-
-
-    container.innerHTML = "";
-
-
-    if (
-        cart.length === 0
-    ) {
-
-        empty.style.display =
-            "block";
-
-        document.getElementById(
-            "cartTotal"
-        ).textContent =
-            "R$ 0,00";
-
-        return;
-
-    }
-
-
-    empty.style.display =
-        "none";
-
-
-    let total = 0;
-
-
-    cart.forEach(
-        product => {
-
-            total +=
-                product.price;
-
-
-            const item =
-                document.createElement(
-                    "div"
-                );
-
-
-            item.className =
-                "cart-item";
-
-
-            item.innerHTML = `
-
-                <div class="cart-icon">
-                    ${product.icon}
-                </div>
-
-                <div class="cart-item-info">
-
-                    <strong>
-                        ${product.title}
-                    </strong>
-
-                    <span>
-                        ${money(product.price)}
-                    </span>
-
-                </div>
-
-                <button
-                    class="remove-cart"
-                    onclick="removeFromCart(${product.id})"
-                >
-                    ×
-                </button>
-
-            `;
-
-
-            container.appendChild(
-                item
-            );
-
-        }
-    );
-
-
-    document.getElementById(
-        "cartTotal"
-    ).textContent =
-        money(total);
-
-}
-
-
-/* =====================================================
-   REMOVER
-===================================================== */
 
 function removeFromCart(id) {
 
     cart =
-        cart.filter(
-            product =>
-                product.id !== id
-        );
+        cart.filter(item => item.id !== id);
 
-
-    saveCart();
-
-    updateCounters();
-
-    renderCart();
-
-    showToast(
-        "Asset removido."
-    );
+    updateCart();
 
 }
 
 
-/* =====================================================
-   ABRIR CARRINHO
-===================================================== */
-
-document
-    .getElementById(
-        "cartButton"
-    )
-    .addEventListener(
-        "click",
-        () => {
-
-            renderCart();
-
-            cartModal.classList.add(
-                "active"
-            );
-
-        }
-    );
-
-
-/* =====================================================
-   MODAL ADD
-===================================================== */
-
-document
-    .getElementById(
-        "modalAdd"
-    )
-    .addEventListener(
-        "click",
-        () => {
-
-            if (!selectedProduct)
-                return;
-
-
-            addToCart(
-                selectedProduct.id
-            );
-
-
-            productModal.classList.remove(
-                "active"
-            );
-
-        }
-    );
-
-
-/* =====================================================
-   CHECKOUT WHATSAPP
-===================================================== */
-
-document
-    .getElementById(
-        "checkoutButton"
-    )
-    .addEventListener(
-        "click",
-        () => {
-
-            if (
-                cart.length === 0
-            ) {
-
-                showToast(
-                    "Seu carrinho está vazio."
-                );
-
-                return;
-
-            }
-
-
-            let total = 0;
-
-
-            const items =
-                cart.map(
-                    product => {
-
-                        total +=
-                            product.price;
-
-                        return (
-                            `• ${product.title} — ` +
-                            `${money(product.price)}`
-                        );
-
-                    }
-                ).join("\n");
-
-
-            const message =
-                `Olá! Tenho interesse em comprar ` +
-                `os seguintes assets do GameVoice Hub:\n\n` +
-                `${items}\n\n` +
-                `Total: ${money(total)}`;
-
-
-            /*
-                TROQUE PELO SEU NÚMERO.
-
-                Formato:
-                5587999999999
-
-                Sem:
-                +
-                espaços
-                parênteses
-                hífen
-            */
-
-            const whatsapp =
-                "5587999999999";
-
-
-            const url =
-                `https://wa.me/${whatsapp}?text=` +
-                encodeURIComponent(
-                    message
-                );
-
-
-            window.open(
-                url,
-                "_blank"
-            );
-
-        }
-    );
-
-
-/* =====================================================
-   CONTADORES
-===================================================== */
-
-function updateCounters() {
+function updateCart() {
 
     cartCount.textContent =
         cart.length;
 
 
-    favoriteCount.textContent =
-        favorites.length;
+    cartItems.innerHTML = "";
+
+
+    if (cart.length === 0) {
+
+        cartItems.innerHTML = `
+            <div class="cart-empty">
+                🛒
+                <br><br>
+                Seu carrinho está vazio.
+            </div>
+        `;
+
+        cartTotal.textContent =
+            formatPrice(0);
+
+        return;
+
+    }
+
+
+    let total = 0;
+
+
+    cart.forEach(product => {
+
+        total += product.price;
+
+
+        const item =
+            document.createElement("div");
+
+        item.className = "cart-item";
+
+
+        item.innerHTML = `
+
+            <div class="cart-item-symbol">
+                ${product.symbol}
+            </div>
+
+            <div class="cart-item-info">
+
+                <strong>
+                    ${escapeHTML(product.title)}
+                </strong>
+
+                <span>
+                    ${formatPrice(product.price)}
+                </span>
+
+            </div>
+
+            <button
+                class="cart-remove"
+                onclick="removeFromCart(${product.id})"
+            >
+                ×
+            </button>
+
+        `;
+
+
+        cartItems.appendChild(item);
+
+    });
+
+
+    cartTotal.textContent =
+        formatPrice(total);
 
 }
 
 
-/* =====================================================
-   CRIADORES
-===================================================== */
+/* =========================================================
+   ABRIR / FECHAR CARRINHO
+   ========================================================= */
 
-function renderCreators() {
+function openCart() {
 
-    creatorGrid.innerHTML = "";
+    cartDrawer.classList.add("active");
 
+    cartBackdrop.classList.add("active");
 
-    creators.forEach(
-        creator => {
-
-            const card =
-                document.createElement(
-                    "div"
-                );
+}
 
 
-            card.className =
-                "creator-card";
+function closeCart() {
+
+    cartDrawer.classList.remove("active");
+
+    cartBackdrop.classList.remove("active");
+
+}
 
 
-            card.innerHTML = `
-
-                <div class="creator-avatar">
-                    ${creator.icon}
-                </div>
-
-                <h3>
-                    ${creator.name}
-                </h3>
-
-                <div class="creator-role">
-                    ${creator.role}
-                </div>
-
-                <div class="creator-location">
-                    📍 ${creator.location}
-                </div>
-
-                <button
-                    onclick="showToast('Perfil do criador em desenvolvimento.')"
-                >
-                    Ver perfil
-                </button>
-
-            `;
+document
+    .getElementById("openCart")
+    .addEventListener("click", openCart);
 
 
-            creatorGrid.appendChild(
-                card
+document
+    .getElementById("closeCart")
+    .addEventListener("click", closeCart);
+
+
+cartBackdrop.addEventListener(
+    "click",
+    closeCart
+);
+
+
+/* =========================================================
+   CHECKOUT DEMONSTRATIVO
+   ========================================================= */
+
+document
+    .getElementById("checkoutButton")
+    .addEventListener("click", () => {
+
+        if (cart.length === 0) {
+
+            alert(
+                "Adicione pelo menos um asset ao carrinho."
             );
 
+            return;
         }
-    );
-
-}
 
 
-/* =====================================================
-   LEAFLET
-===================================================== */
-
-function initializeMap() {
-
-    const mapElement =
-        document.getElementById(
-            "map"
+        alert(
+            "Checkout demonstrativo.\n\n" +
+            "Em uma versão real, esta etapa poderá integrar " +
+            "PIX, cartão, boleto e entrega automática dos arquivos."
         );
 
+    });
 
-    if (!mapElement) return;
+
+/* =========================================================
+   MAPA LEAFLET
+   ========================================================= */
+
+function initMap() {
+
+    const mapElement =
+        document.getElementById("map");
+
+
+    if (!mapElement) {
+        return;
+    }
 
 
     /*
-        Coordenadas aproximadas de cidades.
-        Não são endereços pessoais.
+       Verifica se o Leaflet carregou.
     */
 
-    const locations = [
+    if (typeof L === "undefined") {
+
+        mapElement.innerHTML = `
+            <div style="
+                height:100%;
+                display:grid;
+                place-items:center;
+                padding:30px;
+                text-align:center;
+                color:#8d96a8;
+                background:#101721;
+            ">
+                <div>
+                    <strong style="color:white;">
+                        Mapa indisponível
+                    </strong>
+
+                    <br><br>
+
+                    O Leaflet não foi carregado.
+                    Verifique sua conexão com a internet.
+                </div>
+            </div>
+        `;
+
+        return;
+    }
+
+
+    /*
+       Coordenadas aproximadas de cidades.
+       Não são endereços exatos.
+    */
+
+    const creators = [
 
         {
-            name: "Arcoverde",
-            state: "PE",
-            lat: -8.4189,
-            lng: -37.0561,
-            assets: 8
+            name: "Lucas Voice",
+            city: "Recife - PE",
+            position: [-8.0476, -34.8770]
         },
 
         {
-            name: "Recife",
-            state: "PE",
-            lat: -8.0476,
-            lng: -34.8770,
-            assets: 15
+            name: "Studio Nordeste",
+            city: "Arcoverde - PE",
+            position: [-8.4189, -37.0539]
         },
 
         {
-            name: "São Paulo",
-            state: "SP",
-            lat: -23.5505,
-            lng: -46.6333,
-            assets: 24
+            name: "Ana Voice",
+            city: "Caruaru - PE",
+            position: [-8.2830, -35.9761]
         },
 
         {
-            name: "Rio de Janeiro",
-            state: "RJ",
-            lat: -22.9068,
-            lng: -43.1729,
-            assets: 18
-        },
-
-        {
-            name: "Belo Horizonte",
-            state: "MG",
-            lat: -19.9167,
-            lng: -43.9345,
-            assets: 11
+            name: "Cyber Voice",
+            city: "São Paulo - SP",
+            position: [-23.5505, -46.6333]
         }
 
     ];
 
 
-    /*
-        Inicializa o mapa.
-    */
-
     const map =
-        L.map(
-            mapElement,
-            {
-                zoomControl: true
-            }
+        L.map("map", {
+            scrollWheelZoom: false
+        }).setView(
+            [-12.5, -38.5],
+            5
         );
 
 
     /*
-        OpenStreetMap.
+       OpenStreetMap
     */
 
     L.tileLayer(
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         {
             maxZoom: 19,
+
             attribution:
-                '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors'
         }
     ).addTo(map);
 
 
     /*
-        Cria os marcadores.
+       Marcadores
     */
 
-    const bounds = [];
+    creators.forEach(creator => {
+
+        const marker =
+            L.marker(creator.position)
+                .addTo(map);
 
 
-    locations.forEach(
-        location => {
+        marker.bindPopup(`
 
-            const marker =
-                L.marker([
-                    location.lat,
-                    location.lng
-                ]).addTo(map);
-
-
-            marker.bindPopup(`
+            <div style="
+                min-width:150px;
+                color:#111;
+            ">
 
                 <strong>
-                    ${location.name} - ${location.state}
+                    ${escapeHTML(creator.name)}
                 </strong>
-
-                <br><br>
-
-                🎮 ${location.assets} assets
 
                 <br>
 
-                👤 Criadores disponíveis
+                <small>
+                    ${escapeHTML(creator.city)}
+                </small>
 
-            `);
+                <br><br>
 
+                <span>
+                    🎙️ Vozes
+                    <br>
+                    🎭 Dublagem
+                    <br>
+                    🎧 Áudios
+                </span>
 
-            bounds.push([
-                location.lat,
-                location.lng
-            ]);
+            </div>
 
-        }
-    );
+        `);
+
+    });
 
 
     /*
-        Ajusta o mapa para mostrar todos
-        os marcadores.
+       Corrige o problema clássico de
+       mapa aparecer cortado/cinza.
     */
 
-    if (
-        bounds.length > 0
-    ) {
+    setTimeout(() => {
 
-        map.fitBounds(
-            bounds,
-            {
-                padding: [30,30]
-            }
-        );
+        map.invalidateSize();
+
+    }, 300);
+
+}
+
+
+/* =========================================================
+   INICIALIZAÇÃO
+   ========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        renderProducts();
+
+        updateCart();
+
+        initMap();
 
     }
-
-
-    /*
-        Corrige mapas que ficam
-        parcialmente cinza quando
-        carregados dentro de elementos
-        dinâmicos.
-    */
-
-    setTimeout(
-        () => {
-
-            map.invalidateSize();
-
-        },
-        300
-    );
-
-}
-
-
-/* =====================================================
-   BOTÃO CRIADOR
-===================================================== */
-
-document
-    .getElementById(
-        "creatorButton"
-    )
-    .addEventListener(
-        "click",
-        () => {
-
-            showToast(
-                "🚀 Cadastro de criadores em breve."
-            );
-
-        }
-    );
-
-
-/* =====================================================
-   MENU MOBILE
-===================================================== */
-
-document
-    .getElementById(
-        "mobileMenu"
-    )
-    .addEventListener(
-        "click",
-        () => {
-
-            document
-                .getElementById(
-                    "mobileNav"
-                )
-                .classList.toggle(
-                    "active"
-                );
-
-        }
-    );
-
-
-document
-    .querySelectorAll(
-        "#mobileNav a"
-    )
-    .forEach(
-        link => {
-
-            link.addEventListener(
-                "click",
-                () => {
-
-                    document
-                        .getElementById(
-                            "mobileNav"
-                        )
-                        .classList.remove(
-                            "active"
-                        );
-
-                }
-            );
-
-        }
-    );
-
-
-/* =====================================================
-   TOAST
-===================================================== */
-
-let toastTimer;
-
-
-function showToast(message) {
-
-    toast.textContent =
-        message;
-
-
-    toast.classList.add(
-        "show"
-    );
-
-
-    clearTimeout(
-        toastTimer
-    );
-
-
-    toastTimer =
-        setTimeout(
-            () => {
-
-                toast.classList.remove(
-                    "show"
-                );
-
-            },
-            2500
-        );
-
-}
-
-
-/* =====================================================
-   ANO
-===================================================== */
-
-document.getElementById(
-    "year"
-).textContent =
-    new Date().getFullYear();
-
-
-/* =====================================================
-   INICIALIZAÇÃO
-===================================================== */
-
-renderProducts();
-
-renderCreators();
-
-updateCounters();
-
-initializeMap();
+);
