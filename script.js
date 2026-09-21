@@ -1,1806 +1,856 @@
-"use strict";
-
-/* ==========================================
-   ARCOVERDE BUS
-========================================== */
-
-const ARCOVERDE = [-8.4189, -37.0531];
-
-const OSRM =
-    "https://router.project-osrm.org/route/v1/driving";
+/* =====================================================
+   GAMEVOICE HUB
+   SCRIPT.JS
+===================================================== */
 
 
-/* ==========================================
-   DADOS
-========================================== */
+/* =====================================================
+   PRODUTOS DE DEMONSTRAÇÃO
+===================================================== */
 
-const linhas = {
+const products = [
 
-    escolar: {
-
-        "ESC-01": {
-            nome: "Escolar São Cristóvão",
-            velocidade: 30,
-
-            pontos: [
-                {
-                    nome: "São Cristóvão",
-                    tipo: "bairro",
-                    coords: [-8.4095, -37.0600]
-                },
-
-                {
-                    nome: "Parada São Cristóvão",
-                    tipo: "parada",
-                    coords: [-8.4110, -37.0585]
-                },
-
-                {
-                    nome: "Escola Municipal Rotary",
-                    tipo: "escola",
-                    coords: [-8.4128, -37.0570]
-                },
-
-                {
-                    nome: "Escola Municipal Alfabeto",
-                    tipo: "escola",
-                    coords: [-8.4144, -37.0582]
-                },
-
-                {
-                    nome: "Escola Municipal Sebastião Luiz Cavalcanti",
-                    tipo: "escola",
-                    coords: [-8.4160, -37.0558]
-                },
-
-                {
-                    nome: "Parada Centro",
-                    tipo: "parada",
-                    coords: [-8.4170, -37.0555]
-                }
-            ]
-        },
-
-
-        "ESC-02": {
-            nome: "Escolar Boa Vista / Centro",
-            velocidade: 28,
-
-            pontos: [
-                {
-                    nome: "Boa Vista",
-                    tipo: "bairro",
-                    coords: [-8.4070, -37.0650]
-                },
-
-                {
-                    nome: "Parada Boa Vista",
-                    tipo: "parada",
-                    coords: [-8.4085, -37.0635]
-                },
-
-                {
-                    nome: "Escola Municipal Antônio Joaquim da Silva",
-                    tipo: "escola",
-                    coords: [-8.4075, -37.0650]
-                },
-
-                {
-                    nome: "Sucupira",
-                    tipo: "bairro",
-                    coords: [-8.4300, -37.0515]
-                },
-
-                {
-                    nome: "Escola Municipal José Medeiros da Fonseca",
-                    tipo: "escola",
-                    coords: [-8.4305, -37.0510]
-                },
-
-                {
-                    nome: "Centro",
-                    tipo: "bairro",
-                    coords: [-8.4180, -37.0540]
-                },
-
-                {
-                    nome: "Escola Municipal Olga Gueiros Leite",
-                    tipo: "escola",
-                    coords: [-8.4173, -37.0550]
-                }
-            ]
-        },
-
-
-        "ESC-03": {
-            nome: "Escolar Tamboril",
-            velocidade: 27,
-
-            pontos: [
-                {
-                    nome: "Centro",
-                    tipo: "bairro",
-                    coords: [-8.4180, -37.0540]
-                },
-
-                {
-                    nome: "Parada Centro",
-                    tipo: "parada",
-                    coords: [-8.4170, -37.0550]
-                },
-
-                {
-                    nome: "Tamboril",
-                    tipo: "bairro",
-                    coords: [-8.4260, -37.0465]
-                },
-
-                {
-                    nome: "Escola Municipal Gumercindo Cavalcanti",
-                    tipo: "escola",
-                    coords: [-8.4260, -37.0460]
-                },
-
-                {
-                    nome: "Escola Municipal Antônio Costa Leitão",
-                    tipo: "escola",
-                    coords: [-8.4245, -37.0448]
-                }
-            ]
-        }
-
+    {
+        id: 1,
+        title: "Voz de Soldado Brasileiro",
+        category: "voz",
+        categoryName: "Voz / Dublagem",
+        icon: "🎙️",
+        price: 19.90,
+        description:
+            "Pacote de falas para personagem militar ou policial em jogos.",
+        audio: null
     },
 
+    {
+        id: 2,
+        title: "Voz de NPC — Jovem",
+        category: "voz",
+        categoryName: "Voz / Dublagem",
+        icon: "🗣️",
+        price: 14.90,
+        description:
+            "Voz natural para diálogos de personagens jovens.",
+        audio: null
+    },
 
-    publico: {
+    {
+        id: 3,
+        title: "NPC — Perfil Masculino",
+        category: "foto",
+        categoryName: "Foto / Personagem",
+        icon: "👨",
+        price: 24.90,
+        description:
+            "Pacote demonstrativo de fotografias para criação visual de personagem.",
+        audio: null
+    },
 
-        "PUB-01": {
-            nome: "Centro → São Cristóvão",
-            velocidade: 35,
+    {
+        id: 4,
+        title: "NPC — Perfil Feminino",
+        category: "foto",
+        categoryName: "Foto / Personagem",
+        icon: "👩",
+        price: 24.90,
+        description:
+            "Fotos de referência para criação de personagens de games.",
+        audio: null
+    },
 
-            pontos: [
-                {
-                    nome: "Centro",
-                    tipo: "bairro",
-                    coords: [-8.4180, -37.0540]
-                },
+    {
+        id: 5,
+        title: "Sons de Cidade",
+        category: "audio",
+        categoryName: "Sound Effects",
+        icon: "🌆",
+        price: 12.90,
+        description:
+            "Ambiente urbano para mapas e cenários de jogos.",
+        audio: null
+    },
 
-                {
-                    nome: "Terminal Centro",
-                    tipo: "parada",
-                    coords: [-8.4170, -37.0550]
-                },
+    {
+        id: 6,
+        title: "Pacote de Passos",
+        category: "audio",
+        categoryName: "Sound Effects",
+        icon: "👟",
+        price: 9.90,
+        description:
+            "Efeitos sonoros de passos para personagens.",
+        audio: null
+    },
 
-                {
-                    nome: "São Geraldo",
-                    tipo: "bairro",
-                    coords: [-8.4145, -37.0585]
-                },
+    {
+        id: 7,
+        title: "Voz de Narrador",
+        category: "voz",
+        categoryName: "Voz / Dublagem",
+        icon: "🎧",
+        price: 29.90,
+        description:
+            "Voz para introduções, trailers e narrativas.",
+        audio: null
+    },
 
-                {
-                    nome: "Parada São Geraldo",
-                    tipo: "parada",
-                    coords: [-8.4140, -37.0595]
-                },
+    {
+        id: 8,
+        title: "Ambiente Floresta",
+        category: "audio",
+        categoryName: "Sound Effects",
+        icon: "🌲",
+        price: 16.90,
+        description:
+            "Sons ambientes de floresta para jogos de aventura e sobrevivência.",
+        audio: null
+    },
 
-                {
-                    nome: "São Cristóvão",
-                    tipo: "bairro",
-                    coords: [-8.4095, -37.0600]
-                },
-
-                {
-                    nome: "Parada São Cristóvão",
-                    tipo: "parada",
-                    coords: [-8.4110, -37.0585]
-                }
-            ]
-        },
-
-
-        "PUB-02": {
-            nome: "Centro → Tamboril",
-            velocidade: 32,
-
-            pontos: [
-                {
-                    nome: "Centro",
-                    tipo: "bairro",
-                    coords: [-8.4180, -37.0540]
-                },
-
-                {
-                    nome: "Parada Centro",
-                    tipo: "parada",
-                    coords: [-8.4170, -37.0550]
-                },
-
-                {
-                    nome: "Tamboril",
-                    tipo: "bairro",
-                    coords: [-8.4260, -37.0465]
-                },
-
-                {
-                    nome: "Parada Tamboril",
-                    tipo: "parada",
-                    coords: [-8.4250, -37.0460]
-                }
-            ]
-        },
-
-
-        "PUB-03": {
-            nome: "Boa Vista → Centro → Sucupira",
-            velocidade: 30,
-
-            pontos: [
-                {
-                    nome: "Boa Vista",
-                    tipo: "bairro",
-                    coords: [-8.4070, -37.0650]
-                },
-
-                {
-                    nome: "Parada Boa Vista",
-                    tipo: "parada",
-                    coords: [-8.4085, -37.0635]
-                },
-
-                {
-                    nome: "Centro",
-                    tipo: "bairro",
-                    coords: [-8.4180, -37.0540]
-                },
-
-                {
-                    nome: "Parada Centro",
-                    tipo: "parada",
-                    coords: [-8.4170, -37.0550]
-                },
-
-                {
-                    nome: "Sucupira",
-                    tipo: "bairro",
-                    coords: [-8.4300, -37.0515]
-                },
-
-                {
-                    nome: "Parada Sucupira",
-                    tipo: "parada",
-                    coords: [-8.4290, -37.0510]
-                }
-            ]
-        },
-
-
-        "PUB-04": {
-            nome: "Centro → Boa Vista",
-            velocidade: 31,
-
-            pontos: [
-                {
-                    nome: "Centro",
-                    tipo: "bairro",
-                    coords: [-8.4180, -37.0540]
-                },
-
-                {
-                    nome: "Terminal Centro",
-                    tipo: "parada",
-                    coords: [-8.4170, -37.0550]
-                },
-
-                {
-                    nome: "Boa Vista",
-                    tipo: "bairro",
-                    coords: [-8.4070, -37.0650]
-                },
-
-                {
-                    nome: "Parada Boa Vista",
-                    tipo: "parada",
-                    coords: [-8.4085, -37.0635]
-                }
-            ]
-        }
-
+    {
+        id: 9,
+        title: "Pack Personagem Completo",
+        category: "foto",
+        categoryName: "Personagem",
+        icon: "🎭",
+        price: 49.90,
+        description:
+            "Pacote demonstrativo com fotos e referências para um personagem.",
+        audio: null
     }
 
-};
+];
 
 
-/* ==========================================
-   VARIÁVEIS
-========================================== */
+/* =====================================================
+   ESTADO
+===================================================== */
 
-let map = null;
+let currentCategory = "todos";
 
-let bus = null;
+let cart = JSON.parse(
+    localStorage.getItem("gamevoiceCart")
+) || [];
 
-let route = null;
-
-let markers = [];
-
-let routePoints = [];
-
-let positionIndex = 0;
-
-let timer = null;
-
-let running = true;
-
-let currentType = "escolar";
-
-let currentLine = null;
+let selectedProduct = null;
 
 
-/* ==========================================
-   INICIAR
-========================================== */
+/* =====================================================
+   ELEMENTOS
+===================================================== */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    init
-);
+const productsGrid =
+    document.getElementById("productsGrid");
+
+const searchInput =
+    document.getElementById("searchInput");
+
+const noResults =
+    document.getElementById("noResults");
+
+const cartCount =
+    document.getElementById("cartCount");
+
+const cartModal =
+    document.getElementById("cartModal");
+
+const productModal =
+    document.getElementById("productModal");
+
+const cartItems =
+    document.getElementById("cartItems");
+
+const cartEmpty =
+    document.getElementById("cartEmpty");
+
+const cartTotal =
+    document.getElementById("cartTotal");
+
+const toast =
+    document.getElementById("toast");
 
 
-function init() {
+/* =====================================================
+   FORMATAÇÃO DE PREÇO
+===================================================== */
 
-    if (
-        typeof L === "undefined"
-    ) {
+function formatPrice(value) {
 
-        alert(
-            "Erro: o Leaflet não foi carregado."
-        );
+    return value.toLocaleString(
+        "pt-BR",
+        {
+            style: "currency",
+            currency: "BRL"
+        }
+    );
+
+}
+
+
+/* =====================================================
+   MOSTRAR PRODUTOS
+===================================================== */
+
+function renderProducts() {
+
+    const search =
+        searchInput.value
+            .toLowerCase()
+            .trim();
+
+
+    const filtered =
+        products.filter(product => {
+
+            const categoryMatch =
+                currentCategory === "todos" ||
+                product.category === currentCategory;
+
+
+            const searchMatch =
+                product.title
+                    .toLowerCase()
+                    .includes(search)
+                ||
+                product.description
+                    .toLowerCase()
+                    .includes(search);
+
+
+            return categoryMatch && searchMatch;
+
+        });
+
+
+    productsGrid.innerHTML = "";
+
+
+    if (filtered.length === 0) {
+
+        noResults.style.display = "block";
 
         return;
 
     }
 
 
-    createMap();
-
-    createBus();
-
-    setupEvents();
-
-    updateLines();
-
-}
+    noResults.style.display = "none";
 
 
-/* ==========================================
-   MAPA
-========================================== */
+    filtered.forEach(product => {
 
-function createMap() {
+        const card =
+            document.createElement("article");
 
-    map = L.map(
-        "map"
-    ).setView(
-        ARCOVERDE,
-        14
-    );
+        card.className = "product-card";
 
 
-    L.tileLayer(
-        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        {
-            maxZoom: 19,
+        card.innerHTML = `
 
-            attribution:
-                "&copy; OpenStreetMap contributors"
-        }
-    ).addTo(map);
+            <div class="product-image">
 
-}
+                <span class="product-type">
+                    ${product.categoryName}
+                </span>
 
+                ${product.icon}
 
-/* ==========================================
-   ÔNIBUS
-========================================== */
-
-function createBus() {
-
-    bus = L.marker(
-        ARCOVERDE,
-        {
-            icon: busIcon(
-                currentType
-            ),
-            zIndexOffset: 1000
-        }
-    ).addTo(map);
+            </div>
 
 
-    bus.bindPopup(
-        "<strong>🚌 Ônibus</strong><br>" +
-        "Simulação acadêmica"
-    );
+            <div class="product-content">
 
-}
+                <h3>
+                    ${product.title}
+                </h3>
 
-
-function busIcon(type) {
-
-    const color =
-        type === "escolar"
-            ? "#ff7900"
-            : "#008cff";
+                <p>
+                    ${product.description}
+                </p>
 
 
-    return L.divIcon({
+                <div class="product-bottom">
 
-        className: "",
+                    <strong class="price">
+                        ${formatPrice(product.price)}
+                    </strong>
 
-        html:
-            `<div class="bus-icon"
-                  style="background:${color}">
-                🚌
-             </div>`,
 
-        iconSize: [
-            44,
-            44
-        ],
+                    <div class="product-actions">
 
-        iconAnchor: [
-            22,
-            22
-        ]
+                        <button
+                            class="view-button"
+                            onclick="openProduct(${product.id})"
+                        >
+                            VER
+                        </button>
+
+
+                        <button
+                            class="add-button"
+                            onclick="addToCart(${product.id})"
+                        >
+                            + 🛒
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        productsGrid.appendChild(card);
 
     });
 
 }
 
 
-/* ==========================================
-   EVENTOS
-========================================== */
+/* =====================================================
+   CATEGORIAS
+===================================================== */
 
-function setupEvents() {
+document
+    .querySelectorAll(".category-card")
+    .forEach(button => {
 
-    document
-        .getElementById(
-            "btnEscolar"
-        )
-        .addEventListener(
+        button.addEventListener(
             "click",
-            () => changeType("escolar")
-        );
+            () => {
 
-
-    document
-        .getElementById(
-            "btnPublico"
-        )
-        .addEventListener(
-            "click",
-            () => changeType("publico")
-        );
-
-
-    document
-        .getElementById(
-            "lineSelect"
-        )
-        .addEventListener(
-            "change",
-            event => {
-
-                loadLine(
-                    event.target.value
-                );
-
-            }
-        );
-
-
-    document
-        .getElementById(
-            "centerBus"
-        )
-        .addEventListener(
-            "click",
-            centerBus
-        );
-
-
-    document
-        .getElementById(
-            "fitRoute"
-        )
-        .addEventListener(
-            "click",
-            fitRoute
-        );
-
-
-    document
-        .getElementById(
-            "resetView"
-        )
-        .addEventListener(
-            "click",
-            resetMap
-        );
-
-
-    document
-        .getElementById(
-            "toggleSimulation"
-        )
-        .addEventListener(
-            "click",
-            toggleSimulation
-        );
-
-
-    document
-        .getElementById(
-            "presentationBtn"
-        )
-        .addEventListener(
-            "click",
-            () =>
-                openModal(
-                    "presentationModal"
-                )
-        );
-
-
-    document
-        .getElementById(
-            "aboutBtn"
-        )
-        .addEventListener(
-            "click",
-            () =>
-                openModal(
-                    "aboutModal"
-                )
-        );
-
-
-    document
-        .querySelectorAll(
-            "[data-close]"
-        )
-        .forEach(
-            button => {
-
-                button.addEventListener(
-                    "click",
-                    () =>
-                        closeModal(
-                            button.dataset.close
-                        )
-                );
-
-            }
-        );
-
-
-    document
-        .getElementById(
-            "prevSlide"
-        )
-        .addEventListener(
-            "click",
-            previousSlide
-        );
-
-
-    document
-        .getElementById(
-            "nextSlide"
-        )
-        .addEventListener(
-            "click",
-            nextSlide
-        );
-
-}
-
-
-/* ==========================================
-   TROCAR TRANSPORTE
-========================================== */
-
-function changeType(type) {
-
-    currentType = type;
-
-
-    document
-        .getElementById(
-            "btnEscolar"
-        )
-        .classList.toggle(
-            "active",
-            type === "escolar"
-        );
-
-
-    document
-        .getElementById(
-            "btnPublico"
-        )
-        .classList.toggle(
-            "active",
-            type === "publico"
-        );
-
-
-    bus.setIcon(
-        busIcon(type)
-    );
-
-
-    updateLines();
-
-}
-
-
-/* ==========================================
-   ATUALIZAR LINHAS
-========================================== */
-
-function updateLines() {
-
-    const select =
-        document.getElementById(
-            "lineSelect"
-        );
-
-
-    const data =
-        linhas[currentType];
-
-
-    select.innerHTML = "";
-
-
-    Object.keys(data)
-        .forEach(
-            id => {
-
-                const option =
-                    document.createElement(
-                        "option"
+                document
+                    .querySelectorAll(".category-card")
+                    .forEach(btn =>
+                        btn.classList.remove("active")
                     );
 
 
-                option.value = id;
-
-                option.textContent =
-                    `${id} — ${data[id].nome}`;
+                button.classList.add("active");
 
 
-                select.appendChild(
-                    option
-                );
+                currentCategory =
+                    button.dataset.category;
+
+
+                renderProducts();
 
             }
         );
 
-
-    const first =
-        Object.keys(data)[0];
+    });
 
 
-    loadLine(first);
+/* =====================================================
+   PESQUISA
+===================================================== */
 
-}
-
-
-/* ==========================================
-   CARREGAR LINHA
-========================================== */
-
-async function loadLine(id) {
-
-    stopSimulation();
-
-    clearMapObjects();
+searchInput.addEventListener(
+    "input",
+    renderProducts
+);
 
 
-    currentLine =
-        linhas[currentType][id];
+/* =====================================================
+   ABRIR PRODUTO
+===================================================== */
 
+function openProduct(id) {
 
-    if (!currentLine) {
-
-        return;
-
-    }
-
-
-    positionIndex = 0;
-
-
-    updateInterface(
-        id,
-        currentLine
-    );
-
-
-    drawPoints(
-        currentLine.pontos
-    );
-
-
-    updateList(
-        currentLine.pontos
-    );
-
-
-    bus.setIcon(
-        busIcon(currentType)
-    );
-
-
-    bus.setLatLng(
-        currentLine.pontos[0].coords
-    );
-
-
-    routePoints =
-        await getRoute(
-            currentLine.pontos
+    const product =
+        products.find(
+            item => item.id === id
         );
 
 
-    drawRoute(
-        routePoints
-    );
+    if (!product) return;
 
 
-    running = true;
+    selectedProduct = product;
 
 
     document.getElementById(
-        "toggleSimulation"
+        "modalImage"
+    ).textContent = product.icon;
+
+
+    document.getElementById(
+        "modalCategory"
     ).textContent =
-        "⏸️ Pausar";
+        product.categoryName;
 
 
-    startSimulation();
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        product.title;
 
-}
 
+    document.getElementById(
+        "modalDescription"
+    ).textContent =
+        product.description;
 
-/* ==========================================
-   ROTA OSRM
-========================================== */
 
-async function getRoute(points) {
+    document.getElementById(
+        "modalPrice"
+    ).textContent =
+        formatPrice(product.price);
 
-    if (
-        points.length < 2
-    ) {
 
-        return points.map(
-            p => p.coords
-        );
-
-    }
-
-
-    const coords =
-        points
-            .map(
-                p =>
-                    `${p.coords[1]},${p.coords[0]}`
-            )
-            .join(";");
-
-
-    const url =
-        `${OSRM}/${coords}` +
-        "?overview=full&geometries=geojson";
-
-
-    try {
-
-        const response =
-            await fetch(url);
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                "OSRM HTTP " +
-                response.status
-            );
-
-        }
-
-
-        const data =
-            await response.json();
-
-
-        if (
-            !data.routes ||
-            data.routes.length === 0
-        ) {
-
-            throw new Error(
-                "Nenhuma rota encontrada"
-            );
-
-        }
-
-
-        return data.routes[0]
-            .geometry
-            .coordinates
-            .map(
-                c => [
-                    c[1],
-                    c[0]
-                ]
-            );
-
-    } catch (error) {
-
-        console.warn(
-            "OSRM indisponível:",
-            error
-        );
-
-
-        /*
-         * FALLBACK
-         *
-         * Se o serviço de rota falhar,
-         * o sistema continua funcionando.
-         */
-
-        return points.map(
-            p => p.coords
-        );
-
-    }
-
-}
-
-
-/* ==========================================
-   DESENHAR ROTA
-========================================== */
-
-function drawRoute(points) {
-
-    if (!points.length) {
-
-        return;
-
-    }
-
-
-    const color =
-        currentType === "escolar"
-            ? "#ff7900"
-            : "#008cff";
-
-
-    route =
-        L.polyline(
-            points,
-            {
-                color: color,
-                weight: 6,
-                opacity: .85
-            }
-        ).addTo(map);
-
-
-    fitRoute();
-
-}
-
-
-/* ==========================================
-   PONTOS
-========================================== */
-
-function drawPoints(points) {
-
-    points.forEach(
-        (point, index) => {
-
-            const emoji =
-                point.type === "escola"
-                    ? "🏫"
-                    : point.type === "bairro"
-                        ? "🏘️"
-                        : "📍";
-
-
-            const marker =
-                L.marker(
-                    point.coords,
-                    {
-                        icon:
-                            L.divIcon({
-
-                                className:
-                                    "",
-
-                                html:
-                                    `<div class="point-icon">
-                                        ${emoji}
-                                     </div>`,
-
-                                iconSize:
-                                    [28, 28],
-
-                                iconAnchor:
-                                    [14, 14]
-
-                            })
-                    }
-                ).addTo(map);
-
-
-            marker.bindPopup(
-                `
-                <strong>
-                    ${emoji}
-                    ${escapeHTML(point.nome)}
-                </strong>
-                <br>
-                <small>
-                    ${pointType(point.type)}
-                </small>
-                `
-            );
-
-
-            marker.on(
-                "click",
-                () => {
-
-                    map.flyTo(
-                        point.coords,
-                        16
-                    );
-
-                }
-            );
-
-
-            markers.push(
-                marker
-            );
-
-        }
-    );
-
-}
-
-
-/* ==========================================
-   LISTA
-========================================== */
-
-function updateList(points) {
-
-    const list =
+    const player =
         document.getElementById(
-            "stopList"
+            "modalPlayer"
         );
 
 
-    list.innerHTML = "";
+    if (product.audio) {
 
+        player.innerHTML = `
 
-    points.forEach(
-        (point, index) => {
+            <audio controls>
 
-            const item =
-                document.createElement(
-                    "div"
-                );
+                <source
+                    src="${product.audio}"
+                    type="audio/mpeg"
+                >
 
+                Seu navegador não suporta áudio.
 
-            item.className =
-                "stop-item";
+            </audio>
 
-
-            item.dataset.index =
-                index;
-
-
-            const emoji =
-                point.type === "escola"
-                    ? "🏫"
-                    : point.type === "bairro"
-                        ? "🏘️"
-                        : "📍";
-
-
-            item.innerHTML = `
-                <span class="number">
-                    ${index + 1}
-                </span>
-
-                <div>
-                    <strong>
-                        ${emoji}
-                        ${escapeHTML(point.nome)}
-                    </strong>
-
-                    <small>
-                        ${pointType(point.type)}
-                    </small>
-                </div>
-            `;
-
-
-            item.addEventListener(
-                "click",
-                () => {
-
-                    map.flyTo(
-                        point.coords,
-                        16
-                    );
-
-
-                    markers[index]
-                        ?.openPopup();
-
-                }
-            );
-
-
-            list.appendChild(
-                item
-            );
-
-        }
-    );
-
-}
-
-
-/* ==========================================
-   INTERFACE
-========================================== */
-
-function updateInterface(
-    id,
-    line
-) {
-
-    const escolar =
-        currentType === "escolar";
-
-
-    document.getElementById(
-        "lineBadge"
-    ).textContent = id;
-
-
-    document.getElementById(
-        "lineBadge"
-    ).className =
-        "badge " +
-        (escolar
-            ? "escolar"
-            : "publico");
-
-
-    document.getElementById(
-        "routeName"
-    ).textContent =
-        line.nome;
-
-
-    document.getElementById(
-        "speed"
-    ).textContent =
-        line.velocidade;
-
-
-    document.getElementById(
-        "routeMode"
-    ).textContent =
-        escolar
-            ? "🏫 Transporte Escolar"
-            : "🚌 Transporte Público";
-
-
-    document.getElementById(
-        "routeMode"
-    ).className =
-        "mode " +
-        (escolar
-            ? "escolar-mode"
-            : "publico-mode");
-
-
-    document.getElementById(
-        "overlayLineName"
-    ).textContent =
-        id;
-
-
-    document.getElementById(
-        "overlayLineType"
-    ).textContent =
-        escolar
-            ? "🏫 Transporte Escolar"
-            : "🚌 Transporte Público";
-
-
-    document.getElementById(
-        "pointListTitle"
-    ).textContent =
-        escolar
-            ? "🏫 Escolas e paradas"
-            : "🏘️ Bairros e paradas";
-
-
-    const stops =
-        line.pontos.filter(
-            p =>
-                p.type === "parada"
-        ).length;
-
-
-    const places =
-        line.pontos.filter(
-            p =>
-                p.type !== "parada"
-        ).length;
-
-
-    document.getElementById(
-        "totalLines"
-    ).textContent =
-        Object.keys(
-            linhas[currentType]
-        ).length;
-
-
-    document.getElementById(
-        "totalStops"
-    ).textContent =
-        stops;
-
-
-    document.getElementById(
-        "totalPlaces"
-    ).textContent =
-        places;
-
-}
-
-
-/* ==========================================
-   SIMULAÇÃO
-========================================== */
-
-function startSimulation() {
-
-    stopSimulation();
-
-
-    running = true;
-
-
-    function move() {
-
-        if (!running) {
-
-            return;
-
-        }
-
-
-        if (
-            !routePoints.length
-        ) {
-
-            return;
-
-        }
-
-
-        const position =
-            routePoints[
-                positionIndex
-            ];
-
-
-        bus.setLatLng(
-            position
-        );
-
-
-        updateBusInfo(
-            position
-        );
-
-
-        positionIndex++;
-
-
-        if (
-            positionIndex >=
-            routePoints.length
-        ) {
-
-            positionIndex = 0;
-
-        }
-
-
-        timer =
-            setTimeout(
-                move,
-                100
-            );
-
-    }
-
-
-    move();
-
-}
-
-
-/* ==========================================
-   PARAR
-========================================== */
-
-function stopSimulation() {
-
-    running = false;
-
-
-    if (timer !== null) {
-
-        clearTimeout(
-            timer
-        );
-
-        timer = null;
-
-    }
-
-}
-
-
-/* ==========================================
-   PAUSAR
-========================================== */
-
-function toggleSimulation() {
-
-    if (running) {
-
-        stopSimulation();
-
-
-        document.getElementById(
-            "toggleSimulation"
-        ).textContent =
-            "▶️ Continuar";
-
-
-        document.getElementById(
-            "simulationLabel"
-        ).textContent =
-            "⏸️ Simulação pausada";
+        `;
 
     } else {
 
-        startSimulation();
+        player.innerHTML = `
 
+            <div class="demo-message">
 
-        document.getElementById(
-            "toggleSimulation"
-        ).textContent =
-            "⏸️ Pausar";
+                🎧 Demonstração de áudio
+                ainda não configurada.
 
+            </div>
 
-        document.getElementById(
-            "simulationLabel"
-        ).textContent =
-            "🟢 Simulação ativa";
+        `;
 
     }
+
+
+    productModal.classList.add("active");
 
 }
 
 
-/* ==========================================
-   INFO ÔNIBUS
-========================================== */
+/* =====================================================
+   FECHAR MODAIS
+===================================================== */
 
-function updateBusInfo(position) {
+document
+    .querySelectorAll("[data-close]")
+    .forEach(button => {
 
-    if (
-        !currentLine
-    ) {
+        button.addEventListener(
+            "click",
+            () => {
 
-        return;
+                const modalId =
+                    button.dataset.close;
 
-    }
+                document
+                    .getElementById(modalId)
+                    .classList.remove("active");
+
+            }
+        );
+
+    });
 
 
-    let nearest = 0;
+document
+    .querySelectorAll(".modal-overlay")
+    .forEach(modal => {
 
-    let smallest =
-        Infinity;
-
-
-    currentLine.pontos
-        .forEach(
-            (point, index) => {
-
-                const distance =
-                    distanceMeters(
-                        position,
-                        point.coords
-                    );
-
+        modal.addEventListener(
+            "click",
+            event => {
 
                 if (
-                    distance <
-                    smallest
+                    event.target === modal
                 ) {
 
-                    smallest =
-                        distance;
-
-                    nearest =
-                        index;
+                    modal.classList.remove(
+                        "active"
+                    );
 
                 }
 
             }
         );
 
-
-    const point =
-        currentLine.pontos[
-            nearest
-        ];
+    });
 
 
-    document.getElementById(
-        "nextStop"
-    ).textContent =
-        point.nome;
+/* =====================================================
+   ADICIONAR AO CARRINHO
+===================================================== */
 
+function addToCart(id) {
 
-    document.getElementById(
-        "mapNextStop"
-    ).textContent =
-        point.nome;
-
-
-    document.getElementById(
-        "stopCounter"
-    ).textContent =
-        `${nearest + 1}/${currentLine.pontos.length}`;
-
-
-    document.getElementById(
-        "distance"
-    ).textContent =
-        formatDistance(
-            smallest
+    const product =
+        products.find(
+            item => item.id === id
         );
 
 
-    document
-        .querySelectorAll(
-            ".stop-item"
-        )
-        .forEach(
-            item =>
-                item.classList.remove(
-                    "active"
-                )
+    if (!product) return;
+
+
+    const already =
+        cart.find(
+            item => item.id === id
         );
 
 
-    const active =
-        document.querySelector(
-            `.stop-item[data-index="${nearest}"]`
+    if (already) {
+
+        showToast(
+            "Esse asset já está no carrinho."
         );
-
-
-    if (active) {
-
-        active.classList.add(
-            "active"
-        );
-
-    }
-
-}
-
-
-/* ==========================================
-   DISTÂNCIA
-========================================== */
-
-function distanceMeters(
-    a,
-    b
-) {
-
-    const R =
-        6371000;
-
-
-    const lat1 =
-        a[0] *
-        Math.PI /
-        180;
-
-
-    const lat2 =
-        b[0] *
-        Math.PI /
-        180;
-
-
-    const dLat =
-        (b[0] - a[0]) *
-        Math.PI /
-        180;
-
-
-    const dLon =
-        (b[1] - a[1]) *
-        Math.PI /
-        180;
-
-
-    const x =
-        Math.sin(
-            dLat / 2
-        ) ** 2
-        +
-        Math.cos(lat1)
-        *
-        Math.cos(lat2)
-        *
-        Math.sin(
-            dLon / 2
-        ) ** 2;
-
-
-    return (
-        R *
-        2 *
-        Math.atan2(
-            Math.sqrt(x),
-            Math.sqrt(1 - x)
-        )
-    );
-
-}
-
-
-function formatDistance(
-    meters
-) {
-
-    if (
-        meters < 1000
-    ) {
-
-        return (
-            Math.round(meters) +
-            " m"
-        );
-
-    }
-
-
-    return (
-        (meters / 1000)
-            .toFixed(1) +
-        " km"
-    );
-
-}
-
-
-/* ==========================================
-   MAPA
-========================================== */
-
-function centerBus() {
-
-    if (!bus) {
 
         return;
 
     }
 
 
-    map.flyTo(
-        bus.getLatLng(),
-        16
+    cart.push(product);
+
+
+    saveCart();
+
+
+    updateCart();
+
+
+    showToast(
+        "🎮 Asset adicionado ao carrinho!"
     );
 
 }
 
 
-function fitRoute() {
+/* =====================================================
+   REMOVER DO CARRINHO
+===================================================== */
 
-    if (!route) {
+function removeFromCart(id) {
+
+    cart =
+        cart.filter(
+            item => item.id !== id
+        );
+
+
+    saveCart();
+
+    updateCart();
+
+}
+
+
+/* =====================================================
+   ATUALIZAR CARRINHO
+===================================================== */
+
+function updateCart() {
+
+    cartCount.textContent =
+        cart.length;
+
+
+    cartItems.innerHTML = "";
+
+
+    if (cart.length === 0) {
+
+        cartEmpty.style.display =
+            "block";
+
+        cartTotal.textContent =
+            "R$ 0,00";
 
         return;
 
     }
 
 
-    map.fitBounds(
-        route.getBounds(),
-        {
-            padding: [
-                40,
-                40
-            ]
-        }
+    cartEmpty.style.display =
+        "none";
+
+
+    let total = 0;
+
+
+    cart.forEach(product => {
+
+        total += product.price;
+
+
+        const item =
+            document.createElement("div");
+
+
+        item.className =
+            "cart-item";
+
+
+        item.innerHTML = `
+
+            <div class="cart-item-image">
+
+                ${product.icon}
+
+            </div>
+
+
+            <div class="cart-item-info">
+
+                <strong>
+                    ${product.title}
+                </strong>
+
+                <small>
+                    ${formatPrice(product.price)}
+                </small>
+
+            </div>
+
+
+            <button
+                class="remove-item"
+                onclick="removeFromCart(${product.id})"
+                title="Remover"
+            >
+                ×
+            </button>
+
+        `;
+
+
+        cartItems.appendChild(item);
+
+    });
+
+
+    cartTotal.textContent =
+        formatPrice(total);
+
+}
+
+
+/* =====================================================
+   LOCAL STORAGE
+===================================================== */
+
+function saveCart() {
+
+    localStorage.setItem(
+        "gamevoiceCart",
+        JSON.stringify(cart)
     );
 
 }
 
 
-function resetMap() {
+/* =====================================================
+   ABRIR CARRINHO
+===================================================== */
 
-    map.setView(
-        ARCOVERDE,
-        14
-    );
+document
+    .getElementById("openCart")
+    .addEventListener(
+        "click",
+        () => {
 
-}
-
-
-/* ==========================================
-   LIMPAR
-========================================== */
-
-function clearMapObjects() {
-
-    if (route) {
-
-        map.removeLayer(
-            route
-        );
-
-        route = null;
-
-    }
-
-
-    markers.forEach(
-        marker => {
-
-            map.removeLayer(
-                marker
+            cartModal.classList.add(
+                "active"
             );
 
         }
     );
 
 
-    markers = [];
+/* =====================================================
+   MODAL ADICIONAR
+===================================================== */
 
-}
+document
+    .getElementById("modalAdd")
+    .addEventListener(
+        "click",
+        () => {
 
-
-/* ==========================================
-   MODAIS
-========================================== */
-
-function openModal(id) {
-
-    document
-        .getElementById(id)
-        .classList.add("show");
-
-}
+            if (!selectedProduct)
+                return;
 
 
-function closeModal(id) {
-
-    document
-        .getElementById(id)
-        .classList.remove("show");
-
-}
+            addToCart(
+                selectedProduct.id
+            );
 
 
-/* ==========================================
-   SLIDES
-========================================== */
-
-let slide = 0;
-
-
-function showSlide() {
-
-    const slides =
-        document.querySelectorAll(
-            ".slide"
-        );
-
-
-    slides.forEach(
-        (item, index) => {
-
-            item.classList.toggle(
-                "active",
-                index === slide
+            productModal.classList.remove(
+                "active"
             );
 
         }
     );
 
 
-    document.getElementById(
-        "slideIndicator"
-    ).textContent =
-        `${slide + 1} / ${slides.length}`;
+/* =====================================================
+   FINALIZAR COMPRA
+===================================================== */
 
-}
+document
+    .getElementById("checkoutButton")
+    .addEventListener(
+        "click",
+        () => {
 
+            if (cart.length === 0) {
 
-function nextSlide() {
+                showToast(
+                    "Seu carrinho está vazio."
+                );
 
-    const slides =
-        document.querySelectorAll(
-            ".slide"
-        );
-
-
-    slide++;
-
-    if (
-        slide >= slides.length
-    ) {
-
-        slide = 0;
-
-    }
-
-
-    showSlide();
-
-}
-
-
-function previousSlide() {
-
-    const slides =
-        document.querySelectorAll(
-            ".slide"
-        );
-
-
-    slide--;
-
-    if (
-        slide < 0
-    ) {
-
-        slide =
-            slides.length - 1;
-
-    }
-
-
-    showSlide();
-
-}
-
-
-/* ==========================================
-   TIPO DO PONTO
-========================================== */
-
-function pointType(type) {
-
-    if (
-        type === "escola"
-    ) {
-
-        return "Escola";
-
-    }
-
-
-    if (
-        type === "bairro"
-    ) {
-
-        return "Bairro";
-
-    }
-
-
-    return "Parada de ônibus";
-
-}
-
-
-/* ==========================================
-   SEGURANÇA HTML
-========================================== */
-
-function escapeHTML(text) {
-
-    const element =
-        document.createElement(
-            "div"
-        );
-
-
-    element.textContent =
-        text;
-
-
-    return element.innerHTML;
-
-}
-
-
-/* ==========================================
-   TECLADO
-========================================== */
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        const presentation =
-            document.getElementById(
-                "presentationModal"
-            );
-
-
-        if (
-            presentation.classList.contains(
-                "show"
-            )
-        ) {
-
-            if (
-                event.key ===
-                "ArrowRight"
-            ) {
-
-                nextSlide();
+                return;
 
             }
 
 
-            if (
-                event.key ===
-                "ArrowLeft"
-            ) {
+            /*
+                PROTÓTIPO
 
-                previousSlide();
+                Aqui futuramente você pode
+                integrar Mercado Pago,
+                Stripe, PagSeguro etc.
+            */
 
-            }
+
+            const items =
+                cart
+                    .map(
+                        item =>
+                            `• ${item.title} — ${formatPrice(item.price)}`
+                    )
+                    .join("\n");
+
+
+            const total =
+                cart.reduce(
+                    (sum, item) =>
+                        sum + item.price,
+                    0
+                );
+
+
+            const message =
+                `Olá! Quero comprar estes assets:\n\n` +
+                `${items}\n\n` +
+                `Total: ${formatPrice(total)}`;
+
+
+            const whatsappNumber =
+                "5587999999999";
+
+
+            const url =
+                "https://wa.me/" +
+                whatsappNumber +
+                "?text=" +
+                encodeURIComponent(message);
+
+
+            window.open(
+                url,
+                "_blank"
+            );
 
         }
+    );
 
-    }
-);
+
+/* =====================================================
+   BOTÃO CRIADOR
+===================================================== */
+
+document
+    .getElementById("creatorButton")
+    .addEventListener(
+        "click",
+        () => {
+
+            showToast(
+                "🚀 Área de criadores em desenvolvimento."
+            );
+
+        }
+    );
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+let toastTimeout;
+
+
+function showToast(message) {
+
+    toast.textContent =
+        message;
+
+
+    toast.classList.add(
+        "show"
+    );
+
+
+    clearTimeout(
+        toastTimeout
+    );
+
+
+    toastTimeout =
+        setTimeout(
+            () => {
+
+                toast.classList.remove(
+                    "show"
+                );
+
+            },
+            2500
+        );
+
+}
+
+
+/* =====================================================
+   ANO
+===================================================== */
+
+document.getElementById(
+    "year"
+).textContent =
+    new Date().getFullYear();
+
+
+/* =====================================================
+   INICIALIZAÇÃO
+===================================================== */
+
+renderProducts();
+
+updateCart();
