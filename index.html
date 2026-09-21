@@ -4,11 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Arcoverde Bus</title>
+    <title>GAMEVOICE HUB | Assets para Games</title>
+
+    <meta
+        name="description"
+        content="Marketplace de vozes, fotos e efeitos sonoros licenciados para desenvolvedores de jogos."
+    >
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800&display=swap"
         rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     >
 
     <link rel="stylesheet" href="style.css">
@@ -16,60 +24,168 @@
 
 <body>
 
-<header class="topbar">
+    <!-- ================= HEADER ================= -->
 
-    <div class="logo-area">
-        <div class="logo">🚌</div>
+    <header class="header">
 
-        <div>
-            <h1>Arcoverde Bus</h1>
-            <p>Transporte Inteligente</p>
+        <div class="logo">
+            <span class="logo-icon">🎮</span>
+            <div>
+                <strong>GAMEVOICE</strong>
+                <small>HUB</small>
+            </div>
         </div>
-    </div>
 
-    <div class="top-actions">
+        <nav class="menu">
+            <a href="#inicio">Início</a>
+            <a href="#produtos">Assets</a>
+            <a href="#categorias">Categorias</a>
+            <a href="#como-funciona">Como funciona</a>
+        </nav>
 
-        <button id="presentationBtn">
-            🎓 Apresentação
+        <button class="cart-button" id="openCart">
+            🛒
+            <span>Carrinho</span>
+            <b id="cartCount">0</b>
         </button>
 
-        <button id="aboutBtn">
-            ℹ️ Sobre
-        </button>
-
-    </div>
-
-</header>
+    </header>
 
 
-<main class="app">
+    <!-- ================= HERO ================= -->
 
-    <aside class="sidebar">
+    <main>
 
-        <section class="panel">
+        <section class="hero" id="inicio">
 
-            <h3>Tipo de transporte</h3>
+            <div class="hero-content">
 
-            <div class="transport-buttons">
+                <div class="tag">
+                    🎙️ ASSETS PARA DESENVOLVEDORES
+                </div>
+
+                <h1>
+                    Dê <span>voz</span>,
+                    <br>
+                    imagem e som
+                    <br>
+                    ao seu jogo.
+                </h1>
+
+                <p>
+                    Encontre vozes, fotografias e efeitos sonoros
+                    para criar personagens e experiências únicas
+                    nos seus games.
+                </p>
+
+                <div class="hero-buttons">
+
+                    <a href="#produtos" class="primary-button">
+                        EXPLORAR ASSETS
+                    </a>
+
+                    <a href="#como-funciona" class="secondary-button">
+                        COMO FUNCIONA
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="hero-visual">
+
+                <div class="orbit orbit-one"></div>
+                <div class="orbit orbit-two"></div>
+
+                <div class="character-card">
+
+                    <div class="character-image">
+                        <div class="scan"></div>
+                        <span>👤</span>
+                    </div>
+
+                    <div class="character-info">
+                        <small>CHARACTER ASSET</small>
+                        <strong>NPC COLLECTION</strong>
+
+                        <div class="voice-wave">
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= CATEGORIAS ================= -->
+
+        <section class="categories-section" id="categorias">
+
+            <div class="section-title">
+
+                <span>EXPLORE</span>
+
+                <h2>
+                    Escolha seu tipo de asset
+                </h2>
+
+                <p>
+                    Recursos para personagens, ambientes e experiências.
+                </p>
+
+            </div>
+
+
+            <div class="categories">
 
                 <button
-                    id="btnEscolar"
-                    class="transport-btn escolar active"
-                    type="button"
+                    class="category-card active"
+                    data-category="todos"
                 >
-                    🏫
-                    <strong>Escolar</strong>
-                    <small>Escolas</small>
+                    <span>🎮</span>
+                    <strong>Todos</strong>
+                    <small>Ver catálogo</small>
                 </button>
+
 
                 <button
-                    id="btnPublico"
-                    class="transport-btn publico"
-                    type="button"
+                    class="category-card"
+                    data-category="voz"
                 >
-                    🚌
-                    <strong>Público</strong>
-                    <small>Bairros</small>
+                    <span>🎙️</span>
+                    <strong>Vozes</strong>
+                    <small>Dublagem e diálogos</small>
+                </button>
+
+
+                <button
+                    class="category-card"
+                    data-category="foto"
+                >
+                    <span>📸</span>
+                    <strong>Fotos</strong>
+                    <small>Pessoas e personagens</small>
+                </button>
+
+
+                <button
+                    class="category-card"
+                    data-category="audio"
+                >
+                    <span>🔊</span>
+                    <strong>Áudios</strong>
+                    <small>Effects e ambientes</small>
                 </button>
 
             </div>
@@ -77,117 +193,131 @@
         </section>
 
 
-        <section class="panel">
+        <!-- ================= PRODUTOS ================= -->
 
-            <label for="lineSelect">
-                Linha
-            </label>
+        <section class="products-section" id="produtos">
 
-            <select id="lineSelect"></select>
+            <div class="products-header">
 
-            <button
-                id="favoriteBtn"
-                class="favorite-btn"
-                type="button"
+                <div>
+                    <span>MARKETPLACE</span>
+                    <h2>Assets disponíveis</h2>
+                </div>
+
+
+                <div class="search-box">
+
+                    <span>🔎</span>
+
+                    <input
+                        type="search"
+                        id="searchInput"
+                        placeholder="Pesquisar assets..."
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="products-grid"
+                id="productsGrid"
+            ></div>
+
+
+            <div
+                class="no-results"
+                id="noResults"
             >
-                ☆ Favoritar linha
-            </button>
-
-        </section>
-
-
-        <section class="panel">
-
-            <div class="line-info">
-
-                <span id="lineBadge" class="badge escolar">
-                    ESC-01
-                </span>
-
-                <span id="lineStatus">
-                    🟢 Operando
-                </span>
-
-            </div>
-
-            <h2 id="routeName">
-                Carregando...
-            </h2>
-
-            <span id="routeMode" class="mode escolar-mode">
-                🏫 Transporte Escolar
-            </span>
-
-        </section>
-
-
-        <section class="panel">
-
-            <h3>🚌 Ônibus</h3>
-
-            <div class="stats">
-
-                <div>
-                    <span>Velocidade</span>
-                    <strong>
-                        <span id="speed">0</span> km/h
-                    </strong>
-                </div>
-
-                <div>
-                    <span>Ponto</span>
-                    <strong id="stopCounter">
-                        0/0
-                    </strong>
-                </div>
-
-                <div>
-                    <span>Próximo</span>
-                    <strong id="nextStop">
-                        -
-                    </strong>
-                </div>
-
-                <div>
-                    <span>Distância</span>
-                    <strong id="distance">
-                        -
-                    </strong>
-                </div>
-
-            </div>
-
-            <div id="simulationLabel" class="simulation">
-                🟢 Simulação ativa
+                <span>🔎</span>
+                <h3>Nenhum asset encontrado</h3>
+                <p>Tente outra pesquisa ou categoria.</p>
             </div>
 
         </section>
 
 
-        <section class="panel">
+        <!-- ================= COMO FUNCIONA ================= -->
 
-            <h3>📊 Sistema</h3>
+        <section class="how-section" id="como-funciona">
 
-            <div class="dashboard">
+            <div class="section-title">
 
-                <div>
-                    <span>Linhas</span>
-                    <strong id="totalLines">0</strong>
+                <span>PROCESSO</span>
+
+                <h2>Como funciona?</h2>
+
+                <p>
+                    Uma estrutura simples para comprar assets digitais.
+                </p>
+
+            </div>
+
+
+            <div class="steps">
+
+                <div class="step">
+
+                    <div class="step-number">01</div>
+
+                    <div>
+                        <h3>Escolha</h3>
+
+                        <p>
+                            Encontre uma voz, foto ou áudio
+                            para seu projeto.
+                        </p>
+                    </div>
+
                 </div>
 
-                <div>
-                    <span>Ônibus</span>
-                    <strong>1</strong>
+
+                <div class="step">
+
+                    <div class="step-number">02</div>
+
+                    <div>
+                        <h3>Ouça e veja</h3>
+
+                        <p>
+                            Confira a demonstração antes
+                            de adquirir o asset.
+                        </p>
+                    </div>
+
                 </div>
 
-                <div>
-                    <span>Paradas</span>
-                    <strong id="totalStops">0</strong>
+
+                <div class="step">
+
+                    <div class="step-number">03</div>
+
+                    <div>
+                        <h3>Compre</h3>
+
+                        <p>
+                            Adicione os recursos ao carrinho
+                            e finalize a compra.
+                        </p>
+                    </div>
+
                 </div>
 
-                <div>
-                    <span>Locais</span>
-                    <strong id="totalPlaces">0</strong>
+
+                <div class="step">
+
+                    <div class="step-number">04</div>
+
+                    <div>
+                        <h3>Use no projeto</h3>
+
+                        <p>
+                            Utilize o asset de acordo
+                            com a licença adquirida.
+                        </p>
+                    </div>
+
                 </div>
 
             </div>
@@ -195,303 +325,205 @@
         </section>
 
 
-        <section class="panel">
+        <!-- ================= CRIADORES ================= -->
 
-            <h3 id="pointListTitle">
-                🏫 Escolas e paradas
-            </h3>
+        <section class="creator-section">
 
-            <div id="stopList">
-                Carregando...
+            <div>
+
+                <span>PARA PROFISSIONAIS</span>
+
+                <h2>
+                    Você cria.
+                    <br>
+                    Nós ajudamos a vender.
+                </h2>
+
+                <p>
+                    Dubladores, atores, produtores de áudio
+                    e fotógrafos podem disponibilizar seus
+                    trabalhos para desenvolvedores.
+                </p>
+
+                <button class="primary-button" id="creatorButton">
+                    QUERO SER CRIADOR
+                </button>
+
+            </div>
+
+
+            <div class="creator-visual">
+
+                <div class="creator-orb">
+                    🎙️
+                </div>
+
+                <div class="floating-card card-a">
+                    📸 Foto
+                </div>
+
+                <div class="floating-card card-b">
+                    🎙️ Voz
+                </div>
+
+                <div class="floating-card card-c">
+                    🔊 SFX
+                </div>
+
             </div>
 
         </section>
 
-
-        <section class="panel buttons">
-
-            <button
-                id="centerBus"
-                type="button"
-            >
-                🎯 Centralizar ônibus
-            </button>
-
-            <button
-                id="toggleSimulation"
-                type="button"
-            >
-                ⏸️ Pausar
-            </button>
-
-            <button
-                id="fitRoute"
-                type="button"
-            >
-                🗺️ Ver rota
-            </button>
-
-            <button
-                id="resetView"
-                type="button"
-            >
-                🔄 Restaurar mapa
-            </button>
-
-        </section>
+    </main>
 
 
-        <section class="warning">
+    <!-- ================= FOOTER ================= -->
 
-            ⚠️ <strong>Protótipo acadêmico</strong>
+    <footer>
 
-            <p>
-                Os dados e itinerários deste projeto
-                são demonstrativos e não representam
-                rotas oficiais.
-            </p>
-
-        </section>
-
-    </aside>
-
-
-    <section class="map-container">
-
-        <div id="map"></div>
-
-        <div class="map-info">
-
-            <strong id="overlayLineName">
-                ESC-01
-            </strong>
-
-            <span id="overlayLineType">
-                🏫 Transporte Escolar
-            </span>
-
+        <div class="footer-logo">
+            🎮 GAMEVOICE HUB
         </div>
-
-        <div class="live">
-            ● AO VIVO
-        </div>
-
-        <div class="next-card">
-
-            <span>
-                Próximo ponto
-            </span>
-
-            <strong id="mapNextStop">
-                -
-            </strong>
-
-        </div>
-
-    </section>
-
-</main>
-
-
-<footer>
-    🚌 Arcoverde Bus — Protótipo acadêmico — 2026
-</footer>
-
-
-<!-- MODAL APRESENTAÇÃO -->
-
-<div id="presentationModal" class="modal">
-
-    <div class="modal-box">
-
-        <button
-            class="close"
-            data-close="presentationModal"
-        >
-            ×
-        </button>
-
-        <div class="presentation-icon">
-            🎓
-        </div>
-
-        <h2>Arcoverde Bus</h2>
 
         <p>
-            Sistema inteligente de visualização
-            do transporte.
+            Marketplace de assets digitais para games.
         </p>
 
-        <div id="slides">
-
-            <div class="slide active">
-
-                <small>01 / 06</small>
-
-                <h3>💡 Problema</h3>
-
-                <p>
-                    Como facilitar a visualização
-                    de linhas, paradas e locais
-                    atendidos pelo transporte?
-                </p>
-
-            </div>
-
-            <div class="slide">
-
-                <small>02 / 06</small>
-
-                <h3>🚀 Solução</h3>
-
-                <p>
-                    Desenvolver um sistema web
-                    com mapa interativo para
-                    visualizar o transporte.
-                </p>
-
-            </div>
-
-            <div class="slide">
-
-                <small>03 / 06</small>
-
-                <h3>🏫 Transporte Escolar</h3>
-
-                <p>
-                    Apresentação de escolas,
-                    paradas, bairros e ônibus
-                    escolares.
-                </p>
-
-            </div>
-
-            <div class="slide">
-
-                <small>04 / 06</small>
-
-                <h3>🚌 Transporte Público</h3>
-
-                <p>
-                    Visualização de linhas,
-                    paradas e bairros atendidos.
-                </p>
-
-            </div>
-
-            <div class="slide">
-
-                <small>05 / 06</small>
-
-                <h3>💻 Tecnologias</h3>
-
-                <p>
-                    HTML5, CSS3, JavaScript,
-                    Leaflet, OpenStreetMap e OSRM.
-                </p>
-
-            </div>
-
-            <div class="slide">
-
-                <small>06 / 06</small>
-
-                <h3>🔮 Futuro</h3>
-
-                <p>
-                    GPS real, aplicativo Android,
-                    banco de dados, painel administrativo
-                    e informações oficiais.
-                </p>
-
-            </div>
-
-        </div>
-
-        <div class="slide-controls">
-
-            <button id="prevSlide">
-                ← Anterior
-            </button>
-
-            <span id="slideIndicator">
-                1 / 6
-            </span>
-
-            <button id="nextSlide">
-                Próximo →
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- MODAL SOBRE -->
-
-<div id="aboutModal" class="modal">
-
-    <div class="modal-box">
-
-        <button
-            class="close"
-            data-close="aboutModal"
-        >
-            ×
-        </button>
-
-        <div class="presentation-icon">
-            🚌
-        </div>
-
-        <h2>Sobre o projeto</h2>
-
-        <p>
-            O Arcoverde Bus é um protótipo acadêmico
-            desenvolvido para demonstrar a aplicação
-            de tecnologias web em um sistema de transporte.
-        </p>
-
-        <hr>
-
-        <h3>🎯 Objetivo</h3>
-
-        <p>
-            Criar uma interface para visualizar
-            linhas, ônibus, escolas, bairros e paradas.
-        </p>
-
-        <hr>
-
-        <h3>🛠️ Tecnologias</h3>
-
-        <p>
-            HTML • CSS • JavaScript • Leaflet •
-            OpenStreetMap • OSRM
-        </p>
-
-        <hr>
-
-        <p class="small">
+        <small>
+            © <span id="year"></span> GameVoice Hub.
             Projeto demonstrativo.
-        </p>
+        </small>
+
+    </footer>
+
+
+    <!-- ================= PRODUCT MODAL ================= -->
+
+    <div class="modal-overlay" id="productModal">
+
+        <div class="modal">
+
+            <button
+                class="close-modal"
+                data-close="productModal"
+            >
+                ×
+            </button>
+
+            <div
+                class="modal-product-image"
+                id="modalImage"
+            ></div>
+
+            <div class="modal-content">
+
+                <span id="modalCategory"></span>
+
+                <h2 id="modalTitle"></h2>
+
+                <p id="modalDescription"></p>
+
+                <div
+                    class="modal-player"
+                    id="modalPlayer"
+                ></div>
+
+                <div class="license-box">
+
+                    <strong>📄 Licença</strong>
+
+                    <p>
+                        Uso permitido em projetos de jogos
+                        conforme os termos definidos para este asset.
+                    </p>
+
+                </div>
+
+                <div class="modal-bottom">
+
+                    <strong id="modalPrice"></strong>
+
+                    <button
+                        class="primary-button"
+                        id="modalAdd"
+                    >
+                        🛒 ADICIONAR
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
 
-</div>
+
+    <!-- ================= CART ================= -->
+
+    <div class="modal-overlay" id="cartModal">
+
+        <div class="cart-panel">
+
+            <button
+                class="close-modal"
+                data-close="cartModal"
+            >
+                ×
+            </button>
+
+            <h2>🛒 Seu carrinho</h2>
+
+            <div
+                id="cartItems"
+                class="cart-items"
+            ></div>
+
+            <div
+                class="cart-empty"
+                id="cartEmpty"
+            >
+                <span>🛒</span>
+                <p>Seu carrinho está vazio.</p>
+            </div>
+
+            <div class="cart-footer">
+
+                <div class="cart-total">
+
+                    <span>Total</span>
+
+                    <strong id="cartTotal">
+                        R$ 0,00
+                    </strong>
+
+                </div>
+
+                <button
+                    class="checkout-button"
+                    id="checkoutButton"
+                >
+                    FINALIZAR COMPRA
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
 
 
-<!-- LEAFLET -->
+    <!-- ================= TOAST ================= -->
 
-<script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-></script>
+    <div
+        class="toast"
+        id="toast"
+    >
+        Asset adicionado ao carrinho!
+    </div>
 
-<!-- NOSSO JS -->
 
-<script src="script.js"></script>
+    <script src="script.js"></script>
 
 </body>
 </html>
