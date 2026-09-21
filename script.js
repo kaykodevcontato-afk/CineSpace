@@ -9,7 +9,6 @@
    ========================================================= */
 
 const products = [
-
     {
         id: 1,
         title: "Voz Masculina — Soldado",
@@ -133,7 +132,6 @@ const products = [
             "Material fotográfico demonstrativo para criação de personagens.",
         tags: ["Ação", "Pessoa", "Personagem"]
     }
-
 ];
 
 
@@ -148,26 +146,31 @@ let selectedProduct = null;
 
 
 /* =========================================================
-   ELEMENTOS
+   ELEMENTOS DOM
+   Inicializados somente depois do HTML carregar
    ========================================================= */
 
-const productsGrid = document.getElementById("productsGrid");
-const resultsCount = document.getElementById("resultsCount");
-const emptyState = document.getElementById("emptyState");
+let productsGrid = null;
+let resultsCount = null;
+let emptyState = null;
 
-const searchInput = document.getElementById("searchInput");
-const sortSelect = document.getElementById("sortSelect");
-const clearFilters = document.getElementById("clearFilters");
+let searchInput = null;
+let sortSelect = null;
+let clearFilters = null;
 
-const cartCount = document.getElementById("cartCount");
-const cartItems = document.getElementById("cartItems");
-const cartTotal = document.getElementById("cartTotal");
+let cartCount = null;
+let cartItems = null;
+let cartTotal = null;
 
-const productModal = document.getElementById("productModal");
-const modalContent = document.getElementById("modalContent");
+let productModal = null;
+let modalContent = null;
+let closeModalButton = null;
 
-const cartDrawer = document.getElementById("cartDrawer");
-const cartBackdrop = document.getElementById("cartBackdrop");
+let cartDrawer = null;
+let cartBackdrop = null;
+let openCartButton = null;
+let closeCartButton = null;
+let checkoutButton = null;
 
 
 /* =========================================================
@@ -175,12 +178,10 @@ const cartBackdrop = document.getElementById("cartBackdrop");
    ========================================================= */
 
 function formatPrice(value) {
-
     return new Intl.NumberFormat("pt-BR", {
         style: "currency",
         currency: "BRL"
     }).format(value);
-
 }
 
 
@@ -189,28 +190,12 @@ function formatPrice(value) {
    ========================================================= */
 
 function escapeHTML(text) {
-
     return String(text)
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
-
-}
-
-
-/* =========================================================
-   ESCAPE PARA ATRIBUTO JAVASCRIPT
-   ========================================================= */
-
-function escapeForAttribute(text) {
-
-    return String(text)
-        .replace(/\\/g, "\\\\")
-        .replace(/'/g, "\\'")
-        .replace(/\r?\n/g, " ");
-
 }
 
 
@@ -219,6 +204,11 @@ function escapeForAttribute(text) {
    ========================================================= */
 
 function renderProducts() {
+
+    if (!productsGrid || !resultsCount || !emptyState) {
+        console.warn("Elementos da área de produtos não encontrados.");
+        return;
+    }
 
     let filtered = products.filter(product => {
 
@@ -238,7 +228,6 @@ function renderProducts() {
             searchText.includes(searchTerm.toLowerCase());
 
         return categoryMatch && searchMatch;
-
     });
 
 
@@ -246,36 +235,25 @@ function renderProducts() {
        ORDENAÇÃO
        ===================================================== */
 
-    const sort = sortSelect.value;
+    const sort = sortSelect ? sortSelect.value : "default";
 
     if (sort === "low") {
-
-        filtered.sort((a, b) =>
-            a.price - b.price
-        );
-
+        filtered.sort((a, b) => a.price - b.price);
     }
 
     if (sort === "high") {
-
-        filtered.sort((a, b) =>
-            b.price - a.price
-        );
-
+        filtered.sort((a, b) => b.price - a.price);
     }
 
     if (sort === "name") {
-
         filtered.sort((a, b) =>
             a.title.localeCompare(b.title)
         );
-
     }
 
 
     resultsCount.textContent =
         `${filtered.length} asset${filtered.length !== 1 ? "s" : ""} encontrado${filtered.length !== 1 ? "s" : ""}`;
-
 
     productsGrid.innerHTML = "";
 
@@ -283,7 +261,6 @@ function renderProducts() {
     if (filtered.length === 0) {
 
         emptyState.style.display = "block";
-
         return;
 
     }
@@ -298,14 +275,11 @@ function renderProducts() {
 
     filtered.forEach(product => {
 
-        const card =
-            document.createElement("article");
+        const card = document.createElement("article");
 
         card.className = "product-card";
 
-
         card.innerHTML = `
-
             <div class="product-visual">
 
                 <span class="product-category">
@@ -318,24 +292,20 @@ function renderProducts() {
 
             </div>
 
-
             <div class="product-body">
 
                 <h3>
                     ${escapeHTML(product.title)}
                 </h3>
 
-
                 <p class="product-description">
                     ${escapeHTML(product.description)}
                 </p>
-
 
                 <div class="product-creator">
                     👤 ${escapeHTML(product.creator)}
                     · 📍 ${escapeHTML(product.location)}
                 </div>
-
 
                 <div class="product-bottom">
 
@@ -343,10 +313,10 @@ function renderProducts() {
                         ${formatPrice(product.price)}
                     </span>
 
-
                     <div class="product-actions">
 
                         <button
+                            type="button"
                             class="details-button"
                             title="Ver detalhes"
                             data-product-id="${product.id}"
@@ -354,15 +324,13 @@ function renderProducts() {
                             👁
                         </button>
 
-
                         ${
                             product.voiceText
                                 ? `
                                 <button
+                                    type="button"
                                     class="product-voice-button"
                                     title="Ouvir demonstração"
-                                    data-voice-text="${escapeHTML(product.voiceText)}"
-                                    data-voice-gender="${escapeHTML(product.gender || "masculina")}"
                                 >
                                     ▶
                                 </button>
@@ -370,8 +338,8 @@ function renderProducts() {
                                 : ""
                         }
 
-
                         <button
+                            type="button"
                             class="buy"
                             title="Adicionar ao carrinho"
                             data-buy-id="${product.id}"
@@ -384,64 +352,97 @@ function renderProducts() {
                 </div>
 
             </div>
-
         `;
 
 
         productsGrid.appendChild(card);
 
+
+        /* =================================================
+           BOTÃO DETALHES
+           ================================================= */
+
+        const detailsButton =
+            card.querySelector(".details-button");
+
+        if (detailsButton) {
+
+            detailsButton.addEventListener("click", () => {
+
+                openProduct(product.id);
+
+            });
+
+        }
+
+
+        /* =================================================
+           BOTÃO DE VOZ
+           ================================================= */
+
+        const voiceButton =
+            card.querySelector(".product-voice-button");
+
+        if (voiceButton) {
+
+            voiceButton.addEventListener("click", () => {
+
+                ouvirVoz(
+                    product.voiceText,
+                    product.gender || "masculina"
+                );
+
+            });
+
+        }
+
+
+        /* =================================================
+           BOTÃO COMPRAR
+           ================================================= */
+
+        const buyButton =
+            card.querySelector("[data-buy-id]");
+
+        if (buyButton) {
+
+            buyButton.addEventListener("click", () => {
+
+                addToCart(product.id);
+
+            });
+
+        }
+
     });
 
+}
 
-    /* =====================================================
-       EVENTOS DOS BOTÕES DOS CARDS
-       ===================================================== */
 
-    productsGrid
-        .querySelectorAll(".details-button")
+/* =========================================================
+   CATEGORIAS
+   ========================================================= */
+
+function configurarCategorias() {
+
+    document
+        .querySelectorAll(".category-card")
         .forEach(button => {
 
             button.addEventListener("click", () => {
 
-                const id =
-                    Number(button.dataset.productId);
+                document
+                    .querySelectorAll(".category-card")
+                    .forEach(item => {
+                        item.classList.remove("active");
+                    });
 
-                openProduct(id);
+                button.classList.add("active");
 
-            });
+                currentCategory =
+                    button.dataset.category || "todos";
 
-        });
-
-
-    productsGrid
-        .querySelectorAll(".product-voice-button")
-        .forEach(button => {
-
-            button.addEventListener("click", () => {
-
-                const text =
-                    button.dataset.voiceText;
-
-                const gender =
-                    button.dataset.voiceGender;
-
-                ouvirVoz(text, gender);
-
-            });
-
-        });
-
-
-    productsGrid
-        .querySelectorAll("[data-buy-id]")
-        .forEach(button => {
-
-            button.addEventListener("click", () => {
-
-                const id =
-                    Number(button.dataset.buyId);
-
-                addToCart(id);
+                renderProducts();
 
             });
 
@@ -451,104 +452,87 @@ function renderProducts() {
 
 
 /* =========================================================
-   FILTROS DE CATEGORIA
-   ========================================================= */
-
-document
-    .querySelectorAll(".category-card")
-    .forEach(button => {
-
-        button.addEventListener("click", () => {
-
-            document
-                .querySelectorAll(".category-card")
-                .forEach(item =>
-                    item.classList.remove("active")
-                );
-
-
-            button.classList.add("active");
-
-
-            currentCategory =
-                button.dataset.category;
-
-
-            renderProducts();
-
-        });
-
-    });
-
-
-/* =========================================================
    BUSCA
    ========================================================= */
 
-searchInput.addEventListener(
-    "input",
-    event => {
+function configurarBusca() {
 
-        searchTerm =
-            event.target.value;
+    if (!searchInput) {
+        return;
+    }
+
+    searchInput.addEventListener("input", event => {
+
+        searchTerm = event.target.value;
 
         renderProducts();
 
-    }
-);
+    });
+
+}
 
 
 /* =========================================================
    ORDENAÇÃO
    ========================================================= */
 
-sortSelect.addEventListener(
-    "change",
-    renderProducts
-);
+function configurarOrdenacao() {
+
+    if (!sortSelect) {
+        return;
+    }
+
+    sortSelect.addEventListener(
+        "change",
+        renderProducts
+    );
+
+}
 
 
 /* =========================================================
    LIMPAR FILTROS
    ========================================================= */
 
-clearFilters.addEventListener(
-    "click",
-    () => {
+function configurarLimparFiltros() {
 
-        searchInput.value = "";
+    if (!clearFilters) {
+        return;
+    }
+
+    clearFilters.addEventListener("click", () => {
+
+        if (searchInput) {
+            searchInput.value = "";
+        }
 
         searchTerm = "";
-
         currentCategory = "todos";
 
-        sortSelect.value = "default";
-
+        if (sortSelect) {
+            sortSelect.value = "default";
+        }
 
         document
             .querySelectorAll(".category-card")
-            .forEach(item =>
-                item.classList.remove("active")
-            );
-
+            .forEach(item => {
+                item.classList.remove("active");
+            });
 
         const allCategory =
             document.querySelector(
                 '[data-category="todos"]'
             );
 
-
         if (allCategory) {
-
             allCategory.classList.add("active");
-
         }
-
 
         renderProducts();
 
-    }
-);
+    });
+
+}
 
 
 /* =========================================================
@@ -558,23 +542,17 @@ clearFilters.addEventListener(
 let availableVoices = [];
 
 
-/* =========================================================
-   CARREGAR VOZES
-   ========================================================= */
-
 function carregarVozes() {
 
     if (!("speechSynthesis" in window)) {
         return;
     }
 
-
     availableVoices =
-        speechSynthesis.getVoices();
-
+        window.speechSynthesis.getVoices();
 
     console.log(
-        "Vozes encontradas:",
+        "Vozes disponíveis:",
         availableVoices.map(voice => ({
             nome: voice.name,
             idioma: voice.lang
@@ -585,15 +563,21 @@ function carregarVozes() {
 
 
 /* =========================================================
-   INICIALIZAR VOZES
+   INICIALIZAR SISTEMA DE VOZ
    ========================================================= */
 
-if ("speechSynthesis" in window) {
+function inicializarVozes() {
+
+    if (!("speechSynthesis" in window)) {
+        console.warn(
+            "Speech Synthesis não disponível."
+        );
+        return;
+    }
 
     carregarVozes();
 
-
-    speechSynthesis.onvoiceschanged =
+    window.speechSynthesis.onvoiceschanged =
         carregarVozes;
 
 }
@@ -606,23 +590,15 @@ if ("speechSynthesis" in window) {
 function procurarVoz(preferencias) {
 
     if (!availableVoices.length) {
-
         carregarVozes();
-
     }
-
 
     if (!availableVoices.length) {
-
         return null;
-
     }
 
 
-    /*
-       Primeiro tenta encontrar
-       exatamente pelos nomes conhecidos.
-    */
+    /* Primeiro procura pelos nomes desejados */
 
     for (const nome of preferencias) {
 
@@ -635,7 +611,6 @@ function procurarVoz(preferencias) {
                 const voiceLang =
                     voice.lang.toLowerCase();
 
-
                 return (
                     voiceName.includes(
                         nome.toLowerCase()
@@ -645,20 +620,14 @@ function procurarVoz(preferencias) {
 
             });
 
-
         if (encontrada) {
-
             return encontrada;
-
         }
 
     }
 
 
-    /*
-       Depois procura qualquer voz
-       em português.
-    */
+    /* Depois procura qualquer voz em português */
 
     return availableVoices.find(
         voice =>
@@ -678,7 +647,6 @@ function procurarVoz(preferencias) {
 function escolherVozMasculina() {
 
     return procurarVoz([
-
         "Daniel",
         "Felipe",
         "Ricardo",
@@ -687,9 +655,7 @@ function escolherVozMasculina() {
         "Joao",
         "Antonio",
         "Antônio",
-        "Microsoft Daniel",
-        "Google português do Brasil"
-
+        "Microsoft Daniel"
     ]);
 
 }
@@ -702,7 +668,6 @@ function escolherVozMasculina() {
 function escolherVozFeminina() {
 
     return procurarVoz([
-
         "Maria",
         "Francisca",
         "Camila",
@@ -712,7 +677,6 @@ function escolherVozFeminina() {
         "Mariana",
         "Microsoft Maria",
         "Microsoft Francisca"
-
     ]);
 
 }
@@ -725,15 +689,12 @@ function escolherVozFeminina() {
 function escolherVozRobotica() {
 
     return procurarVoz([
-
         "Daniel",
         "Felipe",
         "Maria",
         "Francisca",
         "Microsoft Daniel",
-        "Microsoft Maria",
-        "Google português do Brasil"
-
+        "Microsoft Maria"
     ]);
 
 }
@@ -752,11 +713,17 @@ function ouvirVoz(texto, genero = "masculina") {
         );
 
         return;
-
     }
 
 
-    pararVoz();
+    if (!texto) {
+        return;
+    }
+
+
+    carregarVozes();
+
+    window.speechSynthesis.cancel();
 
 
     const utterance =
@@ -766,84 +733,49 @@ function ouvirVoz(texto, genero = "masculina") {
     let voice = null;
 
 
-    /* =====================================================
-       MASCULINA
-       ===================================================== */
+    switch (genero) {
 
-    if (genero === "masculina") {
+        case "feminina":
 
-        voice =
-            escolherVozMasculina();
+            voice =
+                escolherVozFeminina();
 
+            utterance.pitch = 1.25;
+            utterance.rate = 0.92;
 
-        utterance.pitch = 0.80;
-
-        utterance.rate = 0.90;
-
-    }
+            break;
 
 
-    /* =====================================================
-       FEMININA
-       ===================================================== */
+        case "robotica":
 
-    else if (genero === "feminina") {
+            voice =
+                escolherVozRobotica();
 
-        voice =
-            escolherVozFeminina();
+            utterance.pitch = 0.55;
+            utterance.rate = 0.82;
 
-
-        utterance.pitch = 1.25;
-
-        utterance.rate = 0.92;
-
-    }
+            break;
 
 
-    /* =====================================================
-       ROBÓTICA
-       ===================================================== */
+        case "masculina":
 
-    else if (genero === "robotica") {
+        default:
 
-        voice =
-            escolherVozRobotica();
+            voice =
+                escolherVozMasculina();
 
+            utterance.pitch = 0.80;
+            utterance.rate = 0.90;
 
-        utterance.pitch = 0.55;
-
-        utterance.rate = 0.82;
+            break;
 
     }
 
-
-    /* =====================================================
-       OUTROS
-       ===================================================== */
-
-    else {
-
-        voice =
-            escolherVozMasculina();
-
-
-        utterance.pitch = 0.90;
-
-        utterance.rate = 0.88;
-
-    }
-
-
-    /* =====================================================
-       APLICAR VOZ
-       ===================================================== */
 
     if (voice) {
 
         utterance.voice = voice;
-
         utterance.lang = voice.lang;
-
 
         console.log(
             "Demonstração:",
@@ -858,7 +790,6 @@ function ouvirVoz(texto, genero = "masculina") {
 
         utterance.lang = "pt-BR";
 
-
         console.warn(
             "Nenhuma voz específica encontrada para:",
             genero
@@ -869,8 +800,7 @@ function ouvirVoz(texto, genero = "masculina") {
 
     utterance.volume = 1;
 
-
-    speechSynthesis.speak(
+    window.speechSynthesis.speak(
         utterance
     );
 
@@ -885,7 +815,7 @@ function pararVoz() {
 
     if ("speechSynthesis" in window) {
 
-        speechSynthesis.cancel();
+        window.speechSynthesis.cancel();
 
     }
 
@@ -893,21 +823,86 @@ function pararVoz() {
 
 
 /* =========================================================
-   MODAL DE PRODUTO
+   BOTÕES DE DEMONSTRAÇÃO DE VOZ DO HTML
+   ========================================================= */
+
+function configurarBotoesDemoVoz() {
+
+    document
+        .querySelectorAll(".voice-button")
+        .forEach(button => {
+
+            button.addEventListener("click", () => {
+
+                const texto =
+                    button.dataset.text || "";
+
+                let genero =
+                    button.dataset.gender || "";
+
+                if (!genero) {
+
+                    const label =
+                        button.textContent.toLowerCase();
+
+                    if (
+                        label.includes("feminina")
+                    ) {
+                        genero = "feminina";
+
+                    } else if (
+                        label.includes("robótica") ||
+                        label.includes("robotica")
+                    ) {
+                        genero = "robotica";
+
+                    } else {
+                        genero = "masculina";
+                    }
+
+                }
+
+                ouvirVoz(
+                    texto,
+                    genero
+                );
+
+            });
+
+        });
+
+
+    document
+        .querySelectorAll(".stop-button")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                pararVoz
+            );
+
+        });
+
+}
+
+
+/* =========================================================
+   MODAL
    ========================================================= */
 
 function openProduct(id) {
+
+    if (!productModal || !modalContent) {
+        return;
+    }
 
     selectedProduct =
         products.find(
             product => product.id === id
         );
 
-
     if (!selectedProduct) {
-
         return;
-
     }
 
 
@@ -917,13 +912,11 @@ function openProduct(id) {
             ${selectedProduct.symbol}
         </div>
 
-
         <span class="eyebrow">
             ${escapeHTML(
                 selectedProduct.categoryName
             )}
         </span>
-
 
         <h2>
             ${escapeHTML(
@@ -931,42 +924,33 @@ function openProduct(id) {
             )}
         </h2>
 
-
         <p class="modal-description">
             ${escapeHTML(
                 selectedProduct.description
             )}
         </p>
 
-
         <p class="modal-description">
-
             👤 Criador:
-
             <strong>
                 ${escapeHTML(
                     selectedProduct.creator
                 )}
             </strong>
-
         </p>
 
-
         <p class="modal-description">
-
             📍 Localização aproximada:
-
             ${escapeHTML(
                 selectedProduct.location
             )}
-
         </p>
-
 
         ${
             selectedProduct.voiceText
                 ? `
                 <button
+                    type="button"
                     id="modalVoiceButton"
                     class="modal-buy"
                     style="
@@ -981,17 +965,14 @@ function openProduct(id) {
                 : ""
         }
 
-
         <div class="modal-price">
-
             ${formatPrice(
                 selectedProduct.price
             )}
-
         </div>
 
-
         <button
+            type="button"
             id="modalAddCart"
             class="modal-buy"
         >
@@ -1004,15 +985,10 @@ function openProduct(id) {
     productModal.classList.add("active");
 
 
-    /* =====================================================
-       BOTÃO DE VOZ DO MODAL
-       ===================================================== */
-
     const modalVoiceButton =
         document.getElementById(
             "modalVoiceButton"
         );
-
 
     if (modalVoiceButton) {
 
@@ -1032,15 +1008,10 @@ function openProduct(id) {
     }
 
 
-    /* =====================================================
-       BOTÃO ADICIONAR AO CARRINHO
-       ===================================================== */
-
     const modalAddCart =
         document.getElementById(
             "modalAddCart"
         );
-
 
     if (modalAddCart) {
 
@@ -1068,39 +1039,55 @@ function openProduct(id) {
 
 function closeProductModal() {
 
+    if (!productModal) {
+        return;
+    }
+
     productModal.classList.remove(
         "active"
     );
+
+    pararVoz();
 
 }
 
 
 /* =========================================================
-   EVENTOS MODAL
+   CONFIGURAR MODAL
    ========================================================= */
 
-document
-    .getElementById("closeModal")
-    .addEventListener(
-        "click",
-        closeProductModal
-    );
+function configurarModal() {
 
+    if (closeModalButton) {
 
-productModal.addEventListener(
-    "click",
-    event => {
-
-        if (
-            event.target === productModal
-        ) {
-
-            closeProductModal();
-
-        }
+        closeModalButton.addEventListener(
+            "click",
+            closeProductModal
+        );
 
     }
-);
+
+
+    if (productModal) {
+
+        productModal.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    event.target === productModal
+                ) {
+
+                    closeProductModal();
+
+                }
+
+            }
+        );
+
+    }
+
+}
 
 
 /* =========================================================
@@ -1114,11 +1101,8 @@ function addToCart(id) {
             item => item.id === id
         );
 
-
     if (!product) {
-
         return;
-
     }
 
 
@@ -1143,7 +1127,7 @@ function addToCart(id) {
 
 
 /* =========================================================
-   REMOVER DO CARRINHO
+   REMOVER CARRINHO
    ========================================================= */
 
 function removeFromCart(id) {
@@ -1152,7 +1136,6 @@ function removeFromCart(id) {
         cart.filter(
             item => item.id !== id
         );
-
 
     updateCart();
 
@@ -1165,6 +1148,15 @@ function removeFromCart(id) {
 
 function updateCart() {
 
+    if (
+        !cartCount ||
+        !cartItems ||
+        !cartTotal
+    ) {
+        return;
+    }
+
+
     cartCount.textContent =
         cart.length;
 
@@ -1175,23 +1167,15 @@ function updateCart() {
     if (cart.length === 0) {
 
         cartItems.innerHTML = `
-
             <div class="cart-empty">
-
                 🛒
-
                 <br><br>
-
                 Seu carrinho está vazio.
-
             </div>
-
         `;
-
 
         cartTotal.textContent =
             formatPrice(0);
-
 
         return;
 
@@ -1209,49 +1193,38 @@ function updateCart() {
         const item =
             document.createElement("div");
 
-
         item.className =
             "cart-item";
 
 
         item.innerHTML = `
-
             <div class="cart-item-symbol">
-
                 ${product.symbol}
-
             </div>
-
 
             <div class="cart-item-info">
 
                 <strong>
-
                     ${escapeHTML(
                         product.title
                     )}
-
                 </strong>
 
-
                 <span>
-
                     ${formatPrice(
                         product.price
                     )}
-
                 </span>
 
             </div>
 
-
             <button
+                type="button"
                 class="cart-remove"
                 data-remove-id="${product.id}"
             >
                 ×
             </button>
-
         `;
 
 
@@ -1259,10 +1232,6 @@ function updateCart() {
 
     });
 
-
-    /* =====================================================
-       BOTÕES REMOVER
-       ===================================================== */
 
     cartItems
         .querySelectorAll("[data-remove-id]")
@@ -1296,6 +1265,10 @@ function updateCart() {
 
 function openCart() {
 
+    if (!cartDrawer || !cartBackdrop) {
+        return;
+    }
+
     cartDrawer.classList.add(
         "active"
     );
@@ -1313,6 +1286,10 @@ function openCart() {
 
 function closeCart() {
 
+    if (!cartDrawer || !cartBackdrop) {
+        return;
+    }
+
     cartDrawer.classList.remove(
         "active"
     );
@@ -1325,38 +1302,54 @@ function closeCart() {
 
 
 /* =========================================================
-   EVENTOS CARRINHO
+   CONFIGURAR CARRINHO
    ========================================================= */
 
-document
-    .getElementById("openCart")
-    .addEventListener(
-        "click",
-        openCart
-    );
+function configurarCarrinho() {
+
+    if (openCartButton) {
+
+        openCartButton.addEventListener(
+            "click",
+            openCart
+        );
+
+    }
 
 
-document
-    .getElementById("closeCart")
-    .addEventListener(
-        "click",
-        closeCart
-    );
+    if (closeCartButton) {
+
+        closeCartButton.addEventListener(
+            "click",
+            closeCart
+        );
+
+    }
 
 
-cartBackdrop.addEventListener(
-    "click",
-    closeCart
-);
+    if (cartBackdrop) {
+
+        cartBackdrop.addEventListener(
+            "click",
+            closeCart
+        );
+
+    }
+
+}
 
 
 /* =========================================================
-   CHECKOUT DEMONSTRATIVO
+   CHECKOUT
    ========================================================= */
 
-document
-    .getElementById("checkoutButton")
-    .addEventListener(
+function configurarCheckout() {
+
+    if (!checkoutButton) {
+        return;
+    }
+
+    checkoutButton.addEventListener(
         "click",
         () => {
 
@@ -1367,7 +1360,6 @@ document
                 );
 
                 return;
-
             }
 
 
@@ -1379,6 +1371,8 @@ document
 
         }
     );
+
+}
 
 
 /* =========================================================
@@ -1392,20 +1386,13 @@ function initMap() {
 
 
     if (!mapElement) {
-
         return;
-
     }
 
-
-    /* =====================================================
-       VERIFICAR LEAFLET
-       ===================================================== */
 
     if (typeof L === "undefined") {
 
         mapElement.innerHTML = `
-
             <div style="
                 height:100%;
                 display:grid;
@@ -1415,7 +1402,6 @@ function initMap() {
                 color:#8d96a8;
                 background:#101721;
             ">
-
                 <div>
 
                     <strong style="color:white;">
@@ -1425,67 +1411,43 @@ function initMap() {
                     <br><br>
 
                     O Leaflet não foi carregado.
-                    Verifique sua conexão com a internet.
 
                 </div>
-
             </div>
-
         `;
 
         return;
-
     }
 
-
-    /* =====================================================
-       CRIADORES
-       ===================================================== */
 
     const creators = [
 
         {
             name: "Lucas Voice",
             city: "Recife - PE",
-            position: [
-                -8.0476,
-                -34.8770
-            ]
+            position: [-8.0476, -34.8770]
         },
 
         {
             name: "Studio Nordeste",
             city: "Arcoverde - PE",
-            position: [
-                -8.4189,
-                -37.0539
-            ]
+            position: [-8.4189, -37.0539]
         },
 
         {
             name: "Ana Voice",
             city: "Caruaru - PE",
-            position: [
-                -8.2830,
-                -35.9761
-            ]
+            position: [-8.2830, -35.9761]
         },
 
         {
             name: "Cyber Voice",
             city: "São Paulo - SP",
-            position: [
-                -23.5505,
-                -46.6333
-            ]
+            position: [-23.5505, -46.6333]
         }
 
     ];
 
-
-    /* =====================================================
-       CRIAR MAPA
-       ===================================================== */
 
     const map =
         L.map("map", {
@@ -1496,26 +1458,16 @@ function initMap() {
         );
 
 
-    /* =====================================================
-       OPEN STREET MAP
-       ===================================================== */
-
     L.tileLayer(
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         {
-
             maxZoom: 19,
 
             attribution:
                 '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors'
-
         }
     ).addTo(map);
 
-
-    /* =====================================================
-       MARCADORES
-       ===================================================== */
 
     creators.forEach(creator => {
 
@@ -1526,54 +1478,38 @@ function initMap() {
 
 
         marker.bindPopup(`
-
             <div style="
                 min-width:150px;
                 color:#111;
             ">
 
                 <strong>
-
                     ${escapeHTML(
                         creator.name
                     )}
-
                 </strong>
 
                 <br>
 
                 <small>
-
                     ${escapeHTML(
                         creator.city
                     )}
-
                 </small>
 
                 <br><br>
 
-                <span>
-
-                    🎙️ Vozes
-                    <br>
-
-                    🎭 Dublagem
-                    <br>
-
-                    🎧 Áudios
-
-                </span>
+                🎙️ Vozes
+                <br>
+                🎭 Dublagem
+                <br>
+                🎧 Áudios
 
             </div>
-
         `);
 
     });
 
-
-    /* =====================================================
-       CORRIGIR TAMANHO DO MAPA
-       ===================================================== */
 
     setTimeout(() => {
 
@@ -1585,18 +1521,192 @@ function initMap() {
 
 
 /* =========================================================
-   INICIALIZAÇÃO
+   VERIFICAR ELEMENTOS NECESSÁRIOS
+   ========================================================= */
+
+function verificarElementosDOM() {
+
+    const elementosObrigatorios = {
+        productsGrid,
+        resultsCount,
+        emptyState,
+        searchInput,
+        sortSelect,
+        clearFilters,
+        cartCount,
+        cartItems,
+        cartTotal,
+        productModal,
+        modalContent,
+        cartDrawer,
+        cartBackdrop
+    };
+
+
+    const ausentes =
+        Object.entries(elementosObrigatorios)
+            .filter(([, elemento]) => !elemento)
+            .map(([nome]) => nome);
+
+
+    if (ausentes.length > 0) {
+
+        console.warn(
+            "Elementos DOM não encontrados:",
+            ausentes
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   INICIALIZAÇÃO PRINCIPAL
    ========================================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
     () => {
 
+        /* ================================================
+           LOCALIZAR ELEMENTOS
+           ================================================ */
+
+        productsGrid =
+            document.getElementById(
+                "productsGrid"
+            );
+
+        resultsCount =
+            document.getElementById(
+                "resultsCount"
+            );
+
+        emptyState =
+            document.getElementById(
+                "emptyState"
+            );
+
+
+        searchInput =
+            document.getElementById(
+                "searchInput"
+            );
+
+        sortSelect =
+            document.getElementById(
+                "sortSelect"
+            );
+
+        clearFilters =
+            document.getElementById(
+                "clearFilters"
+            );
+
+
+        cartCount =
+            document.getElementById(
+                "cartCount"
+            );
+
+        cartItems =
+            document.getElementById(
+                "cartItems"
+            );
+
+        cartTotal =
+            document.getElementById(
+                "cartTotal"
+            );
+
+
+        productModal =
+            document.getElementById(
+                "productModal"
+            );
+
+        modalContent =
+            document.getElementById(
+                "modalContent"
+            );
+
+        closeModalButton =
+            document.getElementById(
+                "closeModal"
+            );
+
+
+        cartDrawer =
+            document.getElementById(
+                "cartDrawer"
+            );
+
+        cartBackdrop =
+            document.getElementById(
+                "cartBackdrop"
+            );
+
+        openCartButton =
+            document.getElementById(
+                "openCart"
+            );
+
+        closeCartButton =
+            document.getElementById(
+                "closeCart"
+            );
+
+        checkoutButton =
+            document.getElementById(
+                "checkoutButton"
+            );
+
+
+        /* ================================================
+           VERIFICAÇÃO
+           ================================================ */
+
+        verificarElementosDOM();
+
+
+        /* ================================================
+           CONFIGURAÇÕES
+           ================================================ */
+
+        configurarCategorias();
+
+        configurarBusca();
+
+        configurarOrdenacao();
+
+        configurarLimparFiltros();
+
+        configurarModal();
+
+        configurarCarrinho();
+
+        configurarCheckout();
+
+        configurarBotoesDemoVoz();
+
+        inicializarVozes();
+
+
+        /* ================================================
+           INICIALIZAÇÃO
+           ================================================ */
+
         renderProducts();
 
         updateCart();
 
         initMap();
+
+
+        console.log(
+            "GameAssets Market iniciado com sucesso."
+        );
 
     }
 );
