@@ -3,7 +3,7 @@
    Watch2Gether-like
    Supabase + GitHub Pages
 
-   VERSÃO CORRIGIDA
+   VERSÃO CORRIGIDA - DOM + CRIAR SALA
    ========================================================= */
 
 
@@ -29,7 +29,8 @@ try {
     if (
         SUPABASE_URL &&
         SUPABASE_ANON_KEY &&
-        window.supabase
+        window.supabase &&
+        typeof window.supabase.createClient === "function"
     ) {
 
         supabaseClient =
@@ -47,6 +48,7 @@ try {
         console.error(
             "❌ Supabase não foi encontrado."
         );
+
     }
 
 } catch (error) {
@@ -55,6 +57,7 @@ try {
         "❌ Erro ao inicializar Supabase:",
         error
     );
+
 }
 
 
@@ -85,17 +88,233 @@ const state = {
 
     initialized: false,
 
-    openingRoom: false
+    openingRoom: false,
+
+    buttonsInitialized: false
+
 };
 
 
 /* =========================================================
-   FUNÇÕES AUXILIARES
+   AUXILIAR DOM
    ========================================================= */
 
 const $ = id =>
     document.getElementById(id);
 
+
+/* =========================================================
+   REFERÊNCIAS DOM
+   =========================================================
+   
+   IMPORTANTE:
+   Elas são "let" porque podem estar null quando
+   o script for carregado antes do HTML.
+   ========================================================= */
+
+let homeScreen = null;
+let roomScreen = null;
+
+let videoPlayer = null;
+let videoPlaceholder = null;
+
+let playlist = null;
+let participants = null;
+let chatMessages = null;
+
+let showCreateRoom = null;
+let showJoinRoom = null;
+
+let createPanel = null;
+let joinPanel = null;
+
+let createName = null;
+let roomName = null;
+let roomPrivate = null;
+
+let createRoomBtn = null;
+let createError = null;
+
+let joinName = null;
+let roomCode = null;
+
+let joinRoomBtn = null;
+let joinError = null;
+
+let leaveRoomBtn = null;
+let copyRoomLink = null;
+
+let showAddVideo = null;
+let videoModal = null;
+let addVideoBtn = null;
+
+let videoTitle = null;
+let videoUrl = null;
+let videoError = null;
+
+let chatForm = null;
+let chatInput = null;
+
+let connectionDot = null;
+let connectionText = null;
+
+let roomTitle = null;
+let roomCodeDisplay = null;
+
+let participantCount = null;
+let hostStatus = null;
+
+let toastElement = null;
+
+
+/* =========================================================
+   ATUALIZAR REFERÊNCIAS DO DOM
+   ========================================================= */
+
+function refreshDOM() {
+
+    homeScreen =
+        $("homeScreen");
+
+    roomScreen =
+        $("roomScreen");
+
+    videoPlayer =
+        $("videoPlayer");
+
+    videoPlaceholder =
+        $("videoPlaceholder");
+
+    playlist =
+        $("playlist");
+
+    participants =
+        $("participants");
+
+    chatMessages =
+        $("chatMessages");
+
+
+    showCreateRoom =
+        $("showCreateRoom");
+
+    showJoinRoom =
+        $("showJoinRoom");
+
+
+    createPanel =
+        $("createPanel");
+
+    joinPanel =
+        $("joinPanel");
+
+
+    createName =
+        $("createName");
+
+    roomName =
+        $("roomName");
+
+    roomPrivate =
+        $("roomPrivate");
+
+
+    createRoomBtn =
+        $("createRoomBtn");
+
+    createError =
+        $("createError");
+
+
+    joinName =
+        $("joinName");
+
+    roomCode =
+        $("roomCode");
+
+    joinRoomBtn =
+        $("joinRoomBtn");
+
+    joinError =
+        $("joinError");
+
+
+    leaveRoomBtn =
+        $("leaveRoomBtn");
+
+    copyRoomLink =
+        $("copyRoomLink");
+
+
+    showAddVideo =
+        $("showAddVideo");
+
+    videoModal =
+        $("videoModal");
+
+    addVideoBtn =
+        $("addVideoBtn");
+
+
+    videoTitle =
+        $("videoTitle");
+
+    videoUrl =
+        $("videoUrl");
+
+    videoError =
+        $("videoError");
+
+
+    chatForm =
+        $("chatForm");
+
+    chatInput =
+        $("chatInput");
+
+
+    connectionDot =
+        $("connectionDot");
+
+    connectionText =
+        $("connectionText");
+
+
+    roomTitle =
+        $("roomTitle");
+
+    roomCodeDisplay =
+        $("roomCodeDisplay");
+
+
+    participantCount =
+        $("participantCount");
+
+    hostStatus =
+        $("hostStatus");
+
+
+    toastElement =
+        $("toast");
+
+
+    console.log(
+        "🔎 DOM atualizado:",
+        {
+            showCreateRoom: !!showCreateRoom,
+            createRoomBtn: !!createRoomBtn,
+            showJoinRoom: !!showJoinRoom,
+            joinRoomBtn: !!joinRoomBtn,
+            createName: !!createName,
+            roomName: !!roomName
+        }
+    );
+}
+
+
+/* =========================================================
+   LOG
+   ========================================================= */
 
 function log(...args) {
 
@@ -103,202 +322,137 @@ function log(...args) {
         "[Alien Watch Party]",
         ...args
     );
+
 }
 
+
+/* =========================================================
+   MOSTRAR ELEMENTO
+   ========================================================= */
 
 function showElement(element) {
 
     if (element) {
 
         element.style.display = "";
+
     }
+
 }
 
+
+/* =========================================================
+   ESCONDER ELEMENTO
+   ========================================================= */
 
 function hideElement(element) {
 
     if (element) {
 
         element.style.display = "none";
+
     }
+
 }
 
 
-function setText(element, text) {
+/* =========================================================
+   TEXTO
+   ========================================================= */
+
+function setText(
+    element,
+    text
+) {
 
     if (element) {
 
         element.textContent =
             text ?? "";
+
     }
+
 }
 
+
+/* =========================================================
+   ESCAPE HTML
+   ========================================================= */
 
 function escapeHtml(text) {
 
     const div =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
     div.textContent =
         text ?? "";
 
     return div.innerHTML;
+
 }
-
-
-/* =========================================================
-   DOM
-   ========================================================= */
-
-const homeScreen =
-    $("homeScreen");
-
-const roomScreen =
-    $("roomScreen");
-
-const videoPlayer =
-    $("videoPlayer");
-
-const videoPlaceholder =
-    $("videoPlaceholder");
-
-const playlist =
-    $("playlist");
-
-const participants =
-    $("participants");
-
-const chatMessages =
-    $("chatMessages");
-
-
-const showCreateRoom =
-    $("showCreateRoom");
-
-const showJoinRoom =
-    $("showJoinRoom");
-
-
-const createPanel =
-    $("createPanel");
-
-const joinPanel =
-    $("joinPanel");
-
-
-const createName =
-    $("createName");
-
-const roomName =
-    $("roomName");
-
-const roomPrivate =
-    $("roomPrivate");
-
-
-const createRoomBtn =
-    $("createRoomBtn");
-
-const createError =
-    $("createError");
-
-
-const joinName =
-    $("joinName");
-
-const roomCode =
-    $("roomCode");
-
-const joinRoomBtn =
-    $("joinRoomBtn");
-
-const joinError =
-    $("joinError");
-
-
-const leaveRoomBtn =
-    $("leaveRoomBtn");
-
-const copyRoomLink =
-    $("copyRoomLink");
-
-
-const showAddVideo =
-    $("showAddVideo");
-
-const videoModal =
-    $("videoModal");
-
-const addVideoBtn =
-    $("addVideoBtn");
-
-
-const videoTitle =
-    $("videoTitle");
-
-const videoUrl =
-    $("videoUrl");
-
-const videoError =
-    $("videoError");
-
-
-const chatForm =
-    $("chatForm");
-
-const chatInput =
-    $("chatInput");
-
-
-const connectionDot =
-    $("connectionDot");
-
-const connectionText =
-    $("connectionText");
-
-
-const roomTitle =
-    $("roomTitle");
-
-const roomCodeDisplay =
-    $("roomCodeDisplay");
-
-
-const participantCount =
-    $("participantCount");
-
-const hostStatus =
-    $("hostStatus");
-
-
-const toastElement =
-    $("toast");
 
 
 /* =========================================================
    INICIALIZAÇÃO
    ========================================================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    init
-);
+if (
+    document.readyState ===
+    "loading"
+) {
 
+    document.addEventListener(
+        "DOMContentLoaded",
+        init,
+        {
+            once: true
+        }
+    );
+
+} else {
+
+    init();
+
+}
+
+
+/* =========================================================
+   INIT
+   ========================================================= */
 
 async function init() {
 
-    if (state.initialized) {
+    if (
+        state.initialized
+    ) {
 
         return;
+
     }
+
 
     state.initialized =
         true;
+
 
     log(
         "🚀 Inicializando aplicação..."
     );
 
+
+    /* -----------------------------------------------------
+       IMPORTANTE:
+       Atualiza DOM somente agora.
+       ----------------------------------------------------- */
+
+    refreshDOM();
+
+
+    /* -----------------------------------------------------
+       CONFIGURAR BOTÕES
+       ----------------------------------------------------- */
 
     setupButtons();
 
@@ -309,20 +463,36 @@ async function init() {
     );
 
 
+    /* -----------------------------------------------------
+       VERIFICAR SUPABASE
+       ----------------------------------------------------- */
+
     if (!supabaseClient) {
+
+        console.error(
+            "❌ Cliente Supabase indisponível."
+        );
+
 
         setConnectionStatus(
             "error",
             "Supabase indisponível"
         );
 
+
         showToast(
-            "Erro ao inicializar o Supabase."
+            "❌ Supabase indisponível. Verifique o carregamento da biblioteca."
         );
 
+
         return;
+
     }
 
+
+    /* -----------------------------------------------------
+       RECUPERAR SESSÃO
+       ----------------------------------------------------- */
 
     try {
 
@@ -330,7 +500,9 @@ async function init() {
             data,
             error
         } =
-            await supabaseClient.auth.getSession();
+            await supabaseClient
+                .auth
+                .getSession();
 
 
         if (error) {
@@ -340,17 +512,22 @@ async function init() {
                 error
             );
 
-        } else if (
-            data?.session?.user
+        }
+
+
+        if (
+            data?.session?.user?.id
         ) {
 
             state.userId =
                 data.session.user.id;
 
+
             log(
                 "👤 Sessão encontrada:",
                 state.userId
             );
+
         }
 
     } catch (error) {
@@ -359,8 +536,13 @@ async function init() {
             "⚠️ Erro ao verificar sessão:",
             error
         );
+
     }
 
+
+    /* -----------------------------------------------------
+       VERIFICAR ROOM NA URL
+       ----------------------------------------------------- */
 
     checkRoomFromURL();
 
@@ -374,96 +556,271 @@ async function init() {
     log(
         "✅ Aplicação pronta."
     );
+
 }
 
 
 /* =========================================================
-   BOTÕES
+   CONFIGURAR BOTÕES
    ========================================================= */
 
 function setupButtons() {
 
+    if (
+        state.buttonsInitialized
+    ) {
 
-    showCreateRoom?.addEventListener(
-        "click",
-        () => {
+        log(
+            "⚠️ Botões já foram configurados."
+        );
 
-            showElement(
-                createPanel
-            );
+        return;
 
-            hideElement(
-                joinPanel
-            );
+    }
 
-            clearError(
-                createError
-            );
-        }
+
+    state.buttonsInitialized =
+        true;
+
+
+    log(
+        "🔧 Configurando botões..."
     );
 
 
-    showJoinRoom?.addEventListener(
-        "click",
-        () => {
+    /* =====================================================
+       BOTÃO MOSTRAR CRIAR SALA
+       ===================================================== */
 
-            showElement(
-                joinPanel
-            );
+    if (showCreateRoom) {
 
-            hideElement(
-                createPanel
-            );
+        showCreateRoom.addEventListener(
+            "click",
+            event => {
 
-            clearError(
-                joinError
-            );
-        }
-    );
+                event.preventDefault();
+                event.stopPropagation();
 
 
-    createRoomBtn?.addEventListener(
-        "click",
-        createRoom
-    );
+                log(
+                    "🟢 BOTÃO 'CRIAR SALA' CLICADO"
+                );
 
 
-    joinRoomBtn?.addEventListener(
-        "click",
-        joinRoom
-    );
+                showElement(
+                    createPanel
+                );
 
+
+                hideElement(
+                    joinPanel
+                );
+
+
+                clearError(
+                    createError
+                );
+
+
+                createName?.focus();
+
+            }
+        );
+
+    } else {
+
+        console.error(
+            "❌ ELEMENTO #showCreateRoom NÃO FOI ENCONTRADO."
+        );
+
+    }
+
+
+    /* =====================================================
+       BOTÃO ENTRAR
+       ===================================================== */
+
+    if (showJoinRoom) {
+
+        showJoinRoom.addEventListener(
+            "click",
+            event => {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+
+                log(
+                    "🟢 BOTÃO 'ENTRAR' CLICADO"
+                );
+
+
+                showElement(
+                    joinPanel
+                );
+
+
+                hideElement(
+                    createPanel
+                );
+
+
+                clearError(
+                    joinError
+                );
+
+
+                joinName?.focus();
+
+            }
+        );
+
+    } else {
+
+        console.warn(
+            "⚠️ #showJoinRoom não encontrado."
+        );
+
+    }
+
+
+    /* =====================================================
+       BOTÃO REAL DE CRIAR SALA
+       ===================================================== */
+
+    if (createRoomBtn) {
+
+        createRoomBtn.type =
+            "button";
+
+
+        createRoomBtn.addEventListener(
+            "click",
+            async event => {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+
+                log(
+                    "🚀 BOTÃO #createRoomBtn CLICADO"
+                );
+
+
+                await createRoom();
+
+            }
+        );
+
+    } else {
+
+        console.error(
+            "❌ ELEMENTO #createRoomBtn NÃO FOI ENCONTRADO."
+        );
+
+    }
+
+
+    /* =====================================================
+       BOTÃO ENTRAR NA SALA
+       ===================================================== */
+
+    if (joinRoomBtn) {
+
+        joinRoomBtn.type =
+            "button";
+
+
+        joinRoomBtn.addEventListener(
+            "click",
+            async event => {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+
+                log(
+                    "🚪 BOTÃO #joinRoomBtn CLICADO"
+                );
+
+
+                await joinRoom();
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       SAIR
+       ===================================================== */
 
     leaveRoomBtn?.addEventListener(
         "click",
-        leaveRoom
+        async event => {
+
+            event.preventDefault();
+
+            await leaveRoom();
+
+        }
     );
 
+
+    /* =====================================================
+       COPIAR LINK
+       ===================================================== */
 
     copyRoomLink?.addEventListener(
         "click",
-        copyRoomURL
+        async event => {
+
+            event.preventDefault();
+
+            await copyRoomURL();
+
+        }
     );
 
 
+    /* =====================================================
+       ADICIONAR VÍDEO
+       ===================================================== */
+
     showAddVideo?.addEventListener(
         "click",
-        () => {
+        event => {
+
+            event.preventDefault();
+
 
             showElement(
                 videoModal
             );
 
+
             videoTitle?.focus();
+
         }
     );
 
 
     addVideoBtn?.addEventListener(
         "click",
-        addVideo
+        async event => {
+
+            event.preventDefault();
+
+            await addVideo();
+
+        }
     );
 
+
+    /* =====================================================
+       CHAT
+       ===================================================== */
 
     chatForm?.addEventListener(
         "submit",
@@ -471,26 +828,42 @@ function setupButtons() {
     );
 
 
+    /* =====================================================
+       REAÇÕES
+       ===================================================== */
+
     document
         .querySelectorAll(
             "[data-reaction]"
         )
-        .forEach(button => {
+        .forEach(
+            button => {
 
-            button.addEventListener(
-                "click",
-                () => {
+                button.addEventListener(
+                    "click",
+                    event => {
 
-                    const reaction =
-                        button.dataset.reaction;
+                        event.preventDefault();
 
-                    sendReaction(
-                        reaction
-                    );
-                }
-            );
-        });
 
+                        const reaction =
+                            button.dataset.reaction;
+
+
+                        sendReaction(
+                            reaction
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+    /* =====================================================
+       MODAL
+       ===================================================== */
 
     videoModal?.addEventListener(
         "click",
@@ -504,10 +877,16 @@ function setupButtons() {
                 hideElement(
                     videoModal
                 );
+
             }
+
         }
     );
 
+
+    /* =====================================================
+       ENTER - CRIAR
+       ===================================================== */
 
     createName?.addEventListener(
         "keydown",
@@ -517,8 +896,12 @@ function setupButtons() {
                 event.key === "Enter"
             ) {
 
+                event.preventDefault();
+
                 createRoom();
+
             }
+
         }
     );
 
@@ -531,11 +914,19 @@ function setupButtons() {
                 event.key === "Enter"
             ) {
 
+                event.preventDefault();
+
                 createRoom();
+
             }
+
         }
     );
 
+
+    /* =====================================================
+       ENTER - ENTRAR
+       ===================================================== */
 
     joinName?.addEventListener(
         "keydown",
@@ -545,8 +936,12 @@ function setupButtons() {
                 event.key === "Enter"
             ) {
 
+                event.preventDefault();
+
                 joinRoom();
+
             }
+
         }
     );
 
@@ -559,11 +954,19 @@ function setupButtons() {
                 event.key === "Enter"
             ) {
 
+                event.preventDefault();
+
                 joinRoom();
+
             }
+
         }
     );
 
+
+    /* =====================================================
+       VÍDEO
+       ===================================================== */
 
     videoPlayer?.addEventListener(
         "play",
@@ -581,6 +984,12 @@ function setupButtons() {
         "seeked",
         handleVideoSeek
     );
+
+
+    log(
+        "✅ Botões configurados."
+    );
+
 }
 
 
@@ -595,18 +1004,21 @@ async function ensureUser() {
         throw new Error(
             "Supabase não está inicializado."
         );
+
     }
 
 
     /* -----------------------------------------------------
-       VERIFICAR SESSÃO EXISTENTE
+       VERIFICAR SESSÃO
        ----------------------------------------------------- */
 
     const {
         data: sessionData,
         error: sessionError
     } =
-        await supabaseClient.auth.getSession();
+        await supabaseClient
+            .auth
+            .getSession();
 
 
     if (sessionError) {
@@ -616,9 +1028,12 @@ async function ensureUser() {
             sessionError
         );
 
+
         throw new Error(
+            sessionError.message ||
             "Não foi possível verificar sua sessão."
         );
+
     }
 
 
@@ -626,17 +1041,22 @@ async function ensureUser() {
         sessionData?.session?.user;
 
 
-    if (sessionUser?.id) {
+    if (
+        sessionUser?.id
+    ) {
 
         state.userId =
             sessionUser.id;
+
 
         log(
             "👤 Usuário autenticado:",
             state.userId
         );
 
+
         return state.userId;
+
     }
 
 
@@ -653,7 +1073,9 @@ async function ensureUser() {
         data,
         error
     } =
-        await supabaseClient.auth.signInAnonymously();
+        await supabaseClient
+            .auth
+            .signInAnonymously();
 
 
     if (error) {
@@ -663,18 +1085,39 @@ async function ensureUser() {
             error
         );
 
-        throw new Error(
+
+        let message =
             error.message ||
-            "Não foi possível criar sua sessão."
+            "Não foi possível criar sua sessão.";
+
+
+        if (
+            error.message
+                ?.toLowerCase()
+                .includes("anonymous")
+        ) {
+
+            message =
+                "Login anônimo não está ativado no Supabase.";
+
+        }
+
+
+        throw new Error(
+            message
         );
+
     }
 
 
-    if (!data?.user?.id) {
+    if (
+        !data?.user?.id
+    ) {
 
         throw new Error(
             "Supabase não retornou o ID do usuário."
         );
+
     }
 
 
@@ -689,11 +1132,12 @@ async function ensureUser() {
 
 
     return state.userId;
+
 }
 
 
 /* =========================================================
-   GERAR CÓDIGO DA SALA
+   GERAR CÓDIGO
    ========================================================= */
 
 function generateRoomCode(
@@ -720,10 +1164,12 @@ function generateRoomCode(
                     characters.length
                 )
             );
+
     }
 
 
     return code;
+
 }
 
 
@@ -733,18 +1179,41 @@ function generateRoomCode(
 
 async function createRoom() {
 
+    log(
+        "🚀 createRoom() iniciado."
+    );
+
+
+    refreshDOM();
+
+
     clearError(
         createError
     );
 
 
     const name =
-        createName?.value.trim();
+        createName?.value
+            ?.trim() || "";
 
 
     const roomNameValue =
-        roomName?.value.trim();
+        roomName?.value
+            ?.trim() || "";
 
+
+    log(
+        "📝 Dados:",
+        {
+            nome: name,
+            sala: roomNameValue
+        }
+    );
+
+
+    /* -----------------------------------------------------
+       VALIDAR NOME
+       ----------------------------------------------------- */
 
     if (!name) {
 
@@ -753,11 +1222,18 @@ async function createRoom() {
             "Digite seu nome."
         );
 
+
         createName?.focus();
 
+
         return;
+
     }
 
+
+    /* -----------------------------------------------------
+       VALIDAR NOME DA SALA
+       ----------------------------------------------------- */
 
     if (!roomNameValue) {
 
@@ -766,9 +1242,12 @@ async function createRoom() {
             "Digite o nome da sala."
         );
 
+
         roomName?.focus();
 
+
         return;
+
     }
 
 
@@ -781,7 +1260,7 @@ async function createRoom() {
 
 
         /* -------------------------------------------------
-           GARANTIR USUÁRIO
+           AUTENTICAR
            ------------------------------------------------- */
 
         await ensureUser();
@@ -792,11 +1271,12 @@ async function createRoom() {
             throw new Error(
                 "Usuário não autenticado."
             );
+
         }
 
 
         log(
-            "👤 ID:",
+            "👤 ID do usuário:",
             state.userId
         );
 
@@ -811,9 +1291,12 @@ async function createRoom() {
         );
 
 
-        let room = null;
+        let room =
+            null;
 
-        let lastError = null;
+
+        let lastError =
+            null;
 
 
         for (
@@ -827,8 +1310,7 @@ async function createRoom() {
 
 
             log(
-                `🔑 Tentativa ${attempt}/5:`,
-                code
+                `🔑 Tentativa ${attempt}/5: ${code}`
             );
 
 
@@ -866,7 +1348,15 @@ async function createRoom() {
                 room =
                     data;
 
+
+                log(
+                    "✅ INSERT DA SALA FUNCIONOU:",
+                    room
+                );
+
+
                 break;
+
             }
 
 
@@ -874,26 +1364,34 @@ async function createRoom() {
                 error;
 
 
-            console.warn(
-                `⚠️ Tentativa ${attempt} falhou:`,
+            console.error(
+                `❌ Tentativa ${attempt} falhou:`,
                 error
             );
 
 
-            /* ------------------------------------------------
-               Se não for código duplicado,
-               não adianta tentar novamente.
-               ------------------------------------------------ */
+            /* ---------------------------------------------
+               Código duplicado
+               --------------------------------------------- */
 
             if (
-                error.code !==
+                error.code ===
                 "23505"
             ) {
 
-                break;
+                continue;
+
             }
+
+
+            break;
+
         }
 
+
+        /* -------------------------------------------------
+           VERIFICAR RESULTADO
+           ------------------------------------------------- */
 
         if (!room) {
 
@@ -903,34 +1401,39 @@ async function createRoom() {
             );
 
 
-            if (lastError) {
+            const message =
+                lastError?.message ||
+                "Não foi possível criar a sala.";
 
-                console.error(
-                    "Código:",
-                    lastError.code
+
+            if (
+                lastError?.code ===
+                "42501"
+            ) {
+
+                throw new Error(
+                    "Permissão negada pelo RLS do Supabase."
                 );
 
-                console.error(
-                    "Mensagem:",
-                    lastError.message
+            }
+
+
+            if (
+                lastError?.code ===
+                "23505"
+            ) {
+
+                throw new Error(
+                    "O código da sala já existe. Tente novamente."
                 );
 
-                console.error(
-                    "Detalhes:",
-                    lastError.details
-                );
-
-                console.error(
-                    "Hint:",
-                    lastError.hint
-                );
             }
 
 
             throw new Error(
-                lastError?.message ||
-                "Não foi possível criar a sala."
+                message
             );
+
         }
 
 
@@ -941,11 +1444,14 @@ async function createRoom() {
         state.userName =
             name;
 
+
         state.room =
             room;
 
+
         state.roomId =
             room.id;
+
 
         state.isHost =
             true;
@@ -953,13 +1459,19 @@ async function createRoom() {
 
         log(
             "🏠 SALA CRIADA:",
-            room
+            state.room
         );
 
 
         /* -------------------------------------------------
            ADICIONAR CRIADOR
            ------------------------------------------------- */
+
+        setConnectionStatus(
+            "connecting",
+            "Entrando na sala..."
+        );
+
 
         await addMember();
 
@@ -992,7 +1504,7 @@ async function createRoom() {
 
         showError(
             createError,
-            error.message ||
+            error?.message ||
             "Erro ao criar sala."
         );
 
@@ -1001,7 +1513,9 @@ async function createRoom() {
             "error",
             "Erro"
         );
+
     }
+
 }
 
 
@@ -1011,19 +1525,23 @@ async function createRoom() {
 
 async function joinRoom() {
 
+    refreshDOM();
+
+
     clearError(
         joinError
     );
 
 
     const name =
-        joinName?.value.trim();
+        joinName?.value
+            ?.trim() || "";
 
 
     const code =
         roomCode?.value
-            .trim()
-            .toUpperCase();
+            ?.trim()
+            .toUpperCase() || "";
 
 
     if (!name) {
@@ -1033,9 +1551,12 @@ async function joinRoom() {
             "Digite seu nome."
         );
 
+
         joinName?.focus();
 
+
         return;
+
     }
 
 
@@ -1046,9 +1567,12 @@ async function joinRoom() {
             "Digite o código da sala."
         );
 
+
         roomCode?.focus();
 
+
         return;
+
     }
 
 
@@ -1068,6 +1592,7 @@ async function joinRoom() {
             throw new Error(
                 "Usuário não autenticado."
             );
+
         }
 
 
@@ -1102,9 +1627,11 @@ async function joinRoom() {
                 error
             );
 
+
             throw new Error(
                 error.message
             );
+
         }
 
 
@@ -1113,21 +1640,21 @@ async function joinRoom() {
             throw new Error(
                 "Sala não encontrada ou encerrada."
             );
+
         }
 
-
-        /* -------------------------------------------------
-           SALVAR ESTADO
-           ------------------------------------------------- */
 
         state.userName =
             name;
 
+
         state.room =
             room;
 
+
         state.roomId =
             room.id;
+
 
         state.isHost =
             room.owner_id ===
@@ -1140,16 +1667,8 @@ async function joinRoom() {
         );
 
 
-        /* -------------------------------------------------
-           ADICIONAR MEMBRO
-           ------------------------------------------------- */
-
         await addMember();
 
-
-        /* -------------------------------------------------
-           ABRIR SALA
-           ------------------------------------------------- */
 
         await openRoom();
 
@@ -1175,7 +1694,7 @@ async function joinRoom() {
 
         showError(
             joinError,
-            error.message ||
+            error?.message ||
             "Erro ao entrar na sala."
         );
 
@@ -1184,7 +1703,9 @@ async function joinRoom() {
             "error",
             "Erro"
         );
+
     }
+
 }
 
 
@@ -1202,6 +1723,7 @@ async function addMember() {
         throw new Error(
             "Dados do usuário ou da sala estão ausentes."
         );
+
     }
 
 
@@ -1238,6 +1760,7 @@ async function addMember() {
                         "room_id,user_id"
 
                 }
+
             )
             .select("*")
             .single();
@@ -1250,10 +1773,12 @@ async function addMember() {
             error
         );
 
+
         throw new Error(
             "Não foi possível entrar como participante: " +
             error.message
         );
+
     }
 
 
@@ -1261,6 +1786,7 @@ async function addMember() {
         "👤 Participante adicionado:",
         data
     );
+
 }
 
 
@@ -1270,13 +1796,17 @@ async function addMember() {
 
 async function openRoom() {
 
-    if (state.openingRoom) {
+    if (
+        state.openingRoom
+    ) {
 
         log(
             "⚠️ openRoom já está executando."
         );
 
+
         return;
+
     }
 
 
@@ -1286,9 +1816,13 @@ async function openRoom() {
 
     try {
 
+        refreshDOM();
+
+
         hideElement(
             homeScreen
         );
+
 
         showElement(
             roomScreen
@@ -1349,7 +1883,9 @@ async function openRoom() {
 
         state.openingRoom =
             false;
+
     }
+
 }
 
 
@@ -1360,10 +1896,15 @@ async function openRoom() {
 async function loadRoomData() {
 
     await Promise.all([
+
         loadParticipants(),
+
         loadPlaylist(),
+
         loadMessages()
+
     ]);
+
 }
 
 
@@ -1376,6 +1917,7 @@ async function loadParticipants() {
     if (!state.roomId) {
 
         return;
+
     }
 
 
@@ -1405,7 +1947,9 @@ async function loadParticipants() {
             error
         );
 
+
         return;
+
     }
 
 
@@ -1414,6 +1958,7 @@ async function loadParticipants() {
 
 
     renderParticipants();
+
 }
 
 
@@ -1426,6 +1971,7 @@ function renderParticipants() {
     if (!participants) {
 
         return;
+
     }
 
 
@@ -1469,6 +2015,7 @@ function renderParticipants() {
             participants.appendChild(
                 item
             );
+
         }
     );
 
@@ -1477,6 +2024,7 @@ function renderParticipants() {
         participantCount,
         state.participants.length
     );
+
 }
 
 
@@ -1489,6 +2037,7 @@ async function loadPlaylist() {
     if (!state.roomId) {
 
         return;
+
     }
 
 
@@ -1524,7 +2073,9 @@ async function loadPlaylist() {
             error
         );
 
+
         return;
+
     }
 
 
@@ -1543,7 +2094,9 @@ async function loadPlaylist() {
         loadVideo(
             state.playlist[0]
         );
+
     }
+
 }
 
 
@@ -1556,6 +2109,7 @@ function renderPlaylist() {
     if (!playlist) {
 
         return;
+
     }
 
 
@@ -1584,6 +2138,7 @@ function renderPlaylist() {
                 element.classList.add(
                     "active"
                 );
+
             }
 
 
@@ -1599,14 +2154,12 @@ function renderPlaylist() {
 
                 </div>
 
-
                 <button
                     type="button"
                     class="playlist-play"
                     title="Reproduzir">
                     ▶
                 </button>
-
 
                 <button
                     type="button"
@@ -1624,11 +2177,15 @@ function renderPlaylist() {
                 )
                 ?.addEventListener(
                     "click",
-                    () => {
+                    event => {
+
+                        event.preventDefault();
+
 
                         loadVideo(
                             item
                         );
+
                     }
                 );
 
@@ -1639,11 +2196,15 @@ function renderPlaylist() {
                 )
                 ?.addEventListener(
                     "click",
-                    () => {
+                    event => {
+
+                        event.preventDefault();
+
 
                         removePlaylistItem(
                             item
                         );
+
                     }
                 );
 
@@ -1651,8 +2212,10 @@ function renderPlaylist() {
             playlist.appendChild(
                 element
             );
+
         }
     );
+
 }
 
 
@@ -1668,11 +2231,13 @@ async function addVideo() {
 
 
     const title =
-        videoTitle?.value.trim();
+        videoTitle?.value
+            ?.trim() || "";
 
 
     const url =
-        videoUrl?.value.trim();
+        videoUrl?.value
+            ?.trim() || "";
 
 
     if (!title) {
@@ -1682,9 +2247,12 @@ async function addVideo() {
             "Digite o título do vídeo."
         );
 
+
         videoTitle?.focus();
 
+
         return;
+
     }
 
 
@@ -1695,9 +2263,12 @@ async function addVideo() {
             "Digite a URL do vídeo."
         );
 
+
         videoUrl?.focus();
 
+
         return;
+
     }
 
 
@@ -1711,7 +2282,9 @@ async function addVideo() {
             "Você não está em uma sala."
         );
 
+
         return;
+
     }
 
 
@@ -1751,14 +2324,10 @@ async function addVideo() {
 
         if (error) {
 
-            console.error(
-                "❌ Erro ao adicionar vídeo:",
-                error
-            );
-
             throw new Error(
                 error.message
             );
+
         }
 
 
@@ -1777,6 +2346,7 @@ async function addVideo() {
             loadVideo(
                 data
             );
+
         }
 
 
@@ -1784,6 +2354,7 @@ async function addVideo() {
 
             videoTitle.value =
                 "";
+
         }
 
 
@@ -1791,6 +2362,7 @@ async function addVideo() {
 
             videoUrl.value =
                 "";
+
         }
 
 
@@ -1817,7 +2389,9 @@ async function addVideo() {
             error.message ||
             "Erro ao adicionar vídeo."
         );
+
     }
+
 }
 
 
@@ -1832,6 +2406,7 @@ async function removePlaylistItem(
     if (!item?.id) {
 
         return;
+
     }
 
 
@@ -1854,6 +2429,7 @@ async function removePlaylistItem(
             throw new Error(
                 error.message
             );
+
         }
 
 
@@ -1893,16 +2469,21 @@ async function removePlaylistItem(
                     );
 
                     videoPlayer.load();
+
                 }
+
 
                 hideElement(
                     videoPlayer
                 );
 
+
                 showElement(
                     videoPlaceholder
                 );
+
             }
+
         }
 
 
@@ -1925,7 +2506,9 @@ async function removePlaylistItem(
         showToast(
             "Não foi possível remover o vídeo."
         );
+
     }
+
 }
 
 
@@ -1938,6 +2521,7 @@ function loadVideo(item) {
     if (!item) {
 
         return;
+
     }
 
 
@@ -1951,12 +2535,14 @@ function loadVideo(item) {
     if (!videoPlayer) {
 
         return;
+
     }
 
 
     hideElement(
         videoPlaceholder
     );
+
 
     showElement(
         videoPlayer
@@ -1972,6 +2558,7 @@ function loadVideo(item) {
         videoPlayer.src =
             item.video_url;
 
+
         videoPlayer.load();
 
     } catch (error) {
@@ -1980,6 +2567,7 @@ function loadVideo(item) {
             "❌ Erro ao carregar vídeo:",
             error
         );
+
     }
 
 
@@ -1998,6 +2586,7 @@ function loadVideo(item) {
         "🎬 Vídeo carregado:",
         item.title
     );
+
 }
 
 
@@ -2013,6 +2602,7 @@ function handleVideoPlay() {
     ) {
 
         return;
+
     }
 
 
@@ -2024,6 +2614,7 @@ function handleVideoPlay() {
                 0
         }
     );
+
 }
 
 
@@ -2039,6 +2630,7 @@ function handleVideoPause() {
     ) {
 
         return;
+
     }
 
 
@@ -2050,6 +2642,7 @@ function handleVideoPause() {
                 0
         }
     );
+
 }
 
 
@@ -2065,6 +2658,7 @@ function handleVideoSeek() {
     ) {
 
         return;
+
     }
 
 
@@ -2076,6 +2670,7 @@ function handleVideoSeek() {
                 0
         }
     );
+
 }
 
 
@@ -2091,6 +2686,7 @@ function broadcastPlayer(
     if (!state.channel) {
 
         return;
+
     }
 
 
@@ -2111,8 +2707,11 @@ function broadcastPlayer(
                 action,
 
             ...data
+
         }
+
     });
+
 }
 
 
@@ -2127,6 +2726,7 @@ async function applyPlayerEvent(
     if (!payload) {
 
         return;
+
     }
 
 
@@ -2136,12 +2736,14 @@ async function applyPlayerEvent(
     ) {
 
         return;
+
     }
 
 
     if (!videoPlayer) {
 
         return;
+
     }
 
 
@@ -2162,6 +2764,7 @@ async function applyPlayerEvent(
                     payload.time;
 
             } catch (_) {}
+
         }
 
 
@@ -2181,10 +2784,13 @@ async function applyPlayerEvent(
                     error
                 );
 
+
                 showToast(
                     "Clique no vídeo para iniciar."
                 );
+
             }
+
         }
 
 
@@ -2194,6 +2800,7 @@ async function applyPlayerEvent(
         ) {
 
             videoPlayer.pause();
+
         }
 
     } catch (error) {
@@ -2214,7 +2821,9 @@ async function applyPlayerEvent(
             },
             300
         );
+
     }
+
 }
 
 
@@ -2230,12 +2839,9 @@ async function subscribeRealtime() {
     ) {
 
         return;
+
     }
 
-
-    /* -----------------------------------------------------
-       REMOVER CANAL ANTERIOR
-       ----------------------------------------------------- */
 
     if (state.channel) {
 
@@ -2251,6 +2857,7 @@ async function subscribeRealtime() {
 
         state.channel =
             null;
+
     }
 
 
@@ -2270,10 +2877,6 @@ async function subscribeRealtime() {
         );
 
 
-    /* -----------------------------------------------------
-       PLAYER
-       ----------------------------------------------------- */
-
     state.channel.on(
         "broadcast",
         {
@@ -2284,13 +2887,10 @@ async function subscribeRealtime() {
             applyPlayerEvent(
                 payload
             );
+
         }
     );
 
-
-    /* -----------------------------------------------------
-       REAÇÕES
-       ----------------------------------------------------- */
 
     state.channel.on(
         "broadcast",
@@ -2302,13 +2902,10 @@ async function subscribeRealtime() {
             showReaction(
                 payload?.reaction
             );
+
         }
     );
 
-
-    /* -----------------------------------------------------
-       MENSAGENS
-       ----------------------------------------------------- */
 
     state.channel.on(
         "postgres_changes",
@@ -2324,13 +2921,10 @@ async function subscribeRealtime() {
             appendMessage(
                 payload.new
             );
+
         }
     );
 
-
-    /* -----------------------------------------------------
-       PARTICIPANTES
-       ----------------------------------------------------- */
 
     state.channel.on(
         "postgres_changes",
@@ -2344,13 +2938,10 @@ async function subscribeRealtime() {
         async () => {
 
             await loadParticipants();
+
         }
     );
 
-
-    /* -----------------------------------------------------
-       PLAYLIST
-       ----------------------------------------------------- */
 
     state.channel.on(
         "postgres_changes",
@@ -2364,13 +2955,10 @@ async function subscribeRealtime() {
         async () => {
 
             await loadPlaylist();
+
         }
     );
 
-
-    /* -----------------------------------------------------
-       CONECTAR
-       ----------------------------------------------------- */
 
     await new Promise(
         resolve => {
@@ -2387,6 +2975,7 @@ async function subscribeRealtime() {
                     ) {
 
                         return;
+
                     }
 
 
@@ -2397,6 +2986,7 @@ async function subscribeRealtime() {
                     resolve(
                         status
                     );
+
                 };
 
 
@@ -2419,6 +3009,7 @@ async function subscribeRealtime() {
                             "Online"
                         );
 
+
                         finish(
                             status
                         );
@@ -2432,6 +3023,7 @@ async function subscribeRealtime() {
                             "error",
                             "Realtime indisponível"
                         );
+
 
                         finish(
                             status
@@ -2447,10 +3039,13 @@ async function subscribeRealtime() {
                             "Conexão expirou"
                         );
 
+
                         finish(
                             status
                         );
+
                     }
+
                 }
             );
 
@@ -2465,8 +3060,10 @@ async function subscribeRealtime() {
                 },
                 10000
             );
+
         }
     );
+
 }
 
 
@@ -2482,12 +3079,14 @@ async function sendMessage(
 
 
     const message =
-        chatInput?.value.trim();
+        chatInput?.value
+            ?.trim() || "";
 
 
     if (!message) {
 
         return;
+
     }
 
 
@@ -2500,7 +3099,9 @@ async function sendMessage(
             "Você não está em uma sala."
         );
 
+
         return;
+
     }
 
 
@@ -2524,6 +3125,7 @@ async function sendMessage(
 
                     message:
                         message
+
                 });
 
 
@@ -2532,12 +3134,16 @@ async function sendMessage(
             throw new Error(
                 error.message
             );
+
         }
 
 
-        chatInput.value =
-            "";
+        if (chatInput) {
 
+            chatInput.value =
+                "";
+
+        }
 
     } catch (error) {
 
@@ -2550,7 +3156,9 @@ async function sendMessage(
         showToast(
             "Não foi possível enviar a mensagem."
         );
+
     }
+
 }
 
 
@@ -2563,6 +3171,7 @@ async function loadMessages() {
     if (!state.roomId) {
 
         return;
+
     }
 
 
@@ -2593,13 +3202,16 @@ async function loadMessages() {
             error
         );
 
+
         return;
+
     }
 
 
     if (!chatMessages) {
 
         return;
+
     }
 
 
@@ -2614,11 +3226,13 @@ async function loadMessages() {
                 message,
                 false
             );
+
         }
     );
 
 
     scrollChat();
+
 }
 
 
@@ -2637,6 +3251,7 @@ function appendMessage(
     ) {
 
         return;
+
     }
 
 
@@ -2649,6 +3264,7 @@ function appendMessage(
     if (existing) {
 
         return;
+
     }
 
 
@@ -2691,7 +3307,9 @@ function appendMessage(
     if (scroll) {
 
         scrollChat();
+
     }
+
 }
 
 
@@ -2704,11 +3322,13 @@ function scrollChat() {
     if (!chatMessages) {
 
         return;
+
     }
 
 
     chatMessages.scrollTop =
         chatMessages.scrollHeight;
+
 }
 
 
@@ -2726,6 +3346,7 @@ function sendReaction(
     ) {
 
         return;
+
     }
 
 
@@ -2744,13 +3365,16 @@ function sendReaction(
 
             reaction:
                 reaction
+
         }
+
     });
 
 
     showReaction(
         reaction
     );
+
 }
 
 
@@ -2765,6 +3389,7 @@ function showReaction(
     if (!reaction) {
 
         return;
+
     }
 
 
@@ -2795,6 +3420,7 @@ function showReaction(
         },
         2000
     );
+
 }
 
 
@@ -2815,6 +3441,7 @@ function startHeartbeat() {
             updateHeartbeat,
             30000
         );
+
 }
 
 
@@ -2830,6 +3457,7 @@ async function updateHeartbeat() {
     ) {
 
         return;
+
     }
 
 
@@ -2863,7 +3491,9 @@ async function updateHeartbeat() {
             "⚠️ Erro no heartbeat:",
             error
         );
+
     }
+
 }
 
 
@@ -2881,9 +3511,12 @@ function stopHeartbeat() {
             state.heartbeat
         );
 
+
         state.heartbeat =
             null;
+
     }
+
 }
 
 
@@ -2919,6 +3552,7 @@ async function leaveRoom() {
                     "user_id",
                     state.userId
                 );
+
         }
 
 
@@ -2932,10 +3566,11 @@ async function leaveRoom() {
                     state.channel
                 );
 
+
             state.channel =
                 null;
-        }
 
+        }
 
     } catch (error) {
 
@@ -2943,23 +3578,29 @@ async function leaveRoom() {
             "⚠️ Erro ao sair:",
             error
         );
+
     }
 
 
     state.room =
         null;
 
+
     state.roomId =
         null;
+
 
     state.isHost =
         false;
 
+
     state.participants =
         [];
 
+
     state.playlist =
         [];
+
 
     state.currentVideoId =
         null;
@@ -2969,17 +3610,21 @@ async function leaveRoom() {
 
         videoPlayer.pause();
 
+
         videoPlayer.removeAttribute(
             "src"
         );
 
+
         videoPlayer.load();
+
     }
 
 
     showElement(
         homeScreen
     );
+
 
     hideElement(
         roomScreen
@@ -2995,6 +3640,7 @@ async function leaveRoom() {
     showToast(
         "Você saiu da sala."
     );
+
 }
 
 
@@ -3007,6 +3653,7 @@ async function copyRoomURL() {
     if (!state.room?.code) {
 
         return;
+
     }
 
 
@@ -3040,7 +3687,9 @@ async function copyRoomURL() {
             "Copie o link da sala:",
             url
         );
+
     }
+
 }
 
 
@@ -3049,6 +3698,9 @@ async function copyRoomURL() {
    ========================================================= */
 
 function checkRoomFromURL() {
+
+    refreshDOM();
+
 
     const params =
         new URLSearchParams(
@@ -3063,6 +3715,7 @@ function checkRoomFromURL() {
     if (!code) {
 
         return;
+
     }
 
 
@@ -3076,12 +3729,14 @@ function checkRoomFromURL() {
 
         roomCode.value =
             normalizedCode;
+
     }
 
 
     showElement(
         joinPanel
     );
+
 
     hideElement(
         createPanel
@@ -3092,6 +3747,7 @@ function checkRoomFromURL() {
         "🔗 Código encontrado na URL:",
         normalizedCode
     );
+
 }
 
 
@@ -3113,6 +3769,7 @@ function setConnectionStatus(
     if (!connectionDot) {
 
         return;
+
     }
 
 
@@ -3126,6 +3783,7 @@ function setConnectionStatus(
     connectionDot.classList.add(
         type
     );
+
 }
 
 
@@ -3140,7 +3798,14 @@ function showError(
 
     if (!element) {
 
+        console.error(
+            "❌ Elemento de erro não encontrado:",
+            message
+        );
+
+
         return;
+
     }
 
 
@@ -3151,8 +3816,13 @@ function showError(
 
     element.style.display =
         "";
+
 }
 
+
+/* =========================================================
+   LIMPAR ERRO
+   ========================================================= */
 
 function clearError(
     element
@@ -3161,14 +3831,17 @@ function clearError(
     if (!element) {
 
         return;
+
     }
 
 
     element.textContent =
         "";
 
+
     element.style.display =
         "none";
+
 }
 
 
@@ -3187,7 +3860,9 @@ function showToast(
             message
         );
 
+
         return;
+
     }
 
 
@@ -3216,6 +3891,7 @@ function showToast(
             },
             3000
         );
+
 }
 
 
@@ -3252,7 +3928,9 @@ window.addEventListener(
                     "user_id",
                     state.userId
                 );
+
         }
+
     }
 );
 
@@ -3264,6 +3942,10 @@ window.addEventListener(
 window.AlienWatchParty = {
 
     state,
+
+    refreshDOM,
+
+    setupButtons,
 
     createRoom,
 
