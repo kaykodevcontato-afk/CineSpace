@@ -1,592 +1,655 @@
-
 <!DOCTYPE html>
-
 <html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-```
-<title>Alien Watch Party</title>
+    <title>Alien Watch Party</title>
 
-<meta
-    name="description"
-    content="Assista vídeos com seus amigos em uma sala sincronizada."
->
+    <meta
+        name="description"
+        content="Assista vídeos com seus amigos em uma sala sincronizada."
+    >
 
-<link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css">
 
-<!-- Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-```
-
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
 
-```
-<!-- =====================================================
-     HEADER
-====================================================== -->
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
 
-<header class="topbar">
+    <header class="topbar">
 
-    <div class="logo">
+        <div class="logo">
 
-        <span class="logo-icon">👽</span>
+            <span class="logo-icon">👽</span>
 
-        <div>
-            <strong>ALIEN</strong>
-            <span>WATCH PARTY</span>
-        </div>
-
-    </div>
-
-    <div class="connection-status">
-
-        <span id="connectionDot"></span>
-
-        <span id="connectionText">
-            Offline
-        </span>
-
-    </div>
-
-</header>
-
-
-<!-- =====================================================
-     TELA INICIAL
-====================================================== -->
-
-<main id="homeScreen" class="screen">
-
-    <section class="hero">
-
-        <div class="hero-content">
-
-            <div class="alien-icon">
-                👽
-            </div>
-
-            <h1>
-                Alien Watch Party
-            </h1>
-
-            <p>
-                Crie uma sala e assista com seus amigos
-                em tempo real.
-            </p>
-
-            <div class="hero-buttons">
-
-                <button
-                    id="showCreateRoom"
-                    type="button"
-                    class="btn primary"
-                >
-                    🚀 Criar sala
-                </button>
-
-                <button
-                    id="showJoinRoom"
-                    type="button"
-                    class="btn secondary"
-                >
-                    🔗 Entrar em sala
-                </button>
-
+            <div>
+                <strong>ALIEN</strong>
+                <span>WATCH PARTY</span>
             </div>
 
         </div>
 
-    </section>
+        <div class="connection-status">
 
+            <span id="connectionDot"></span>
 
-    <!-- =================================================
-         MODAL CRIAR SALA
-    ================================================== -->
-
-    <section
-        id="createPanel"
-        class="modal-panel hidden"
-    >
-
-        <div class="modal-box">
-
-            <button
-                type="button"
-                class="close-btn"
-                data-close="createPanel"
-                aria-label="Fechar"
-            >
-                ×
-            </button>
-
-            <h2>
-                🚀 Criar sala
-            </h2>
-
-            <label for="createName">
-                Seu nome
-            </label>
-
-            <input
-                id="createName"
-                type="text"
-                maxlength="30"
-                placeholder="Digite seu nome"
-                autocomplete="name"
-            >
-
-            <label for="roomName">
-                Nome da sala
-            </label>
-
-            <input
-                id="roomName"
-                type="text"
-                maxlength="50"
-                placeholder="Noite de filmes"
-            >
-
-            <label class="checkbox-label">
-
-                <input
-                    id="roomPrivate"
-                    type="checkbox"
-                >
-
-                <span>
-                    Sala privada
-                </span>
-
-            </label>
-
-            <button
-                id="createRoomBtn"
-                type="button"
-                class="btn primary full"
-            >
-                Criar sala
-            </button>
-
-            <p
-                id="createError"
-                class="error-message"
-            ></p>
-
-        </div>
-
-    </section>
-
-
-    <!-- =================================================
-         MODAL ENTRAR
-    ================================================== -->
-
-    <section
-        id="joinPanel"
-        class="modal-panel hidden"
-    >
-
-        <div class="modal-box">
-
-            <button
-                type="button"
-                class="close-btn"
-                data-close="joinPanel"
-                aria-label="Fechar"
-            >
-                ×
-            </button>
-
-            <h2>
-                🔗 Entrar em sala
-            </h2>
-
-            <label for="joinName">
-                Seu nome
-            </label>
-
-            <input
-                id="joinName"
-                type="text"
-                maxlength="30"
-                placeholder="Digite seu nome"
-                autocomplete="name"
-            >
-
-            <label for="roomCode">
-                Código da sala
-            </label>
-
-            <input
-                id="roomCode"
-                type="text"
-                maxlength="6"
-                placeholder="ABC123"
-                autocomplete="off"
-                style="text-transform:uppercase"
-            >
-
-            <button
-                id="joinRoomBtn"
-                type="button"
-                class="btn primary full"
-            >
-                Entrar
-            </button>
-
-            <p
-                id="joinError"
-                class="error-message"
-            ></p>
-
-        </div>
-
-    </section>
-
-</main>
-
-
-<!-- =====================================================
-     SALA
-====================================================== -->
-
-<main
-    id="roomScreen"
-    class="room-screen hidden"
->
-
-    <div class="room-header">
-
-        <div>
-
-            <span class="room-label">
-                SALA
+            <span id="connectionText">
+                Conectando...
             </span>
 
-            <h2 id="roomTitle">
-                Minha sala
-            </h2>
-
         </div>
 
-        <div class="room-actions">
-
-            <div class="room-code-box">
-
-                <span>
-                    CÓDIGO
-                </span>
-
-                <strong id="roomCodeDisplay">
-                    ------
-                </strong>
-
-                <button
-                    id="copyRoomLink"
-                    type="button"
-                    title="Copiar link"
-                >
-                    🔗
-                </button>
-
-            </div>
-
-            <button
-                id="leaveRoomBtn"
-                type="button"
-                class="btn danger"
-            >
-                Sair
-            </button>
-
-        </div>
-
-    </div>
+    </header>
 
 
-    <!-- =================================================
-         CONTEÚDO
-    ================================================== -->
+    <!-- =====================================================
+         TELA INICIAL
+    ====================================================== -->
 
-    <div class="room-layout">
+    <main id="homeScreen" class="screen">
 
-        <!-- PLAYER -->
+        <section class="hero">
 
-        <section class="watch-area">
+            <div class="hero-content">
 
-            <div class="video-container">
-
-                <video
-                    id="videoPlayer"
-                    controls
-                    playsinline
-                ></video>
-
-                <div
-                    id="videoPlaceholder"
-                    class="video-placeholder"
-                >
-
-                    <div>
-                        🎬
-                    </div>
-
-                    <h3>
-                        Nenhum vídeo selecionado
-                    </h3>
-
-                    <p>
-                        Adicione um vídeo pela playlist.
-                    </p>
-
+                <div class="alien-icon">
+                    👽
                 </div>
 
-            </div>
+                <h1>
+                    Alien Watch Party
+                </h1>
 
+                <p>
+                    Crie uma sala e assista com seus amigos
+                    em tempo real.
+                </p>
 
-            <!-- SINCRONIZAÇÃO -->
-
-            <div class="sync-bar">
-
-                <span id="syncStatus">
-                    🟢 Sincronizado
-                </span>
-
-                <span id="hostStatus">
-                    👑 Você controla esta sala
-                </span>
-
-            </div>
-
-
-            <!-- REAÇÕES -->
-
-            <div class="reactions">
-
-                <button type="button" data-reaction="❤️">
-                    ❤️
-                </button>
-
-                <button type="button" data-reaction="😂">
-                    😂
-                </button>
-
-                <button type="button" data-reaction="🔥">
-                    🔥
-                </button>
-
-                <button type="button" data-reaction="😱">
-                    😱
-                </button>
-
-                <button type="button" data-reaction="👏">
-                    👏
-                </button>
-
-            </div>
-
-
-            <!-- PLAYLIST -->
-
-            <section class="playlist-section">
-
-                <div class="section-title">
-
-                    <h3>
-                        🎵 Playlist
-                    </h3>
+                <div class="hero-buttons">
 
                     <button
-                        id="showAddVideo"
+                        id="showCreateRoom"
                         type="button"
-                        class="small-btn"
+                        class="btn primary"
                     >
-                        + Adicionar
+                        🚀 Criar sala
+                    </button>
+
+                    <button
+                        id="showJoinRoom"
+                        type="button"
+                        class="btn secondary"
+                    >
+                        🔗 Entrar em sala
                     </button>
 
                 </div>
 
+                <!-- STATUS VISÍVEL PARA DEBUG -->
+
                 <div
-                    id="playlist"
-                    class="playlist"
+                    id="appStatus"
+                    class="app-status"
+                    aria-live="polite"
                 >
-
-                    <div class="empty-playlist">
-                        Nenhum vídeo adicionado.
-                    </div>
-
+                    Inicializando sistema...
                 </div>
 
-            </section>
+            </div>
 
         </section>
 
 
-        <!-- SIDEBAR -->
+        <!-- =================================================
+             MODAL CRIAR SALA
+        ================================================== -->
 
-        <aside class="sidebar">
+        <section
+            id="createPanel"
+            class="modal-panel hidden"
+        >
 
-            <!-- PARTICIPANTES -->
+            <div class="modal-box">
 
-            <section class="side-section">
+                <button
+                    type="button"
+                    class="close-btn"
+                    data-close="createPanel"
+                    aria-label="Fechar"
+                >
+                    ×
+                </button>
 
-                <div class="section-title">
+                <h2>
+                    🚀 Criar sala
+                </h2>
 
-                    <h3>
-                        👥 Participantes
-                    </h3>
+                <label for="createName">
+                    Seu nome
+                </label>
 
-                    <span id="participantCount">
-                        0
+                <input
+                    id="createName"
+                    type="text"
+                    maxlength="30"
+                    placeholder="Digite seu nome"
+                    autocomplete="name"
+                >
+
+                <label for="roomName">
+                    Nome da sala
+                </label>
+
+                <input
+                    id="roomName"
+                    type="text"
+                    maxlength="50"
+                    placeholder="Noite de filmes"
+                >
+
+                <label class="checkbox-label">
+
+                    <input
+                        id="roomPrivate"
+                        type="checkbox"
+                    >
+
+                    <span>
+                        Sala privada
+                    </span>
+
+                </label>
+
+                <button
+                    id="createRoomBtn"
+                    type="button"
+                    class="btn primary full"
+                >
+                    🚀 Criar sala
+                </button>
+
+                <p
+                    id="createError"
+                    class="error-message"
+                    aria-live="polite"
+                ></p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             MODAL ENTRAR
+        ================================================== -->
+
+        <section
+            id="joinPanel"
+            class="modal-panel hidden"
+        >
+
+            <div class="modal-box">
+
+                <button
+                    type="button"
+                    class="close-btn"
+                    data-close="joinPanel"
+                    aria-label="Fechar"
+                >
+                    ×
+                </button>
+
+                <h2>
+                    🔗 Entrar em sala
+                </h2>
+
+                <label for="joinName">
+                    Seu nome
+                </label>
+
+                <input
+                    id="joinName"
+                    type="text"
+                    maxlength="30"
+                    placeholder="Digite seu nome"
+                    autocomplete="name"
+                >
+
+                <label for="roomCode">
+                    Código da sala
+                </label>
+
+                <input
+                    id="roomCode"
+                    type="text"
+                    maxlength="6"
+                    placeholder="ABC123"
+                    autocomplete="off"
+                    style="text-transform:uppercase"
+                >
+
+                <button
+                    id="joinRoomBtn"
+                    type="button"
+                    class="btn primary full"
+                >
+                    🔗 Entrar
+                </button>
+
+                <p
+                    id="joinError"
+                    class="error-message"
+                    aria-live="polite"
+                ></p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         SALA
+    ====================================================== -->
+
+    <main
+        id="roomScreen"
+        class="room-screen hidden"
+    >
+
+        <div class="room-header">
+
+            <div>
+
+                <span class="room-label">
+                    SALA
+                </span>
+
+                <h2 id="roomTitle">
+                    Minha sala
+                </h2>
+
+            </div>
+
+            <div class="room-actions">
+
+                <div class="room-code-box">
+
+                    <span>
+                        CÓDIGO
+                    </span>
+
+                    <strong id="roomCodeDisplay">
+                        ------
+                    </strong>
+
+                    <button
+                        id="copyRoomLink"
+                        type="button"
+                        title="Copiar link da sala"
+                    >
+                        🔗
+                    </button>
+
+                </div>
+
+                <button
+                    id="leaveRoomBtn"
+                    type="button"
+                    class="btn danger"
+                >
+                    🚪 Sair
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             CONTEÚDO DA SALA
+        ================================================== -->
+
+        <div class="room-layout">
+
+            <!-- PLAYER -->
+
+            <section class="watch-area">
+
+                <div class="video-container">
+
+                    <video
+                        id="videoPlayer"
+                        controls
+                        playsinline
+                        preload="metadata"
+                    ></video>
+
+                    <div
+                        id="videoPlaceholder"
+                        class="video-placeholder"
+                    >
+
+                        <div>
+                            🎬
+                        </div>
+
+                        <h3>
+                            Nenhum vídeo selecionado
+                        </h3>
+
+                        <p>
+                            Adicione um vídeo pela playlist.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SINCRONIZAÇÃO -->
+
+                <div class="sync-bar">
+
+                    <span id="syncStatus">
+                        🟢 Sincronizado
+                    </span>
+
+                    <span id="hostStatus">
+                        👑 Você controla esta sala
                     </span>
 
                 </div>
 
-                <div
-                    id="participants"
-                    class="participants"
-                ></div>
 
-            </section>
+                <!-- CONTROLES DE SINCRONIZAÇÃO -->
 
+                <div class="player-controls">
 
-            <!-- CHAT -->
+                    <button
+                        id="playBtn"
+                        type="button"
+                        class="small-btn"
+                    >
+                        ▶ Reproduzir
+                    </button>
 
-            <section class="chat-section">
+                    <button
+                        id="pauseBtn"
+                        type="button"
+                        class="small-btn"
+                    >
+                        ⏸ Pausar
+                    </button>
 
-                <div class="section-title">
-
-                    <h3>
-                        💬 Chat
-                    </h3>
+                    <button
+                        id="syncBtn"
+                        type="button"
+                        class="small-btn"
+                    >
+                        🔄 Sincronizar
+                    </button>
 
                 </div>
 
-                <div
-                    id="chatMessages"
-                    class="chat-messages"
-                ></div>
 
-                <form
-                    id="chatForm"
-                    class="chat-form"
-                >
+                <!-- REAÇÕES -->
 
-                    <input
-                        id="chatInput"
-                        type="text"
-                        maxlength="500"
-                        placeholder="Digite uma mensagem..."
-                        autocomplete="off"
-                    >
+                <div class="reactions">
 
                     <button
-                        type="submit"
-                        title="Enviar"
+                        type="button"
+                        data-reaction="❤️"
                     >
-                        ➤
+                        ❤️
                     </button>
 
-                </form>
+                    <button
+                        type="button"
+                        data-reaction="😂"
+                    >
+                        😂
+                    </button>
+
+                    <button
+                        type="button"
+                        data-reaction="🔥"
+                    >
+                        🔥
+                    </button>
+
+                    <button
+                        type="button"
+                        data-reaction="😱"
+                    >
+                        😱
+                    </button>
+
+                    <button
+                        type="button"
+                        data-reaction="👏"
+                    >
+                        👏
+                    </button>
+
+                </div>
+
+
+                <!-- REAÇÃO FLUTUANTE -->
+
+                <div
+                    id="reactionLayer"
+                    class="reaction-layer"
+                ></div>
+
+
+                <!-- PLAYLIST -->
+
+                <section class="playlist-section">
+
+                    <div class="section-title">
+
+                        <h3>
+                            🎵 Playlist
+                        </h3>
+
+                        <button
+                            id="showAddVideo"
+                            type="button"
+                            class="small-btn"
+                        >
+                            + Adicionar
+                        </button>
+
+                    </div>
+
+                    <div
+                        id="playlist"
+                        class="playlist"
+                    >
+
+                        <div class="empty-playlist">
+                            Nenhum vídeo adicionado.
+                        </div>
+
+                    </div>
+
+                </section>
 
             </section>
 
-        </aside>
 
-    </div>
+            <!-- SIDEBAR -->
 
-</main>
+            <aside class="sidebar">
 
+                <!-- PARTICIPANTES -->
 
-<!-- =====================================================
-     MODAL ADICIONAR VÍDEO
-====================================================== -->
+                <section class="side-section">
 
-<section
-    id="videoModal"
-    class="modal-panel hidden"
->
+                    <div class="section-title">
 
-    <div class="modal-box">
+                        <h3>
+                            👥 Participantes
+                        </h3>
 
-        <button
-            type="button"
-            class="close-btn"
-            data-close="videoModal"
-            aria-label="Fechar"
-        >
-            ×
-        </button>
+                        <span id="participantCount">
+                            0
+                        </span>
 
-        <h2>
-            🎬 Adicionar vídeo
-        </h2>
+                    </div>
 
-        <label for="videoTitle">
-            Nome do vídeo
-        </label>
+                    <div
+                        id="participants"
+                        class="participants"
+                    ></div>
 
-        <input
-            id="videoTitle"
-            type="text"
-            maxlength="100"
-            placeholder="Meu vídeo"
-        >
-
-        <label for="videoUrl">
-            URL do vídeo
-        </label>
-
-        <input
-            id="videoUrl"
-            type="url"
-            placeholder="https://..."
-        >
-
-        <p class="help-text">
-            Use uma URL de vídeo que possa ser reproduzida
-            diretamente pelo navegador.
-        </p>
-
-        <button
-            id="addVideoBtn"
-            type="button"
-            class="btn primary full"
-        >
-            Adicionar à playlist
-        </button>
-
-        <p
-            id="videoError"
-            class="error-message"
-        ></p>
-
-    </div>
-
-</section>
+                </section>
 
 
-<!-- =====================================================
-     TOAST
-====================================================== -->
+                <!-- CHAT -->
 
-<div
-    id="toast"
-    class="toast"
-></div>
+                <section class="chat-section">
+
+                    <div class="section-title">
+
+                        <h3>
+                            💬 Chat
+                        </h3>
+
+                    </div>
+
+                    <div
+                        id="chatMessages"
+                        class="chat-messages"
+                    ></div>
+
+                    <form
+                        id="chatForm"
+                        class="chat-form"
+                    >
+
+                        <input
+                            id="chatInput"
+                            type="text"
+                            maxlength="500"
+                            placeholder="Digite uma mensagem..."
+                            autocomplete="off"
+                        >
+
+                        <button
+                            type="submit"
+                            title="Enviar"
+                        >
+                            ➤
+                        </button>
+
+                    </form>
+
+                </section>
+
+            </aside>
+
+        </div>
+
+    </main>
 
 
-<!-- =====================================================
-     JAVASCRIPT
-====================================================== -->
+    <!-- =====================================================
+         MODAL ADICIONAR VÍDEO
+    ====================================================== -->
 
-<script src="script.js"></script>
-```
+    <section
+        id="videoModal"
+        class="modal-panel hidden"
+    >
+
+        <div class="modal-box">
+
+            <button
+                type="button"
+                class="close-btn"
+                data-close="videoModal"
+                aria-label="Fechar"
+            >
+                ×
+            </button>
+
+            <h2>
+                🎬 Adicionar vídeo
+            </h2>
+
+            <label for="videoTitle">
+                Nome do vídeo
+            </label>
+
+            <input
+                id="videoTitle"
+                type="text"
+                maxlength="100"
+                placeholder="Meu vídeo"
+            >
+
+            <label for="videoUrl">
+                URL do vídeo
+            </label>
+
+            <input
+                id="videoUrl"
+                type="url"
+                placeholder="https://..."
+            >
+
+            <p class="help-text">
+                Use uma URL de vídeo que possa ser reproduzida
+                diretamente pelo navegador, como MP4 ou WebM.
+            </p>
+
+            <button
+                id="addVideoBtn"
+                type="button"
+                class="btn primary full"
+            >
+                🎬 Adicionar à playlist
+            </button>
+
+            <p
+                id="videoError"
+                class="error-message"
+                aria-live="polite"
+            ></p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         TOAST
+    ====================================================== -->
+
+    <div
+        id="toast"
+        class="toast"
+        role="status"
+        aria-live="polite"
+    ></div>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script src="script.js" defer></script>
 
 </body>
 </html>
