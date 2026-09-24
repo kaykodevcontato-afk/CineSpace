@@ -28,16 +28,30 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 let supabaseClient = null;
 
-if (
-    SUPABASE_URL !== "COLE_SUA_URL_AQUI" &&
-    SUPABASE_ANON_KEY !== "COLE_SUA_ANON_KEY_AQUI"
-) {
+try {
 
-    supabaseClient =
-        window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_ANON_KEY
-        );
+    if (
+        SUPABASE_URL &&
+        SUPABASE_ANON_KEY
+    ) {
+
+        supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_ANON_KEY
+            );
+
+        console.log("✅ Supabase inicializado.");
+
+    }
+
+} catch (error) {
+
+    console.error(
+        "❌ Erro ao inicializar Supabase:",
+        error
+    );
+
 }
 
 
