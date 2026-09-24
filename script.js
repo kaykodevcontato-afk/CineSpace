@@ -1,1713 +1,2377 @@
 /* =========================================================
-   GAMEASSETS MARKET
-   Marketplace demonstrativo
-   ========================================================= */
+   ALIEN WATCH PARTY
+   V2
+   Supabase + Realtime
+========================================================= */
 
 
 /* =========================================================
-   DADOS DOS PRODUTOS
-   ========================================================= */
+   CONFIGURAÇÃO SUPABASE
+=========================================================
 
-const products = [
-    {
-        id: 1,
-        title: "Voz Masculina — Soldado",
-        category: "voz",
-        categoryName: "VOZ",
-        symbol: "🎙️",
-        price: 39.90,
-        creator: "Lucas Voice",
-        location: "Recife - PE",
-        gender: "masculina",
-        description:
-            "Voz masculina para personagens de ação, soldados, policiais e protagonistas de jogos.",
-        tags: ["Masculina", "Ação", "Game"],
-        voiceText:
-            "Soldado, a área está segura. Podemos continuar a missão."
-    },
+   COLOQUE AQUI OS DADOS DO SEU PROJETO SUPABASE.
 
-    {
-        id: 2,
-        title: "Voz Feminina — Narradora",
-        category: "voz",
-        categoryName: "VOZ",
-        symbol: "🎙️",
-        price: 44.90,
-        creator: "Ana Voice",
-        location: "Caruaru - PE",
-        gender: "feminina",
-        description:
-            "Voz feminina para narrativas, trailers, histórias e personagens.",
-        tags: ["Feminina", "Narrativa", "Trailer"],
-        voiceText:
-            "A jornada está apenas começando. O destino deste mundo está em suas mãos."
-    },
+   Supabase:
+   Project Settings
+   -> API
 
-    {
-        id: 3,
-        title: "Dublagem — Personagem RPG",
-        category: "dublagem",
-        categoryName: "DUBLAGEM",
-        symbol: "🎭",
-        price: 59.90,
-        creator: "Studio Nordeste",
-        location: "Arcoverde - PE",
-        gender: "masculina",
-        description:
-            "Pacote demonstrativo de falas para personagens de RPG e fantasia.",
-        tags: ["RPG", "Fantasia", "Personagem"],
-        voiceText:
-            "Você chegou tarde, aventureiro. A cidade já está sendo atacada."
-    },
+========================================================= */
 
-    {
-        id: 4,
-        title: "Foto — Personagem Jovem",
-        category: "foto",
-        categoryName: "FOTO",
-        symbol: "📸",
-        price: 29.90,
-        creator: "RealFace Studio",
-        location: "São Paulo - SP",
-        description:
-            "Foto demonstrativa de pessoa real para composição de personagem.",
-        tags: ["Pessoa", "Game", "Personagem"]
-    },
+const SUPABASE_URL = "COLE_SUA_URL_AQUI";
 
-    {
-        id: 5,
-        title: "Efeito Sonoro — Explosão",
-        category: "audio",
-        categoryName: "ÁUDIO",
-        symbol: "💥",
-        price: 14.90,
-        creator: "FX Lab",
-        location: "Recife - PE",
-        description:
-            "Efeito sonoro para explosões, combates e cenas de ação.",
-        tags: ["FX", "Explosão", "Ação"]
-    },
+const SUPABASE_ANON_KEY = "COLE_SUA_ANON_KEY_AQUI";
 
-    {
-        id: 6,
-        title: "Voz Robótica — IA",
-        category: "voz",
-        categoryName: "VOZ",
-        symbol: "🤖",
-        price: 49.90,
-        creator: "Cyber Voice",
-        location: "São Paulo - SP",
-        gender: "robotica",
-        description:
-            "Estilo de voz tecnológica para robôs, inteligência artificial e ficção científica.",
-        tags: ["IA", "Robô", "Sci-Fi"],
-        voiceText:
-            "Sistema operacional iniciado. Todos os módulos estão funcionando normalmente."
-    },
 
-    {
-        id: 7,
-        title: "Ambiente — Cidade",
-        category: "audio",
-        categoryName: "ÁUDIO",
-        symbol: "🏙️",
-        price: 19.90,
-        creator: "Sound City",
-        location: "Recife - PE",
-        description:
-            "Ambiente sonoro urbano para jogos, vídeos e experiências digitais.",
-        tags: ["Cidade", "Ambiente", "Game"]
-    },
+/* =========================================================
+   CLIENTE
+========================================================= */
 
-    {
-        id: 8,
-        title: "Foto — Personagem de Ação",
-        category: "foto",
-        categoryName: "FOTO",
-        symbol: "📷",
-        price: 34.90,
-        creator: "Character Lab",
-        location: "Caruaru - PE",
-        description:
-            "Material fotográfico demonstrativo para criação de personagens.",
-        tags: ["Ação", "Pessoa", "Personagem"]
-    }
-];
+let supabaseClient = null;
+
+if (
+    SUPABASE_URL !== "COLE_SUA_URL_AQUI" &&
+    SUPABASE_ANON_KEY !== "COLE_SUA_ANON_KEY_AQUI"
+) {
+
+    supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_ANON_KEY
+        );
+}
 
 
 /* =========================================================
    ESTADO
-   ========================================================= */
+========================================================= */
 
-let currentCategory = "todos";
-let searchTerm = "";
-let cart = [];
-let selectedProduct = null;
+const state = {
 
+    userId: null,
 
-/* =========================================================
-   ELEMENTOS DOM
-   Inicializados somente depois do HTML carregar
-   ========================================================= */
+    userName: null,
 
-let productsGrid = null;
-let resultsCount = null;
-let emptyState = null;
+    room: null,
 
-let searchInput = null;
-let sortSelect = null;
-let clearFilters = null;
+    roomId: null,
 
-let cartCount = null;
-let cartItems = null;
-let cartTotal = null;
+    isHost: false,
 
-let productModal = null;
-let modalContent = null;
-let closeModalButton = null;
+    participants: new Map(),
 
-let cartDrawer = null;
-let cartBackdrop = null;
-let openCartButton = null;
-let closeCartButton = null;
-let checkoutButton = null;
+    playlist: [],
+
+    currentVideoId: null,
+
+    channel: null,
+
+    lastSync: 0,
+
+    ignoreVideoEvent: false,
+
+    heartbeat: null
+
+};
 
 
 /* =========================================================
-   FORMATAÇÃO
-   ========================================================= */
+   ELEMENTOS
+========================================================= */
 
-function formatPrice(value) {
-    return new Intl.NumberFormat("pt-BR", {
-        style: "currency",
-        currency: "BRL"
-    }).format(value);
-}
+const $ = (id) =>
+    document.getElementById(id);
+
+
+const homeScreen =
+    $("homeScreen");
+
+const roomScreen =
+    $("roomScreen");
+
+const videoPlayer =
+    $("videoPlayer");
+
+const videoPlaceholder =
+    $("videoPlaceholder");
+
+const playlistElement =
+    $("playlist");
+
+const participantsElement =
+    $("participants");
+
+const chatMessages =
+    $("chatMessages");
 
 
 /* =========================================================
-   ESCAPE HTML
-   ========================================================= */
-
-function escapeHTML(text) {
-    return String(text)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-
-/* =========================================================
-   RENDER PRODUTOS
-   ========================================================= */
-
-function renderProducts() {
-
-    if (!productsGrid || !resultsCount || !emptyState) {
-        console.warn("Elementos da área de produtos não encontrados.");
-        return;
-    }
-
-    let filtered = products.filter(product => {
-
-        const categoryMatch =
-            currentCategory === "todos" ||
-            product.category === currentCategory;
-
-        const searchText = `
-            ${product.title}
-            ${product.description}
-            ${product.creator}
-            ${product.location}
-            ${product.tags.join(" ")}
-        `.toLowerCase();
-
-        const searchMatch =
-            searchText.includes(searchTerm.toLowerCase());
-
-        return categoryMatch && searchMatch;
-    });
-
-
-    /* =====================================================
-       ORDENAÇÃO
-       ===================================================== */
-
-    const sort = sortSelect ? sortSelect.value : "default";
-
-    if (sort === "low") {
-        filtered.sort((a, b) => a.price - b.price);
-    }
-
-    if (sort === "high") {
-        filtered.sort((a, b) => b.price - a.price);
-    }
-
-    if (sort === "name") {
-        filtered.sort((a, b) =>
-            a.title.localeCompare(b.title)
-        );
-    }
-
-
-    resultsCount.textContent =
-        `${filtered.length} asset${filtered.length !== 1 ? "s" : ""} encontrado${filtered.length !== 1 ? "s" : ""}`;
-
-    productsGrid.innerHTML = "";
-
-
-    if (filtered.length === 0) {
-
-        emptyState.style.display = "block";
-        return;
-
-    }
-
-
-    emptyState.style.display = "none";
-
-
-    /* =====================================================
-       CRIAR CARDS
-       ===================================================== */
-
-    filtered.forEach(product => {
-
-        const card = document.createElement("article");
-
-        card.className = "product-card";
-
-        card.innerHTML = `
-            <div class="product-visual">
-
-                <span class="product-category">
-                    ${escapeHTML(product.categoryName)}
-                </span>
-
-                <span class="product-symbol">
-                    ${product.symbol}
-                </span>
-
-            </div>
-
-            <div class="product-body">
-
-                <h3>
-                    ${escapeHTML(product.title)}
-                </h3>
-
-                <p class="product-description">
-                    ${escapeHTML(product.description)}
-                </p>
-
-                <div class="product-creator">
-                    👤 ${escapeHTML(product.creator)}
-                    · 📍 ${escapeHTML(product.location)}
-                </div>
-
-                <div class="product-bottom">
-
-                    <span class="price">
-                        ${formatPrice(product.price)}
-                    </span>
-
-                    <div class="product-actions">
-
-                        <button
-                            type="button"
-                            class="details-button"
-                            title="Ver detalhes"
-                            data-product-id="${product.id}"
-                        >
-                            👁
-                        </button>
-
-                        ${
-                            product.voiceText
-                                ? `
-                                <button
-                                    type="button"
-                                    class="product-voice-button"
-                                    title="Ouvir demonstração"
-                                >
-                                    ▶
-                                </button>
-                                `
-                                : ""
-                        }
-
-                        <button
-                            type="button"
-                            class="buy"
-                            title="Adicionar ao carrinho"
-                            data-buy-id="${product.id}"
-                        >
-                            +
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </div>
-        `;
-
-
-        productsGrid.appendChild(card);
-
-
-        /* =================================================
-           BOTÃO DETALHES
-           ================================================= */
-
-        const detailsButton =
-            card.querySelector(".details-button");
-
-        if (detailsButton) {
-
-            detailsButton.addEventListener("click", () => {
-
-                openProduct(product.id);
-
-            });
-
-        }
-
-
-        /* =================================================
-           BOTÃO DE VOZ
-           ================================================= */
-
-        const voiceButton =
-            card.querySelector(".product-voice-button");
-
-        if (voiceButton) {
-
-            voiceButton.addEventListener("click", () => {
-
-                ouvirVoz(
-                    product.voiceText,
-                    product.gender || "masculina"
-                );
-
-            });
-
-        }
-
-
-        /* =================================================
-           BOTÃO COMPRAR
-           ================================================= */
-
-        const buyButton =
-            card.querySelector("[data-buy-id]");
-
-        if (buyButton) {
-
-            buyButton.addEventListener("click", () => {
-
-                addToCart(product.id);
-
-            });
-
-        }
-
-    });
-
-}
-
-
-/* =========================================================
-   CATEGORIAS
-   ========================================================= */
-
-function configurarCategorias() {
-
-    document
-        .querySelectorAll(".category-card")
-        .forEach(button => {
-
-            button.addEventListener("click", () => {
-
-                document
-                    .querySelectorAll(".category-card")
-                    .forEach(item => {
-                        item.classList.remove("active");
-                    });
-
-                button.classList.add("active");
-
-                currentCategory =
-                    button.dataset.category || "todos";
-
-                renderProducts();
-
-            });
-
-        });
-
-}
-
-
-/* =========================================================
-   BUSCA
-   ========================================================= */
-
-function configurarBusca() {
-
-    if (!searchInput) {
-        return;
-    }
-
-    searchInput.addEventListener("input", event => {
-
-        searchTerm = event.target.value;
-
-        renderProducts();
-
-    });
-
-}
-
-
-/* =========================================================
-   ORDENAÇÃO
-   ========================================================= */
-
-function configurarOrdenacao() {
-
-    if (!sortSelect) {
-        return;
-    }
-
-    sortSelect.addEventListener(
-        "change",
-        renderProducts
-    );
-
-}
-
-
-/* =========================================================
-   LIMPAR FILTROS
-   ========================================================= */
-
-function configurarLimparFiltros() {
-
-    if (!clearFilters) {
-        return;
-    }
-
-    clearFilters.addEventListener("click", () => {
-
-        if (searchInput) {
-            searchInput.value = "";
-        }
-
-        searchTerm = "";
-        currentCategory = "todos";
-
-        if (sortSelect) {
-            sortSelect.value = "default";
-        }
-
-        document
-            .querySelectorAll(".category-card")
-            .forEach(item => {
-                item.classList.remove("active");
-            });
-
-        const allCategory =
-            document.querySelector(
-                '[data-category="todos"]'
-            );
-
-        if (allCategory) {
-            allCategory.classList.add("active");
-        }
-
-        renderProducts();
-
-    });
-
-}
-
-
-/* =========================================================
-   VOZES - SPEECH SYNTHESIS
-   ========================================================= */
-
-let availableVoices = [];
-
-
-function carregarVozes() {
-
-    if (!("speechSynthesis" in window)) {
-        return;
-    }
-
-    availableVoices =
-        window.speechSynthesis.getVoices();
-
-    console.log(
-        "Vozes disponíveis:",
-        availableVoices.map(voice => ({
-            nome: voice.name,
-            idioma: voice.lang
-        }))
-    );
-
-}
-
-
-/* =========================================================
-   INICIALIZAR SISTEMA DE VOZ
-   ========================================================= */
-
-function inicializarVozes() {
-
-    if (!("speechSynthesis" in window)) {
-        console.warn(
-            "Speech Synthesis não disponível."
-        );
-        return;
-    }
-
-    carregarVozes();
-
-    window.speechSynthesis.onvoiceschanged =
-        carregarVozes;
-
-}
-
-
-/* =========================================================
-   PROCURAR VOZ
-   ========================================================= */
-
-function procurarVoz(preferencias) {
-
-    if (!availableVoices.length) {
-        carregarVozes();
-    }
-
-    if (!availableVoices.length) {
-        return null;
-    }
-
-
-    /* Primeiro procura pelos nomes desejados */
-
-    for (const nome of preferencias) {
-
-        const encontrada =
-            availableVoices.find(voice => {
-
-                const voiceName =
-                    voice.name.toLowerCase();
-
-                const voiceLang =
-                    voice.lang.toLowerCase();
-
-                return (
-                    voiceName.includes(
-                        nome.toLowerCase()
-                    ) &&
-                    voiceLang.startsWith("pt")
-                );
-
-            });
-
-        if (encontrada) {
-            return encontrada;
-        }
-
-    }
-
-
-    /* Depois procura qualquer voz em português */
-
-    return availableVoices.find(
-        voice =>
-            voice.lang &&
-            voice.lang
-                .toLowerCase()
-                .startsWith("pt")
-    ) || null;
-
-}
-
-
-/* =========================================================
-   VOZ MASCULINA
-   ========================================================= */
-
-function escolherVozMasculina() {
-
-    return procurarVoz([
-        "Daniel",
-        "Felipe",
-        "Ricardo",
-        "Guilherme",
-        "João",
-        "Joao",
-        "Antonio",
-        "Antônio",
-        "Microsoft Daniel"
-    ]);
-
-}
-
-
-/* =========================================================
-   VOZ FEMININA
-   ========================================================= */
-
-function escolherVozFeminina() {
-
-    return procurarVoz([
-        "Maria",
-        "Francisca",
-        "Camila",
-        "Ana",
-        "Luciana",
-        "Fernanda",
-        "Mariana",
-        "Microsoft Maria",
-        "Microsoft Francisca"
-    ]);
-
-}
-
-
-/* =========================================================
-   VOZ ROBÓTICA
-   ========================================================= */
-
-function escolherVozRobotica() {
-
-    return procurarVoz([
-        "Daniel",
-        "Felipe",
-        "Maria",
-        "Francisca",
-        "Microsoft Daniel",
-        "Microsoft Maria"
-    ]);
-
-}
-
-
-/* =========================================================
-   FALAR
-   ========================================================= */
-
-function ouvirVoz(texto, genero = "masculina") {
-
-    if (!("speechSynthesis" in window)) {
-
-        alert(
-            "Seu navegador não possui suporte à demonstração de voz."
-        );
-
-        return;
-    }
-
-
-    if (!texto) {
-        return;
-    }
-
-
-    carregarVozes();
-
-    window.speechSynthesis.cancel();
-
-
-    const utterance =
-        new SpeechSynthesisUtterance(texto);
-
-
-    let voice = null;
-
-
-    switch (genero) {
-
-        case "feminina":
-
-            voice =
-                escolherVozFeminina();
-
-            utterance.pitch = 1.25;
-            utterance.rate = 0.92;
-
-            break;
-
-
-        case "robotica":
-
-            voice =
-                escolherVozRobotica();
-
-            utterance.pitch = 0.55;
-            utterance.rate = 0.82;
-
-            break;
-
-
-        case "masculina":
-
-        default:
-
-            voice =
-                escolherVozMasculina();
-
-            utterance.pitch = 0.80;
-            utterance.rate = 0.90;
-
-            break;
-
-    }
-
-
-    if (voice) {
-
-        utterance.voice = voice;
-        utterance.lang = voice.lang;
-
-        console.log(
-            "Demonstração:",
-            genero,
-            "| Voz:",
-            voice.name,
-            "| Idioma:",
-            voice.lang
-        );
-
-    } else {
-
-        utterance.lang = "pt-BR";
-
-        console.warn(
-            "Nenhuma voz específica encontrada para:",
-            genero
-        );
-
-    }
-
-
-    utterance.volume = 1;
-
-    window.speechSynthesis.speak(
-        utterance
-    );
-
-}
-
-
-/* =========================================================
-   PARAR VOZ
-   ========================================================= */
-
-function pararVoz() {
-
-    if ("speechSynthesis" in window) {
-
-        window.speechSynthesis.cancel();
-
-    }
-
-}
-
-
-/* =========================================================
-   BOTÕES DE DEMONSTRAÇÃO DE VOZ DO HTML
-   ========================================================= */
-
-function configurarBotoesDemoVoz() {
-
-    document
-        .querySelectorAll(".voice-button")
-        .forEach(button => {
-
-            button.addEventListener("click", () => {
-
-                const texto =
-                    button.dataset.text || "";
-
-                let genero =
-                    button.dataset.gender || "";
-
-                if (!genero) {
-
-                    const label =
-                        button.textContent.toLowerCase();
-
-                    if (
-                        label.includes("feminina")
-                    ) {
-                        genero = "feminina";
-
-                    } else if (
-                        label.includes("robótica") ||
-                        label.includes("robotica")
-                    ) {
-                        genero = "robotica";
-
-                    } else {
-                        genero = "masculina";
-                    }
-
-                }
-
-                ouvirVoz(
-                    texto,
-                    genero
-                );
-
-            });
-
-        });
-
-
-    document
-        .querySelectorAll(".stop-button")
-        .forEach(button => {
-
-            button.addEventListener(
-                "click",
-                pararVoz
-            );
-
-        });
-
-}
-
-
-/* =========================================================
-   MODAL
-   ========================================================= */
-
-function openProduct(id) {
-
-    if (!productModal || !modalContent) {
-        return;
-    }
-
-    selectedProduct =
-        products.find(
-            product => product.id === id
-        );
-
-    if (!selectedProduct) {
-        return;
-    }
-
-
-    modalContent.innerHTML = `
-
-        <div class="modal-product-symbol">
-            ${selectedProduct.symbol}
-        </div>
-
-        <span class="eyebrow">
-            ${escapeHTML(
-                selectedProduct.categoryName
-            )}
-        </span>
-
-        <h2>
-            ${escapeHTML(
-                selectedProduct.title
-            )}
-        </h2>
-
-        <p class="modal-description">
-            ${escapeHTML(
-                selectedProduct.description
-            )}
-        </p>
-
-        <p class="modal-description">
-            👤 Criador:
-            <strong>
-                ${escapeHTML(
-                    selectedProduct.creator
-                )}
-            </strong>
-        </p>
-
-        <p class="modal-description">
-            📍 Localização aproximada:
-            ${escapeHTML(
-                selectedProduct.location
-            )}
-        </p>
-
-        ${
-            selectedProduct.voiceText
-                ? `
-                <button
-                    type="button"
-                    id="modalVoiceButton"
-                    class="modal-buy"
-                    style="
-                        margin-top:15px;
-                        background:#171f2d;
-                        color:white;
-                    "
-                >
-                    ▶ Ouvir demonstração
-                </button>
-                `
-                : ""
-        }
-
-        <div class="modal-price">
-            ${formatPrice(
-                selectedProduct.price
-            )}
-        </div>
-
-        <button
-            type="button"
-            id="modalAddCart"
-            class="modal-buy"
-        >
-            🛒 Adicionar ao carrinho
-        </button>
-
-    `;
-
-
-    productModal.classList.add("active");
-
-
-    const modalVoiceButton =
-        document.getElementById(
-            "modalVoiceButton"
-        );
-
-    if (modalVoiceButton) {
-
-        modalVoiceButton.addEventListener(
-            "click",
-            () => {
-
-                ouvirVoz(
-                    selectedProduct.voiceText,
-                    selectedProduct.gender ||
-                    "masculina"
-                );
-
-            }
-        );
-
-    }
-
-
-    const modalAddCart =
-        document.getElementById(
-            "modalAddCart"
-        );
-
-    if (modalAddCart) {
-
-        modalAddCart.addEventListener(
-            "click",
-            () => {
-
-                addToCart(
-                    selectedProduct.id
-                );
-
-                closeProductModal();
-
-            }
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   FECHAR MODAL
-   ========================================================= */
-
-function closeProductModal() {
-
-    if (!productModal) {
-        return;
-    }
-
-    productModal.classList.remove(
-        "active"
-    );
-
-    pararVoz();
-
-}
-
-
-/* =========================================================
-   CONFIGURAR MODAL
-   ========================================================= */
-
-function configurarModal() {
-
-    if (closeModalButton) {
-
-        closeModalButton.addEventListener(
-            "click",
-            closeProductModal
-        );
-
-    }
-
-
-    if (productModal) {
-
-        productModal.addEventListener(
-            "click",
-            event => {
-
-                if (
-                    event.target === productModal
-                ) {
-
-                    closeProductModal();
-
-                }
-
-            }
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   CARRINHO
-   ========================================================= */
-
-function addToCart(id) {
-
-    const product =
-        products.find(
-            item => item.id === id
-        );
-
-    if (!product) {
-        return;
-    }
-
-
-    const alreadyExists =
-        cart.some(
-            item => item.id === id
-        );
-
-
-    if (!alreadyExists) {
-
-        cart.push(product);
-
-    }
-
-
-    updateCart();
-
-    openCart();
-
-}
-
-
-/* =========================================================
-   REMOVER CARRINHO
-   ========================================================= */
-
-function removeFromCart(id) {
-
-    cart =
-        cart.filter(
-            item => item.id !== id
-        );
-
-    updateCart();
-
-}
-
-
-/* =========================================================
-   ATUALIZAR CARRINHO
-   ========================================================= */
-
-function updateCart() {
-
-    if (
-        !cartCount ||
-        !cartItems ||
-        !cartTotal
-    ) {
-        return;
-    }
-
-
-    cartCount.textContent =
-        cart.length;
-
-
-    cartItems.innerHTML = "";
-
-
-    if (cart.length === 0) {
-
-        cartItems.innerHTML = `
-            <div class="cart-empty">
-                🛒
-                <br><br>
-                Seu carrinho está vazio.
-            </div>
-        `;
-
-        cartTotal.textContent =
-            formatPrice(0);
-
-        return;
-
-    }
-
-
-    let total = 0;
-
-
-    cart.forEach(product => {
-
-        total += product.price;
-
-
-        const item =
-            document.createElement("div");
-
-        item.className =
-            "cart-item";
-
-
-        item.innerHTML = `
-            <div class="cart-item-symbol">
-                ${product.symbol}
-            </div>
-
-            <div class="cart-item-info">
-
-                <strong>
-                    ${escapeHTML(
-                        product.title
-                    )}
-                </strong>
-
-                <span>
-                    ${formatPrice(
-                        product.price
-                    )}
-                </span>
-
-            </div>
-
-            <button
-                type="button"
-                class="cart-remove"
-                data-remove-id="${product.id}"
-            >
-                ×
-            </button>
-        `;
-
-
-        cartItems.appendChild(item);
-
-    });
-
-
-    cartItems
-        .querySelectorAll("[data-remove-id]")
-        .forEach(button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    removeFromCart(
-                        Number(
-                            button.dataset.removeId
-                        )
-                    );
-
-                }
-            );
-
-        });
-
-
-    cartTotal.textContent =
-        formatPrice(total);
-
-}
-
-
-/* =========================================================
-   ABRIR CARRINHO
-   ========================================================= */
-
-function openCart() {
-
-    if (!cartDrawer || !cartBackdrop) {
-        return;
-    }
-
-    cartDrawer.classList.add(
-        "active"
-    );
-
-    cartBackdrop.classList.add(
-        "active"
-    );
-
-}
-
-
-/* =========================================================
-   FECHAR CARRINHO
-   ========================================================= */
-
-function closeCart() {
-
-    if (!cartDrawer || !cartBackdrop) {
-        return;
-    }
-
-    cartDrawer.classList.remove(
-        "active"
-    );
-
-    cartBackdrop.classList.remove(
-        "active"
-    );
-
-}
-
-
-/* =========================================================
-   CONFIGURAR CARRINHO
-   ========================================================= */
-
-function configurarCarrinho() {
-
-    if (openCartButton) {
-
-        openCartButton.addEventListener(
-            "click",
-            openCart
-        );
-
-    }
-
-
-    if (closeCartButton) {
-
-        closeCartButton.addEventListener(
-            "click",
-            closeCart
-        );
-
-    }
-
-
-    if (cartBackdrop) {
-
-        cartBackdrop.addEventListener(
-            "click",
-            closeCart
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   CHECKOUT
-   ========================================================= */
-
-function configurarCheckout() {
-
-    if (!checkoutButton) {
-        return;
-    }
-
-    checkoutButton.addEventListener(
-        "click",
-        () => {
-
-            if (cart.length === 0) {
-
-                alert(
-                    "Adicione pelo menos um asset ao carrinho."
-                );
-
-                return;
-            }
-
-
-            alert(
-                "Checkout demonstrativo.\n\n" +
-                "Em uma versão real, esta etapa poderá integrar " +
-                "PIX, cartão, boleto e entrega automática dos arquivos."
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   MAPA LEAFLET
-   ========================================================= */
-
-function initMap() {
-
-    const mapElement =
-        document.getElementById("map");
-
-
-    if (!mapElement) {
-        return;
-    }
-
-
-    if (typeof L === "undefined") {
-
-        mapElement.innerHTML = `
-            <div style="
-                height:100%;
-                display:grid;
-                place-items:center;
-                padding:30px;
-                text-align:center;
-                color:#8d96a8;
-                background:#101721;
-            ">
-                <div>
-
-                    <strong style="color:white;">
-                        Mapa indisponível
-                    </strong>
-
-                    <br><br>
-
-                    O Leaflet não foi carregado.
-
-                </div>
-            </div>
-        `;
-
-        return;
-    }
-
-
-    const creators = [
-
-        {
-            name: "Lucas Voice",
-            city: "Recife - PE",
-            position: [-8.0476, -34.8770]
-        },
-
-        {
-            name: "Studio Nordeste",
-            city: "Arcoverde - PE",
-            position: [-8.4189, -37.0539]
-        },
-
-        {
-            name: "Ana Voice",
-            city: "Caruaru - PE",
-            position: [-8.2830, -35.9761]
-        },
-
-        {
-            name: "Cyber Voice",
-            city: "São Paulo - SP",
-            position: [-23.5505, -46.6333]
-        }
-
-    ];
-
-
-    const map =
-        L.map("map", {
-            scrollWheelZoom: false
-        }).setView(
-            [-12.5, -38.5],
-            5
-        );
-
-
-    L.tileLayer(
-        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        {
-            maxZoom: 19,
-
-            attribution:
-                '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors'
-        }
-    ).addTo(map);
-
-
-    creators.forEach(creator => {
-
-        const marker =
-            L.marker(
-                creator.position
-            ).addTo(map);
-
-
-        marker.bindPopup(`
-            <div style="
-                min-width:150px;
-                color:#111;
-            ">
-
-                <strong>
-                    ${escapeHTML(
-                        creator.name
-                    )}
-                </strong>
-
-                <br>
-
-                <small>
-                    ${escapeHTML(
-                        creator.city
-                    )}
-                </small>
-
-                <br><br>
-
-                🎙️ Vozes
-                <br>
-                🎭 Dublagem
-                <br>
-                🎧 Áudios
-
-            </div>
-        `);
-
-    });
-
-
-    setTimeout(() => {
-
-        map.invalidateSize();
-
-    }, 300);
-
-}
-
-
-/* =========================================================
-   VERIFICAR ELEMENTOS NECESSÁRIOS
-   ========================================================= */
-
-function verificarElementosDOM() {
-
-    const elementosObrigatorios = {
-        productsGrid,
-        resultsCount,
-        emptyState,
-        searchInput,
-        sortSelect,
-        clearFilters,
-        cartCount,
-        cartItems,
-        cartTotal,
-        productModal,
-        modalContent,
-        cartDrawer,
-        cartBackdrop
-    };
-
-
-    const ausentes =
-        Object.entries(elementosObrigatorios)
-            .filter(([, elemento]) => !elemento)
-            .map(([nome]) => nome);
-
-
-    if (ausentes.length > 0) {
-
-        console.warn(
-            "Elementos DOM não encontrados:",
-            ausentes
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   INICIALIZAÇÃO PRINCIPAL
-   ========================================================= */
+   INICIALIZAÇÃO
+========================================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
-    () => {
-
-        /* ================================================
-           LOCALIZAR ELEMENTOS
-           ================================================ */
-
-        productsGrid =
-            document.getElementById(
-                "productsGrid"
-            );
-
-        resultsCount =
-            document.getElementById(
-                "resultsCount"
-            );
-
-        emptyState =
-            document.getElementById(
-                "emptyState"
-            );
+    init
+);
 
 
-        searchInput =
-            document.getElementById(
-                "searchInput"
-            );
+async function init() {
 
-        sortSelect =
-            document.getElementById(
-                "sortSelect"
-            );
+    setupButtons();
 
-        clearFilters =
-            document.getElementById(
-                "clearFilters"
-            );
+    checkRoomFromURL();
 
+    if (!supabaseClient) {
 
-        cartCount =
-            document.getElementById(
-                "cartCount"
-            );
+        setConnection(
+            false,
+            "Configure o Supabase"
+        );
 
-        cartItems =
-            document.getElementById(
-                "cartItems"
-            );
+        console.warn(
+            "Supabase ainda não configurado."
+        );
 
-        cartTotal =
-            document.getElementById(
-                "cartTotal"
-            );
+        return;
+    }
 
 
-        productModal =
-            document.getElementById(
-                "productModal"
-            );
-
-        modalContent =
-            document.getElementById(
-                "modalContent"
-            );
-
-        closeModalButton =
-            document.getElementById(
-                "closeModal"
-            );
+    setConnection(
+        false,
+        "Conectando..."
+    );
 
 
-        cartDrawer =
-            document.getElementById(
-                "cartDrawer"
-            );
-
-        cartBackdrop =
-            document.getElementById(
-                "cartBackdrop"
-            );
-
-        openCartButton =
-            document.getElementById(
-                "openCart"
-            );
-
-        closeCartButton =
-            document.getElementById(
-                "closeCart"
-            );
-
-        checkoutButton =
-            document.getElementById(
-                "checkoutButton"
-            );
+    const {
+        data: {
+            user
+        }
+    } =
+        await supabaseClient.auth.getUser();
 
 
-        /* ================================================
-           VERIFICAÇÃO
-           ================================================ */
+    if (user) {
 
-        verificarElementosDOM();
+        state.userId =
+            user.id;
 
-
-        /* ================================================
-           CONFIGURAÇÕES
-           ================================================ */
-
-        configurarCategorias();
-
-        configurarBusca();
-
-        configurarOrdenacao();
-
-        configurarLimparFiltros();
-
-        configurarModal();
-
-        configurarCarrinho();
-
-        configurarCheckout();
-
-        configurarBotoesDemoVoz();
-
-        inicializarVozes();
+    }
 
 
-        /* ================================================
-           INICIALIZAÇÃO
-           ================================================ */
-
-        renderProducts();
-
-        updateCart();
-
-        initMap();
+    setConnection(
+        true,
+        "Online"
+    );
+}
 
 
-        console.log(
-            "GameAssets Market iniciado com sucesso."
+/* =========================================================
+   BOTÕES
+========================================================= */
+
+function setupButtons() {
+
+
+    $("showCreateRoom")
+        .addEventListener(
+            "click",
+            () => {
+
+                openPanel(
+                    "createPanel"
+                );
+
+            }
+        );
+
+
+    $("showJoinRoom")
+        .addEventListener(
+            "click",
+            () => {
+
+                openPanel(
+                    "joinPanel"
+                );
+
+            }
+        );
+
+
+    document
+        .querySelectorAll(
+            "[data-close]"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        closePanel(
+                            button.dataset.close
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+    $("createRoomBtn")
+        .addEventListener(
+            "click",
+            createRoom
+        );
+
+
+    $("joinRoomBtn")
+        .addEventListener(
+            "click",
+            joinRoom
+        );
+
+
+    $("leaveRoomBtn")
+        .addEventListener(
+            "click",
+            leaveRoom
+        );
+
+
+    $("copyRoomLink")
+        .addEventListener(
+            "click",
+            copyRoomLink
+        );
+
+
+    $("showAddVideo")
+        .addEventListener(
+            "click",
+            () => {
+
+                openPanel(
+                    "videoModal"
+                );
+
+            }
+        );
+
+
+    $("addVideoBtn")
+        .addEventListener(
+            "click",
+            addVideo
+        );
+
+
+    $("chatForm")
+        .addEventListener(
+            "submit",
+            sendChat
+        );
+
+
+    document
+        .querySelectorAll(
+            "[data-reaction]"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        sendReaction(
+                            button.dataset.reaction
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+    videoPlayer
+        .addEventListener(
+            "play",
+            handlePlay
+        );
+
+
+    videoPlayer
+        .addEventListener(
+            "pause",
+            handlePause
+        );
+
+
+    videoPlayer
+        .addEventListener(
+            "seeked",
+            handleSeek
+        );
+
+
+    videoPlayer
+        .addEventListener(
+            "timeupdate",
+            handleTimeUpdate
+        );
+
+}
+
+
+/* =========================================================
+   PAINÉIS
+========================================================= */
+
+function openPanel(id) {
+
+    $(id)
+        .classList
+        .remove("hidden");
+
+}
+
+
+function closePanel(id) {
+
+    $(id)
+        .classList
+        .add("hidden");
+
+}
+
+
+/* =========================================================
+   CONEXÃO
+========================================================= */
+
+function setConnection(
+    online,
+    text
+) {
+
+    const dot =
+        $("connectionDot");
+
+    const label =
+        $("connectionText");
+
+
+    dot.classList.toggle(
+        "online",
+        online
+    );
+
+
+    label.textContent =
+        text;
+}
+
+
+/* =========================================================
+   URL DA SALA
+========================================================= */
+
+function checkRoomFromURL() {
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const roomCode =
+        params.get("room");
+
+
+    if (roomCode) {
+
+        $("roomCode")
+            .value =
+            roomCode.toUpperCase();
+
+        openPanel(
+            "joinPanel"
         );
 
     }
-);
+
+}
+
+
+/* =========================================================
+   GERAR CÓDIGO
+========================================================= */
+
+function generateRoomCode() {
+
+    const chars =
+        "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+
+    let code = "";
+
+
+    for (
+        let i = 0;
+        i < 6;
+        i++
+    ) {
+
+        code +=
+            chars[
+                Math.floor(
+                    Math.random() *
+                    chars.length
+                )
+            ];
+
+    }
+
+
+    return code;
+}
+
+
+/* =========================================================
+   CRIAR SALA
+========================================================= */
+
+async function createRoom() {
+
+    if (!supabaseClient) {
+
+        showError(
+            "createError",
+            "Configure primeiro o Supabase."
+        );
+
+        return;
+    }
+
+
+    const name =
+        $("createName")
+            .value
+            .trim();
+
+
+    const roomName =
+        $("roomName")
+            .value
+            .trim();
+
+
+    if (!name) {
+
+        showError(
+            "createError",
+            "Digite seu nome."
+        );
+
+        return;
+    }
+
+
+    if (!roomName) {
+
+        showError(
+            "createError",
+            "Digite o nome da sala."
+        );
+
+        return;
+    }
+
+
+    try {
+
+        state.userName =
+            name;
+
+
+        await ensureUser();
+
+
+        const code =
+            generateRoomCode();
+
+
+        const isPrivate =
+            $("roomPrivate")
+                .checked;
+
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("rooms")
+                .insert({
+
+                    name:
+                        roomName,
+
+                    code:
+                        code,
+
+                    owner_id:
+                        state.userId,
+
+                    is_private:
+                        isPrivate
+
+                })
+                .select()
+                .single();
+
+
+        if (error)
+            throw error;
+
+
+        state.room =
+            data;
+
+        state.roomId =
+            data.id;
+
+        state.isHost =
+            true;
+
+
+        await addMember();
+
+
+        openRoom();
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        showError(
+            "createError",
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   ENTRAR NA SALA
+========================================================= */
+
+async function joinRoom() {
+
+    if (!supabaseClient) {
+
+        showError(
+            "joinError",
+            "Configure primeiro o Supabase."
+        );
+
+        return;
+    }
+
+
+    const name =
+        $("joinName")
+            .value
+            .trim();
+
+
+    const code =
+        $("roomCode")
+            .value
+            .trim()
+            .toUpperCase();
+
+
+    if (!name) {
+
+        showError(
+            "joinError",
+            "Digite seu nome."
+        );
+
+        return;
+    }
+
+
+    if (code.length !== 6) {
+
+        showError(
+            "joinError",
+            "Código inválido."
+        );
+
+        return;
+    }
+
+
+    try {
+
+        state.userName =
+            name;
+
+
+        await ensureUser();
+
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("rooms")
+                .select("*")
+                .eq(
+                    "code",
+                    code
+                )
+                .eq(
+                    "is_active",
+                    true
+                )
+                .single();
+
+
+        if (error)
+            throw new Error(
+                "Sala não encontrada."
+            );
+
+
+        state.room =
+            data;
+
+        state.roomId =
+            data.id;
+
+        state.isHost =
+            data.owner_id ===
+            state.userId;
+
+
+        await addMember();
+
+
+        await loadRoomData();
+
+
+        openRoom();
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        showError(
+            "joinError",
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   USUÁRIO ANÔNIMO
+========================================================= */
+
+async function ensureUser() {
+
+    if (state.userId)
+        return;
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.auth
+            .signInAnonymously();
+
+
+    if (error)
+        throw error;
+
+
+    state.userId =
+        data.user.id;
+
+}
+
+
+/* =========================================================
+   ADICIONAR MEMBRO
+========================================================= */
+
+async function addMember() {
+
+    const {
+        error
+    } =
+        await supabaseClient
+            .from("room_members")
+            .upsert({
+
+                room_id:
+                    state.roomId,
+
+                user_id:
+                    state.userId,
+
+                display_name:
+                    state.userName,
+
+                is_online:
+                    true,
+
+                last_seen:
+                    new Date()
+                        .toISOString()
+
+            }, {
+
+                onConflict:
+                    "room_id,user_id"
+
+            });
+
+
+    if (error)
+        throw error;
+
+}
+
+
+/* =========================================================
+   ABRIR SALA
+========================================================= */
+
+async function openRoom() {
+
+    homeScreen
+        .classList
+        .add("hidden");
+
+
+    roomScreen
+        .classList
+        .remove("hidden");
+
+
+    $("roomTitle")
+        .textContent =
+        state.room.name;
+
+
+    $("roomCodeDisplay")
+        .textContent =
+        state.room.code;
+
+
+    updateHostUI();
+
+
+    await loadRoomData();
+
+    subscribeRealtime();
+
+    startHeartbeat();
+
+}
+
+
+/* =========================================================
+   CARREGAR DADOS
+========================================================= */
+
+async function loadRoomData() {
+
+    await loadParticipants();
+
+    await loadPlaylist();
+
+    await loadMessages();
+
+}
+
+
+/* =========================================================
+   PARTICIPANTES
+========================================================= */
+
+async function loadParticipants() {
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("room_members")
+            .select("*")
+            .eq(
+                "room_id",
+                state.roomId
+            )
+            .eq(
+                "is_online",
+                true
+            )
+            .order(
+                "created_at"
+            );
+
+
+    if (error) {
+
+        console.error(error);
+
+        return;
+    }
+
+
+    state.participants.clear();
+
+
+    data.forEach(
+        member => {
+
+            state.participants.set(
+                member.user_id,
+                member
+            );
+
+        }
+    );
+
+
+    renderParticipants();
+
+}
+
+
+/* =========================================================
+   RENDER PARTICIPANTES
+========================================================= */
+
+function renderParticipants() {
+
+    participantsElement.innerHTML = "";
+
+
+    state.participants
+        .forEach(
+            member => {
+
+                const div =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                div.className =
+                    "participant";
+
+
+                const avatar =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                avatar.className =
+                    "avatar";
+
+
+                avatar.textContent =
+                    member.display_name
+                        .charAt(0)
+                        .toUpperCase();
+
+
+                const name =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                name.className =
+                    "participant-name";
+
+
+                name.textContent =
+                    member.display_name;
+
+
+                div.appendChild(
+                    avatar
+                );
+
+                div.appendChild(
+                    name
+                );
+
+
+                if (
+                    member.user_id ===
+                    state.room.owner_id
+                ) {
+
+                    const badge =
+                        document.createElement(
+                            "span"
+                        );
+
+
+                    badge.className =
+                        "host-badge";
+
+
+                    badge.textContent =
+                        "👑";
+
+
+                    div.appendChild(
+                        badge
+                    );
+
+                }
+
+
+                participantsElement
+                    .appendChild(
+                        div
+                    );
+
+            }
+        );
+
+
+    $("participantCount")
+        .textContent =
+        state.participants.size;
+
+}
+
+
+/* =========================================================
+   PLAYLIST
+========================================================= */
+
+async function loadPlaylist() {
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("playlist_items")
+            .select("*")
+            .eq(
+                "room_id",
+                state.roomId
+            )
+            .order(
+                "position",
+                {
+                    ascending: true
+                }
+            );
+
+
+    if (error) {
+
+        console.error(error);
+
+        return;
+    }
+
+
+    state.playlist =
+        data || [];
+
+
+    renderPlaylist();
+
+
+    if (
+        state.playlist.length &&
+        !state.currentVideoId
+    ) {
+
+        state.currentVideoId =
+            state.playlist[0].id;
+
+
+        loadVideo(
+            state.playlist[0],
+            false
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   RENDER PLAYLIST
+========================================================= */
+
+function renderPlaylist() {
+
+    playlistElement.innerHTML = "";
+
+
+    if (
+        !state.playlist.length
+    ) {
+
+        playlistElement.innerHTML =
+            `<div class="empty-playlist">
+                Nenhum vídeo adicionado.
+             </div>`;
+
+        return;
+    }
+
+
+    state.playlist
+        .forEach(
+            (item, index) => {
+
+                const div =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                div.className =
+                    "playlist-item";
+
+
+                if (
+                    item.id ===
+                    state.currentVideoId
+                ) {
+
+                    div.classList.add(
+                        "active"
+                    );
+
+                }
+
+
+                const number =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                number.className =
+                    "playlist-number";
+
+
+                number.textContent =
+                    index + 1;
+
+
+                const info =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                info.className =
+                    "playlist-info";
+
+
+                const title =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                title.className =
+                    "playlist-title";
+
+
+                title.textContent =
+                    item.title;
+
+
+                const url =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                url.className =
+                    "playlist-url";
+
+
+                url.textContent =
+                    item.video_url;
+
+
+                info.appendChild(
+                    title
+                );
+
+                info.appendChild(
+                    url
+                );
+
+
+                const remove =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                remove.className =
+                    "remove-video";
+
+
+                remove.textContent =
+                    "🗑️";
+
+
+                remove.addEventListener(
+                    "click",
+                    event => {
+
+                        event.stopPropagation();
+
+                        removeVideo(
+                            item.id
+                        );
+
+                    }
+                );
+
+
+                div.appendChild(
+                    number
+                );
+
+                div.appendChild(
+                    info
+                );
+
+                div.appendChild(
+                    remove
+                );
+
+
+                div.addEventListener(
+                    "click",
+                    () => {
+
+                        loadVideo(
+                            item,
+                            true
+                        );
+
+                    }
+                );
+
+
+                playlistElement
+                    .appendChild(
+                        div
+                    );
+
+            }
+        );
+
+}
+
+
+/* =========================================================
+   ADICIONAR VÍDEO
+========================================================= */
+
+async function addVideo() {
+
+    if (!state.isHost) {
+
+        showToast(
+            "Somente o dono da sala pode adicionar vídeos."
+        );
+
+        return;
+    }
+
+
+    const title =
+        $("videoTitle")
+            .value
+            .trim();
+
+
+    const url =
+        $("videoUrl")
+            .value
+            .trim();
+
+
+    if (!title || !url) {
+
+        showError(
+            "videoError",
+            "Preencha nome e URL."
+        );
+
+        return;
+    }
+
+
+    const position =
+        state.playlist.length;
+
+
+    const {
+        error
+    } =
+        await supabaseClient
+            .from("playlist_items")
+            .insert({
+
+                room_id:
+                    state.roomId,
+
+                title:
+                    title,
+
+                video_url:
+                    url,
+
+                position:
+                    position
+
+            });
+
+
+    if (error) {
+
+        showError(
+            "videoError",
+            error.message
+        );
+
+        return;
+    }
+
+
+    $("videoTitle").value = "";
+
+    $("videoUrl").value = "";
+
+
+    closePanel(
+        "videoModal"
+    );
+
+
+    await loadPlaylist();
+
+
+    showToast(
+        "Vídeo adicionado!"
+    );
+
+}
+
+
+/* =========================================================
+   REMOVER VÍDEO
+========================================================= */
+
+async function removeVideo(id) {
+
+    if (!state.isHost) {
+
+        showToast(
+            "Somente o dono pode remover vídeos."
+        );
+
+        return;
+    }
+
+
+    const {
+        error
+    } =
+        await supabaseClient
+            .from("playlist_items")
+            .delete()
+            .eq(
+                "id",
+                id
+            );
+
+
+    if (error) {
+
+        showToast(
+            error.message
+        );
+
+        return;
+    }
+
+
+    if (
+        state.currentVideoId ===
+        id
+    ) {
+
+        state.currentVideoId =
+            null;
+
+        videoPlayer.pause();
+
+        videoPlayer.removeAttribute(
+            "src"
+        );
+
+        videoPlayer.load();
+
+        videoPlaceholder
+            .classList
+            .remove("hidden");
+
+    }
+
+
+    await loadPlaylist();
+
+}
+
+
+/* =========================================================
+   CARREGAR VÍDEO
+========================================================= */
+
+async function loadVideo(
+    item,
+    broadcast = true
+) {
+
+    state.currentVideoId =
+        item.id;
+
+
+    renderPlaylist();
+
+
+    state.ignoreVideoEvent =
+        true;
+
+
+    videoPlayer.src =
+        item.video_url;
+
+
+    videoPlayer.load();
+
+
+    videoPlaceholder
+        .classList
+        .add("hidden");
+
+
+    videoPlayer.currentTime =
+        0;
+
+
+    setTimeout(
+        () => {
+
+            state.ignoreVideoEvent =
+                false;
+
+        },
+        500
+    );
+
+
+    if (broadcast) {
+
+        await broadcastState(
+            "video",
+            {
+                videoId:
+                    item.id,
+
+                time:
+                    0,
+
+                playing:
+                    false
+            }
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   PLAY
+========================================================= */
+
+async function handlePlay() {
+
+    if (
+        state.ignoreVideoEvent ||
+        !state.isHost
+    )
+        return;
+
+
+    await broadcastState(
+        "play",
+        {
+            videoId:
+                state.currentVideoId,
+
+            time:
+                videoPlayer.currentTime,
+
+            playing:
+                true
+        }
+    );
+
+}
+
+
+/* =========================================================
+   PAUSE
+========================================================= */
+
+async function handlePause() {
+
+    if (
+        state.ignoreVideoEvent ||
+        !state.isHost
+    )
+        return;
+
+
+    await broadcastState(
+        "pause",
+        {
+            videoId:
+                state.currentVideoId,
+
+            time:
+                videoPlayer.currentTime,
+
+            playing:
+                false
+        }
+    );
+
+}
+
+
+/* =========================================================
+   SEEK
+========================================================= */
+
+async function handleSeek() {
+
+    if (
+        state.ignoreVideoEvent ||
+        !state.isHost
+    )
+        return;
+
+
+    await broadcastState(
+        "seek",
+        {
+            videoId:
+                state.currentVideoId,
+
+            time:
+                videoPlayer.currentTime,
+
+            playing:
+                !videoPlayer.paused
+        }
+    );
+
+}
+
+
+/* =========================================================
+   TIME UPDATE
+========================================================= */
+
+function handleTimeUpdate() {
+
+    if (!state.isHost)
+        return;
+
+
+    const now =
+        Date.now();
+
+
+    if (
+        now -
+        state.lastSync <
+        5000
+    )
+        return;
+
+
+    state.lastSync =
+        now;
+
+}
+
+
+/* =========================================================
+   TRANSMITIR ESTADO
+========================================================= */
+
+async function broadcastState(
+    action,
+    payload
+) {
+
+    if (!state.channel)
+        return;
+
+
+    await state.channel.send({
+
+        type:
+            "broadcast",
+
+        event:
+            "player",
+
+        payload: {
+
+            action:
+                action,
+
+            ...payload
+
+        }
+
+    });
+
+}
+
+
+/* =========================================================
+   APLICAR ESTADO RECEBIDO
+========================================================= */
+
+async function applyPlayerState(
+    payload
+) {
+
+    if (state.isHost)
+        return;
+
+
+    state.ignoreVideoEvent =
+        true;
+
+
+    if (
+        payload.videoId &&
+        payload.videoId !==
+        state.currentVideoId
+    ) {
+
+        const item =
+            state.playlist.find(
+                video =>
+                    video.id ===
+                    payload.videoId
+            );
+
+
+        if (item) {
+
+            state.currentVideoId =
+                item.id;
+
+            videoPlayer.src =
+                item.video_url;
+
+            videoPlayer.load();
+
+            videoPlaceholder
+                .classList
+                .add("hidden");
+
+        }
+
+    }
+
+
+    if (
+        Number.isFinite(
+            payload.time
+        )
+    ) {
+
+        try {
+
+            videoPlayer.currentTime =
+                payload.time;
+
+        } catch {}
+
+    }
+
+
+    if (
+        payload.playing
+    ) {
+
+        try {
+
+            await videoPlayer.play();
+
+        } catch {
+
+            showToast(
+                "Clique no player para permitir a reprodução."
+            );
+
+        }
+
+    } else {
+
+        videoPlayer.pause();
+
+    }
+
+
+    renderPlaylist();
+
+
+    setTimeout(
+        () => {
+
+            state.ignoreVideoEvent =
+                false;
+
+        },
+        500
+    );
+
+}
+
+
+/* =========================================================
+   REALTIME
+========================================================= */
+
+function subscribeRealtime() {
+
+    if (state.channel) {
+
+        supabaseClient
+            .removeChannel(
+                state.channel
+            );
+
+    }
+
+
+    state.channel =
+        supabaseClient
+            .channel(
+                `room-${state.roomId}`
+            );
+
+
+    state.channel
+        .on(
+            "broadcast",
+            {
+                event:
+                    "player"
+            },
+            payload => {
+
+                applyPlayerState(
+                    payload.payload
+                );
+
+            }
+        )
+        .on(
+            "broadcast",
+            {
+                event:
+                    "reaction"
+            },
+            payload => {
+
+                showReaction(
+                    payload.payload.reaction
+                );
+
+            }
+        )
+        .on(
+            "postgres_changes",
+            {
+                event:
+                    "*",
+
+                schema:
+                    "public",
+
+                table:
+                    "messages",
+
+                filter:
+                    `room_id=eq.${state.roomId}`
+
+            },
+            payload => {
+
+                if (
+                    payload.eventType ===
+                    "INSERT"
+                ) {
+
+                    addChatMessage(
+                        payload.new
+                    );
+
+                }
+
+            }
+        )
+        .on(
+            "postgres_changes",
+            {
+                event:
+                    "*",
+
+                schema:
+                    "public",
+
+                table:
+                    "room_members",
+
+                filter:
+                    `room_id=eq.${state.roomId}`
+
+            },
+            () => {
+
+                loadParticipants();
+
+            }
+        )
+        .on(
+            "postgres_changes",
+            {
+                event:
+                    "*",
+
+                schema:
+                    "public",
+
+                table:
+                    "playlist_items",
+
+                filter:
+                    `room_id=eq.${state.roomId}`
+
+            },
+            () => {
+
+                loadPlaylist();
+
+            }
+        )
+        .subscribe(
+            status => {
+
+                if (
+                    status ===
+                    "SUBSCRIBED"
+                ) {
+
+                    setConnection(
+                        true,
+                        "Realtime conectado"
+                    );
+
+                }
+
+            }
+        );
+
+}
+
+
+/* =========================================================
+   CHAT
+========================================================= */
+
+async function sendChat(event) {
+
+    event.preventDefault();
+
+
+    const input =
+        $("chatInput");
+
+
+    const message =
+        input.value.trim();
+
+
+    if (!message)
+        return;
+
+
+    const {
+        error
+    } =
+        await supabaseClient
+            .from("messages")
+            .insert({
+
+                room_id:
+                    state.roomId,
+
+                user_id:
+                    state.userId,
+
+                display_name:
+                    state.userName,
+
+                message:
+                    message
+
+            });
+
+
+    if (error) {
+
+        showToast(
+            error.message
+        );
+
+        return;
+    }
+
+
+    input.value = "";
+
+}
+
+
+/* =========================================================
+   CARREGAR CHAT
+========================================================= */
+
+async function loadMessages() {
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("messages")
+            .select("*")
+            .eq(
+                "room_id",
+                state.roomId
+            )
+            .order(
+                "created_at",
+                {
+                    ascending: true
+                }
+            )
+            .limit(100);
+
+
+    if (error)
+        return;
+
+
+    chatMessages.innerHTML = "";
+
+
+    data.forEach(
+        message => {
+
+            addChatMessage(
+                message
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ADICIONAR MENSAGEM
+========================================================= */
+
+function addChatMessage(
+    message
+) {
+
+    if (
+        document.querySelector(
+            `[data-message-id="${message.id}"]`
+        )
+    )
+        return;
+
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+
+    div.className =
+        "chat-message";
+
+
+    div.dataset.messageId =
+        message.id;
+
+
+    const name =
+        document.createElement(
+            "strong"
+        );
+
+
+    name.textContent =
+        message.display_name;
+
+
+    const text =
+        document.createElement(
+            "p"
+        );
+
+
+    text.textContent =
+        message.message;
+
+
+    div.appendChild(
+        name
+    );
+
+    div.appendChild(
+        text
+    );
+
+
+    chatMessages.appendChild(
+        div
+    );
+
+
+    chatMessages.scrollTop =
+        chatMessages.scrollHeight;
+
+}
+
+
+/* =========================================================
+   REAÇÕES
+========================================================= */
+
+async function sendReaction(
+    reaction
+) {
+
+    if (!state.channel)
+        return;
+
+
+    await state.channel.send({
+
+        type:
+            "broadcast",
+
+        event:
+            "reaction",
+
+        payload: {
+
+            reaction:
+                reaction,
+
+            user:
+                state.userName
+
+        }
+
+    });
+
+
+    showReaction(
+        reaction
+    );
+
+}
+
+
+function showReaction(
+    reaction
+) {
+
+    const element =
+        document.createElement(
+            "div"
+        );
+
+
+    element.textContent =
+        reaction;
+
+
+    element.style.position =
+        "fixed";
+
+
+    element.style.left =
+        Math.random() * 90 + "%";
+
+
+    element.style.bottom =
+        "100px";
+
+
+    element.style.fontSize =
+        "35px";
+
+
+    element.style.zIndex =
+        "2000";
+
+
+    document.body
+        .appendChild(
+            element
+        );
+
+
+    element.animate(
+
+        [
+            {
+                transform:
+                    "translateY(0)",
+                opacity: 1
+            },
+
+            {
+                transform:
+                    "translateY(-300px)",
+                opacity: 0
+            }
+
+        ],
+
+        {
+            duration:
+                1800
+        }
+
+    );
+
+
+    setTimeout(
+        () => {
+
+            element.remove();
+
+        },
+        1800
+    );
+
+}
+
+
+/* =========================================================
+   HEARTBEAT
+========================================================= */
+
+function startHeartbeat() {
+
+    if (state.heartbeat)
+        clearInterval(
+            state.heartbeat
+        );
+
+
+    updatePresence();
+
+
+    state.heartbeat =
+        setInterval(
+            updatePresence,
+            30000
+        );
+
+}
+
+
+async function updatePresence() {
+
+    if (
+        !state.roomId ||
+        !state.userId
+    )
+        return;
+
+
+    await supabaseClient
+        .from("room_members")
+        .update({
+
+            is_online:
+                true,
+
+            last_seen:
+                new Date()
+                    .toISOString()
+
+        })
+        .eq(
+            "room_id",
+            state.roomId
+        )
+        .eq(
+            "user_id",
+            state.userId
+        );
+
+}
+
+
+/* =========================================================
+   UI HOST
+========================================================= */
+
+function updateHostUI() {
+
+    $("hostStatus")
+        .textContent =
+        state.isHost
+            ? "👑 Você controla esta sala"
+            : "👁️ Modo espectador";
+
+}
+
+
+/* =========================================================
+   SAIR
+========================================================= */
+
+async function leaveRoom() {
+
+    if (
+        state.roomId &&
+        state.userId
+    ) {
+
+        await supabaseClient
+            .from("room_members")
+            .update({
+
+                is_online:
+                    false,
+
+                last_seen:
+                    new Date()
+                        .toISOString()
+
+            })
+            .eq(
+                "room_id",
+                state.roomId
+            )
+            .eq(
+                "user_id",
+                state.userId
+            );
+
+    }
+
+
+    if (state.channel) {
+
+        await supabaseClient
+            .removeChannel(
+                state.channel
+            );
+
+    }
+
+
+    if (state.heartbeat) {
+
+        clearInterval(
+            state.heartbeat
+        );
+
+    }
+
+
+    state.room = null;
+
+    state.roomId = null;
+
+    state.channel = null;
+
+    state.playlist = [];
+
+    state.currentVideoId = null;
+
+
+    roomScreen
+        .classList
+        .add("hidden");
+
+
+    homeScreen
+        .classList
+        .remove("hidden");
+
+
+    history.pushState(
+        {},
+        "",
+        window.location.pathname
+    );
+
+}
+
+
+/* =========================================================
+   COPIAR LINK
+========================================================= */
+
+async function copyRoomLink() {
+
+    const url =
+        `${window.location.origin}${window.location.pathname}?room=${state.room.code}`;
+
+
+    try {
+
+        await navigator.clipboard
+            .writeText(url);
+
+
+        showToast(
+            "Link copiado!"
+        );
+
+    } catch {
+
+        prompt(
+            "Copie o link:",
+            url
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   ERROS
+========================================================= */
+
+function showError(
+    elementId,
+    message
+) {
+
+    $(elementId)
+        .textContent =
+        message;
+
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+let toastTimer;
+
+
+function showToast(
+    message
+) {
+
+    const toast =
+        $("toast");
+
+
+    toast.textContent =
+        message;
+
+
+    toast.classList.add(
+        "show"
+    );
+
+
+    clearTimeout(
+        toastTimer
+    );
+
+
+    toastTimer =
+        setTimeout(
+            () => {
+
+                toast.classList.remove(
+                    "show"
+                );
+
+            },
+            2500
+        );
+
+}
 
