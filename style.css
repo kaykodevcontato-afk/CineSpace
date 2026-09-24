@@ -1,1347 +1,1339 @@
 :root {
---pink: #ff1493;
---purple: #8a2be2;
---blue: #5c4dff;
+    --pink: #ff1493;
+    --purple: #8a2be2;
+    --blue: #5c4dff;
 
-```
---background: #070711;
---background-2: #0d0d1c;
+    --background: #070711;
+    --background-2: #0d0d1c;
 
---card: #111122;
---card-2: #17172c;
+    --card: #111122;
+    --card-2: #17172c;
 
---border: #29294a;
+    --border: #29294a;
 
---text: #ffffff;
---muted: #a7a7c2;
+    --text: #ffffff;
+    --muted: #a7a7c2;
 
---danger: #ff3b5c;
+    --danger: #ff3b5c;
+    --success: #00ff9d;
+    --warning: #ffd166;
 
---radius: 14px;
-```
-
+    --radius: 14px;
 }
 
 * {
-  box-sizing: border-box;
-  }
+    box-sizing: border-box;
+}
 
 html,
 body {
-margin: 0;
-padding: 0;
-min-height: 100%;
-
-```
-background:
-    radial-gradient(
-        circle at top,
-        #18102d 0%,
-        var(--background) 50%
-    );
-
-color: var(--text);
-
-font-family:
-    Arial,
-    Helvetica,
-    sans-serif;
-```
-
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
 }
 
 body {
-min-height: 100vh;
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at top,
+            #18102d 0%,
+            var(--background) 50%
+        );
+
+    color: var(--text);
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
 }
 
-/* =========================================================
-HEADER
-========================================================= */
+
+/* =====================================================
+   UTILITÁRIO
+===================================================== */
+
+.hidden {
+    display: none !important;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
 
 .topbar {
-height: 70px;
+    height: 70px;
 
-```
-display: flex;
-align-items: center;
-justify-content: space-between;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-padding: 0 30px;
+    padding: 0 30px;
 
-background: rgba(5, 5, 15, 0.92);
+    background: rgba(5, 5, 15, .95);
 
-border-bottom:
-    1px solid var(--border);
+    border-bottom:
+        1px solid var(--border);
 
-position: sticky;
-top: 0;
+    position: sticky;
+    top: 0;
 
-z-index: 100;
-```
-
+    z-index: 100;
 }
 
 .logo {
-display: flex;
-align-items: center;
-gap: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .logo-icon {
-font-size: 34px;
+    font-size: 34px;
 
-```
-filter:
-    drop-shadow(
-        0 0 10px var(--pink)
-    );
-```
-
+    filter:
+        drop-shadow(
+            0 0 10px var(--pink)
+        );
 }
 
 .logo div {
-display: flex;
-flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 .logo strong {
-font-size: 18px;
-letter-spacing: 3px;
-color: var(--pink);
+    font-size: 18px;
+    letter-spacing: 3px;
+    color: var(--pink);
 }
 
 .logo span {
-font-size: 10px;
-letter-spacing: 4px;
-color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--muted);
 }
 
 .connection-status {
-display: flex;
-align-items: center;
-gap: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 
-```
-font-size: 13px;
-color: var(--muted);
-```
-
+    font-size: 13px;
+    color: var(--muted);
 }
 
 #connectionDot {
-width: 9px;
-height: 9px;
+    width: 9px;
+    height: 9px;
 
-```
-border-radius: 50%;
+    border-radius: 50%;
 
-background: #777;
+    background: #777;
 
-transition:
-    background .2s,
-    box-shadow .2s;
-```
-
+    transition:
+        background .2s,
+        box-shadow .2s;
 }
 
 #connectionDot.connected {
-background: #00ff9d;
+    background: var(--success);
 
-```
-box-shadow:
-    0 0 10px #00ff9d;
-```
-
+    box-shadow:
+        0 0 10px var(--success);
 }
 
 #connectionDot.connecting {
-background: #ffd166;
+    background: var(--warning);
 
-```
-box-shadow:
-    0 0 10px #ffd166;
-```
-
+    box-shadow:
+        0 0 10px var(--warning);
 }
 
 #connectionDot.error {
-background: #ff3b5c;
+    background: var(--danger);
 
-```
-box-shadow:
-    0 0 10px #ff3b5c;
-```
-
+    box-shadow:
+        0 0 10px var(--danger);
 }
 
-/* =========================================================
-HOME
-========================================================= */
+
+/* =====================================================
+   HOME
+===================================================== */
 
 .screen {
-min-height:
-calc(100vh - 70px);
+    min-height:
+        calc(100vh - 70px);
 
-```
-display: flex;
-align-items: center;
-justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-padding: 40px 20px;
-```
-
+    padding: 40px 20px;
 }
 
 .hero {
-width: 100%;
-max-width: 800px;
-text-align: center;
+    width: 100%;
+    max-width: 800px;
+
+    text-align: center;
 }
 
 .alien-icon {
-font-size: 90px;
-margin-bottom: 15px;
+    font-size: 90px;
+    margin-bottom: 15px;
 
-```
-filter:
-    drop-shadow(
-        0 0 25px var(--purple)
-    );
-```
-
+    filter:
+        drop-shadow(
+            0 0 25px var(--purple)
+        );
 }
 
 .hero h1 {
-margin: 0;
+    margin: 0;
 
-```
-font-size:
-    clamp(38px, 7vw, 72px);
+    font-size:
+        clamp(38px, 7vw, 72px);
 
-background:
-    linear-gradient(
-        90deg,
-        var(--pink),
-        var(--purple),
-        var(--blue)
-    );
+    background:
+        linear-gradient(
+            90deg,
+            var(--pink),
+            var(--purple),
+            var(--blue)
+        );
 
--webkit-background-clip: text;
-background-clip: text;
+    -webkit-background-clip: text;
+    background-clip: text;
 
-color: transparent;
-```
-
+    color: transparent;
 }
 
 .hero p {
-color: var(--muted);
+    color: var(--muted);
 
-```
-font-size: 18px;
+    font-size: 18px;
 
-margin:
-    18px auto 35px;
+    margin:
+        18px auto 35px;
 
-max-width: 550px;
-```
-
+    max-width: 550px;
 }
 
 .hero-buttons {
-display: flex;
-justify-content: center;
-gap: 15px;
-flex-wrap: wrap;
+    display: flex;
+    justify-content: center;
+
+    gap: 15px;
+
+    flex-wrap: wrap;
 }
 
-/* =========================================================
-BUTTONS
-========================================================= */
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+.app-status {
+    margin: 25px auto 0;
+
+    max-width: 500px;
+
+    padding: 10px 14px;
+
+    border-radius: 8px;
+
+    color: var(--muted);
+
+    background:
+        rgba(255,255,255,.03);
+
+    border:
+        1px solid var(--border);
+
+    font-size: 12px;
+}
+
+
+/* =====================================================
+   BOTÕES
+===================================================== */
 
 button {
-font-family: inherit;
+    font-family: inherit;
+}
+
+button:focus-visible {
+    outline:
+        2px solid var(--pink);
+
+    outline-offset: 2px;
 }
 
 .btn {
-border: none;
+    border: none;
 
-```
-border-radius: 10px;
+    border-radius: 10px;
 
-padding: 13px 22px;
+    padding: 13px 22px;
 
-font-size: 15px;
-font-weight: bold;
+    font-size: 15px;
+    font-weight: bold;
 
-cursor: pointer;
+    cursor: pointer;
 
-transition:
-    transform .2s,
-    box-shadow .2s,
-    opacity .2s;
-```
-
+    transition:
+        transform .2s,
+        box-shadow .2s,
+        opacity .2s;
 }
 
 .btn:hover {
-transform:
-translateY(-2px);
+    transform:
+        translateY(-2px);
 }
 
 .btn:active {
-transform:
-translateY(0);
+    transform:
+        translateY(0);
 }
 
 .btn:disabled {
-opacity: .6;
-cursor: not-allowed;
-transform: none;
+    opacity: .6;
+
+    cursor: wait;
+
+    transform: none;
 }
 
 .btn.primary {
-color: white;
+    color: white;
 
-```
-background:
-    linear-gradient(
-        90deg,
-        var(--pink),
-        var(--purple)
-    );
+    background:
+        linear-gradient(
+            90deg,
+            var(--pink),
+            var(--purple)
+        );
 
-box-shadow:
-    0 0 20px rgba(255, 20, 147, .25);
-```
-
+    box-shadow:
+        0 0 20px
+        rgba(255,20,147,.25);
 }
 
 .btn.secondary {
-background: var(--card);
+    background: var(--card);
 
-```
-color: white;
+    color: white;
 
-border:
-    1px solid var(--border);
-```
-
+    border:
+        1px solid var(--border);
 }
 
 .btn.danger {
-background:
-rgba(255, 59, 92, .12);
+    background:
+        rgba(255,59,92,.12);
 
-```
-color:
-    #ff6d83;
+    color:
+        #ff6d83;
 
-border:
-    1px solid rgba(255, 59, 92, .35);
-```
-
+    border:
+        1px solid
+        rgba(255,59,92,.35);
 }
 
 .btn.full {
-width: 100%;
-margin-top: 15px;
+    width: 100%;
+    margin-top: 15px;
 }
 
 .small-btn {
-border:
-1px solid var(--border);
+    border:
+        1px solid var(--border);
 
-```
-background: var(--card);
+    background:
+        var(--card);
 
-color: white;
+    color: white;
 
-padding: 8px 12px;
+    padding:
+        8px 12px;
 
-border-radius: 8px;
+    border-radius:
+        8px;
 
-cursor: pointer;
-```
-
+    cursor: pointer;
 }
 
-/* =========================================================
-MODAIS
-========================================================= */
+.small-btn:hover {
+    border-color:
+        var(--purple);
+}
+
+
+/* =====================================================
+   MODAIS
+===================================================== */
 
 .modal-panel {
-position: fixed;
-inset: 0;
+    position: fixed;
 
-```
-z-index: 500;
+    inset: 0;
 
-background:
-    rgba(0, 0, 0, .78);
+    z-index: 500;
 
-display: flex;
+    background:
+        rgba(0,0,0,.82);
 
-align-items: center;
-justify-content: center;
+    display: flex;
 
-padding: 20px;
-```
+    align-items: center;
+    justify-content: center;
 
+    padding: 20px;
 }
 
 .modal-box {
-width: 100%;
-max-width: 430px;
+    width: 100%;
 
-```
-background: var(--card);
+    max-width: 430px;
 
-border:
-    1px solid var(--border);
+    background:
+        var(--card);
 
-border-radius:
-    var(--radius);
+    border:
+        1px solid var(--border);
 
-padding: 28px;
+    border-radius:
+        var(--radius);
 
-position: relative;
+    padding: 28px;
 
-box-shadow:
-    0 20px 80px rgba(0, 0, 0, .6);
-```
+    position: relative;
 
+    box-shadow:
+        0 20px 80px
+        rgba(0,0,0,.7);
 }
 
 .modal-box h2 {
-margin-top: 0;
+    margin-top: 0;
 }
 
 .close-btn {
-position: absolute;
+    position: absolute;
 
-```
-right: 15px;
-top: 10px;
+    right: 15px;
+    top: 10px;
 
-background: transparent;
+    background:
+        transparent;
 
-color: var(--muted);
+    color:
+        var(--muted);
 
-border: none;
+    border: none;
 
-font-size: 28px;
+    font-size: 28px;
 
-cursor: pointer;
-```
-
+    cursor: pointer;
 }
 
 .modal-box label {
-display: block;
+    display: block;
 
-```
-margin-top: 17px;
-margin-bottom: 7px;
+    margin-top: 17px;
+    margin-bottom: 7px;
 
-color: var(--muted);
+    color:
+        var(--muted);
 
-font-size: 13px;
-```
-
+    font-size: 13px;
 }
 
 .modal-box input {
-width: 100%;
+    width: 100%;
 
-```
-padding: 13px;
+    padding: 13px;
 
-border-radius: 9px;
+    border-radius: 9px;
 
-border:
-    1px solid var(--border);
+    border:
+        1px solid var(--border);
 
-background:
-    #090914;
+    background:
+        #090914;
 
-color: white;
+    color:
+        white;
 
-outline: none;
-```
-
+    outline: none;
 }
 
 .modal-box input:focus {
-border-color:
-var(--purple);
+    border-color:
+        var(--purple);
 
-```
-box-shadow:
-    0 0 0 2px
-    rgba(138,43,226,.15);
-```
-
+    box-shadow:
+        0 0 0 2px
+        rgba(138,43,226,.15);
 }
 
 .checkbox-label {
-display: flex !important;
+    display: flex !important;
 
-```
-align-items: center;
+    align-items: center;
 
-gap: 8px;
-```
-
+    gap: 8px;
 }
 
 .checkbox-label input {
-width: auto;
+    width: auto;
 }
 
 .help-text {
-font-size: 12px;
+    font-size: 12px;
 
-```
-color: var(--muted);
+    color:
+        var(--muted);
 
-line-height: 1.5;
-```
-
+    line-height: 1.5;
 }
 
 .error-message {
-color:
-#ff6d83;
+    color:
+        #ff6d83;
 
-```
-font-size: 13px;
+    font-size: 13px;
 
-min-height: 18px;
+    min-height: 18px;
 
-margin-bottom: 0;
-```
-
+    margin-bottom: 0;
 }
 
-/* =========================================================
-IMPORTANTE
-========================================================= */
 
-.hidden {
-display: none !important;
-}
-
-/* =========================================================
-ROOM
-========================================================= */
+/* =====================================================
+   SALA
+===================================================== */
 
 .room-screen {
-padding: 20px;
+    padding: 20px;
 
-```
-max-width: 1700px;
+    max-width: 1700px;
 
-margin: auto;
-```
-
+    margin: auto;
 }
 
 .room-header {
-display: flex;
+    display: flex;
 
-```
-justify-content: space-between;
+    justify-content: space-between;
 
-align-items: center;
+    align-items: center;
 
-gap: 20px;
+    gap: 20px;
 
-margin-bottom: 20px;
+    margin-bottom: 20px;
 
-flex-wrap: wrap;
-```
-
+    flex-wrap: wrap;
 }
 
 .room-label {
-color: var(--pink);
+    color:
+        var(--pink);
 
-```
-font-size: 11px;
+    font-size: 11px;
 
-letter-spacing: 3px;
-```
-
+    letter-spacing: 3px;
 }
 
 .room-header h2 {
-margin: 5px 0 0;
+    margin:
+        5px 0 0;
 }
 
 .room-actions {
-display: flex;
+    display: flex;
 
-```
-align-items: center;
+    align-items: center;
 
-gap: 10px;
+    gap: 10px;
 
-flex-wrap: wrap;
-```
-
+    flex-wrap: wrap;
 }
 
 .room-code-box {
-display: flex;
+    display: flex;
 
-```
-align-items: center;
+    align-items: center;
 
-gap: 10px;
+    gap: 10px;
 
-padding: 8px 12px;
+    padding:
+        8px 12px;
 
-background: var(--card);
+    background:
+        var(--card);
 
-border:
-    1px solid var(--border);
+    border:
+        1px solid var(--border);
 
-border-radius: 9px;
-```
-
+    border-radius:
+        9px;
 }
 
 .room-code-box span {
-font-size: 10px;
+    font-size: 10px;
 
-```
-color: var(--muted);
-```
-
+    color:
+        var(--muted);
 }
 
 .room-code-box strong {
-color: var(--pink);
+    color:
+        var(--pink);
 
-```
-letter-spacing: 2px;
-```
-
+    letter-spacing:
+        2px;
 }
 
 .room-code-box button {
-border: none;
+    border: none;
 
-```
-background: transparent;
+    background:
+        transparent;
 
-color: white;
+    color: white;
 
-cursor: pointer;
-```
-
+    cursor: pointer;
 }
 
-/* =========================================================
-LAYOUT
-========================================================= */
+
+/* =====================================================
+   LAYOUT
+===================================================== */
 
 .room-layout {
-display: grid;
+    display: grid;
 
-```
-grid-template-columns:
-    minmax(0, 1fr)
-    350px;
+    grid-template-columns:
+        minmax(0,1fr)
+        350px;
 
-gap: 20px;
-```
-
+    gap: 20px;
 }
-
-/* =========================================================
-PLAYER
-========================================================= */
 
 .watch-area {
-min-width: 0;
+    min-width: 0;
 }
 
+
+/* =====================================================
+   PLAYER
+===================================================== */
+
 .video-container {
-position: relative;
+    position: relative;
 
-```
-width: 100%;
+    width: 100%;
 
-aspect-ratio: 16 / 9;
+    aspect-ratio:
+        16 / 9;
 
-background: #000;
+    background:
+        #000;
 
-border-radius: var(--radius);
+    border-radius:
+        var(--radius);
 
-overflow: hidden;
+    overflow: hidden;
 
-border:
-    1px solid var(--border);
-```
-
+    border:
+        1px solid var(--border);
 }
 
 .video-container video {
-width: 100%;
-height: 100%;
+    width: 100%;
+    height: 100%;
 
-```
-object-fit: contain;
+    object-fit:
+        contain;
 
-background: #000;
-```
+    background:
+        #000;
+}
 
+#youtubePlayer {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    border: 0;
+
+    background:
+        #000;
+}
+
+.hidden-player {
+    display: none;
 }
 
 .video-placeholder {
-position: absolute;
+    position: absolute;
 
-```
-inset: 0;
+    inset: 0;
 
-display: flex;
+    display: flex;
 
-flex-direction: column;
+    flex-direction: column;
 
-align-items: center;
+    align-items: center;
 
-justify-content: center;
+    justify-content: center;
 
-color: var(--muted);
+    color:
+        var(--muted);
 
-pointer-events: none;
+    pointer-events:
+        none;
 
-background:
-    radial-gradient(
-        circle,
-        #19132b,
-        #050509
-    );
-```
-
+    background:
+        radial-gradient(
+            circle,
+            #19132b,
+            #050509
+        );
 }
 
 .video-placeholder div {
-font-size: 60px;
-margin-bottom: 10px;
+    font-size: 60px;
+
+    margin-bottom: 10px;
 }
 
 .video-placeholder h3 {
-color: white;
-margin: 5px;
+    color: white;
+
+    margin: 5px;
 }
 
 .video-placeholder p {
-margin: 5px;
+    margin: 5px;
 }
 
-/* =========================================================
-SYNC
-========================================================= */
+.video-info {
+    padding: 10px 4px;
+
+    color:
+        var(--muted);
+
+    font-size: 13px;
+}
+
+
+/* =====================================================
+   CONTROLES
+===================================================== */
 
 .sync-bar {
-display: flex;
+    display: flex;
 
-```
-justify-content: space-between;
+    justify-content:
+        space-between;
 
-gap: 10px;
+    gap: 10px;
 
-flex-wrap: wrap;
+    flex-wrap: wrap;
 
-padding: 12px;
+    padding: 12px;
 
-margin-top: 10px;
+    background:
+        var(--card);
 
-background: var(--card);
+    border-radius:
+        9px;
 
-border-radius: 9px;
+    color:
+        var(--muted);
 
-color: var(--muted);
-
-font-size: 12px;
-```
-
+    font-size: 12px;
 }
 
-/* =========================================================
-REAÇÕES
-========================================================= */
+.player-controls {
+    display: flex;
+
+    gap: 8px;
+
+    flex-wrap: wrap;
+
+    margin-top: 10px;
+}
+
+
+/* =====================================================
+   REAÇÕES
+===================================================== */
 
 .reactions {
-display: flex;
+    display: flex;
 
-```
-gap: 8px;
+    gap: 8px;
 
-margin-top: 10px;
-```
-
+    margin-top: 10px;
 }
 
 .reactions button {
-border:
-1px solid var(--border);
+    border:
+        1px solid var(--border);
 
-```
-background:
-    var(--card);
+    background:
+        var(--card);
 
-border-radius: 20px;
+    border-radius:
+        20px;
 
-padding: 8px 12px;
+    padding:
+        8px 12px;
 
-cursor: pointer;
+    cursor:
+        pointer;
 
-font-size: 17px;
+    font-size:
+        17px;
 
-transition:
-    transform .15s;
-```
-
+    transition:
+        transform .15s;
 }
 
 .reactions button:hover {
-transform:
-scale(1.15);
+    transform:
+        scale(1.15);
 }
 
-/* =========================================================
-PLAYLIST
-========================================================= */
+
+/* =====================================================
+   PLAYLIST
+===================================================== */
 
 .playlist-section {
-margin-top: 20px;
+    margin-top: 20px;
 
-```
-background: var(--card);
+    background:
+        var(--card);
 
-border:
-    1px solid var(--border);
+    border:
+        1px solid var(--border);
 
-border-radius: var(--radius);
+    border-radius:
+        var(--radius);
 
-padding: 16px;
-```
-
+    padding:
+        16px;
 }
 
 .section-title {
-display: flex;
+    display: flex;
 
-```
-align-items: center;
+    align-items:
+        center;
 
-justify-content: space-between;
+    justify-content:
+        space-between;
 
-gap: 10px;
-```
-
+    gap: 10px;
 }
 
 .section-title h3 {
-margin: 0;
+    margin: 0;
 
-```
-font-size: 15px;
-```
-
+    font-size:
+        15px;
 }
 
 .playlist {
-margin-top: 12px;
+    margin-top: 12px;
 
-```
-display: flex;
+    display: flex;
 
-flex-direction: column;
+    flex-direction:
+        column;
 
-gap: 8px;
-```
-
+    gap: 8px;
 }
 
 .playlist-item {
-display: flex;
+    display: flex;
 
-```
-align-items: center;
+    align-items:
+        center;
 
-gap: 10px;
+    gap: 10px;
 
-padding: 10px;
+    padding:
+        10px;
 
-border-radius: 8px;
+    border-radius:
+        8px;
 
-background:
-    var(--card-2);
+    background:
+        var(--card-2);
 
-border:
-    1px solid transparent;
-```
-
+    border:
+        1px solid transparent;
 }
 
 .playlist-item:hover {
-border-color:
-var(--purple);
+    border-color:
+        var(--purple);
 }
 
 .playlist-item.active {
-border-color:
-var(--pink);
+    border-color:
+        var(--pink);
 
-```
-background:
-    rgba(255,20,147,.08);
-```
-
+    background:
+        rgba(255,20,147,.08);
 }
 
 .playlist-info {
-flex: 1;
-min-width: 0;
+    flex: 1;
+
+    min-width: 0;
 }
 
 .playlist-info strong {
-display: block;
+    display: block;
 
-```
-white-space: nowrap;
+    white-space:
+        nowrap;
 
-overflow: hidden;
+    overflow:
+        hidden;
 
-text-overflow: ellipsis;
-```
-
+    text-overflow:
+        ellipsis;
 }
 
 .playlist-play,
 .playlist-delete {
-border: none;
+    border: none;
 
-```
-background: transparent;
+    background:
+        transparent;
 
-color: white;
+    color: white;
 
-cursor: pointer;
+    cursor:
+        pointer;
 
-padding: 5px;
-```
-
+    padding: 5px;
 }
 
 .playlist-delete {
-color: #ff6d83;
+    color:
+        #ff6d83;
 }
 
 .empty-playlist {
-color: var(--muted);
+    color:
+        var(--muted);
 
-```
-text-align: center;
+    text-align:
+        center;
 
-padding: 20px;
-```
-
+    padding:
+        20px;
 }
 
-/* =========================================================
-SIDEBAR
-========================================================= */
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
 
 .sidebar {
-display: flex;
+    display: flex;
 
-```
-flex-direction: column;
+    flex-direction:
+        column;
 
-gap: 15px;
+    gap: 15px;
 
-min-height: 600px;
-```
-
+    min-height:
+        600px;
 }
 
 .side-section,
 .chat-section {
-background: var(--card);
+    background:
+        var(--card);
 
-```
-border:
-    1px solid var(--border);
+    border:
+        1px solid var(--border);
 
-border-radius: var(--radius);
+    border-radius:
+        var(--radius);
 
-overflow: hidden;
-```
-
+    overflow:
+        hidden;
 }
 
 .side-section {
-padding: 16px;
+    padding:
+        16px;
 }
 
 .participants {
-margin-top: 12px;
+    margin-top:
+        12px;
 
-```
-display: flex;
+    display: flex;
 
-flex-direction: column;
+    flex-direction:
+        column;
 
-gap: 8px;
-```
-
+    gap: 8px;
 }
 
 .participant-item {
-display: flex;
+    display: flex;
 
-```
-align-items: center;
+    align-items:
+        center;
 
-gap: 10px;
+    gap: 10px;
 
-padding: 8px;
+    padding:
+        8px;
 
-border-radius: 8px;
+    border-radius:
+        8px;
 
-background:
-    var(--card-2);
-```
-
+    background:
+        var(--card-2);
 }
 
 .participant-status {
-width: 9px;
-height: 9px;
+    width: 9px;
+    height: 9px;
 
-```
-border-radius: 50%;
+    border-radius:
+        50%;
 
-background: #666;
+    background:
+        #666;
 
-flex-shrink: 0;
-```
-
+    flex-shrink:
+        0;
 }
 
 .participant-status.online {
-background: #00ff9d;
+    background:
+        var(--success);
 
-```
-box-shadow:
-    0 0 8px #00ff9d;
-```
-
+    box-shadow:
+        0 0 8px
+        var(--success);
 }
 
 .participant-name {
-flex: 1;
+    flex: 1;
 
-```
-overflow: hidden;
+    overflow:
+        hidden;
 
-text-overflow: ellipsis;
+    text-overflow:
+        ellipsis;
 
-white-space: nowrap;
-```
-
+    white-space:
+        nowrap;
 }
 
-/* =========================================================
-CHAT
-========================================================= */
+
+/* =====================================================
+   CHAT
+===================================================== */
 
 .chat-section {
-flex: 1;
+    flex: 1;
 
-```
-min-height: 450px;
+    min-height:
+        450px;
 
-display: flex;
+    display: flex;
 
-flex-direction: column;
-```
-
+    flex-direction:
+        column;
 }
 
 .chat-section .section-title {
-padding: 15px;
+    padding:
+        15px;
 
-```
-border-bottom:
-    1px solid var(--border);
-```
-
+    border-bottom:
+        1px solid var(--border);
 }
 
 .chat-messages {
-flex: 1;
+    flex: 1;
 
-```
-min-height: 350px;
+    min-height:
+        350px;
 
-max-height: 500px;
+    max-height:
+        500px;
 
-overflow-y: auto;
+    overflow-y:
+        auto;
 
-padding: 15px;
-```
-
+    padding:
+        15px;
 }
 
 .chat-message {
-margin-bottom: 12px;
+    margin-bottom:
+        12px;
 }
 
 .chat-message strong {
-display: block;
+    display: block;
 
-```
-color: var(--pink);
+    color:
+        var(--pink);
 
-font-size: 13px;
-```
-
+    font-size:
+        13px;
 }
 
 .chat-message span {
-display: block;
+    display: block;
 
-```
-margin-top: 3px;
+    margin-top:
+        3px;
 
-color: #ddd;
+    color:
+        #ddd;
 
-font-size: 13px;
+    font-size:
+        13px;
 
-word-break: break-word;
-```
-
+    word-break:
+        break-word;
 }
 
 .chat-form {
-display: flex;
+    display: flex;
 
-```
-border-top:
-    1px solid var(--border);
-```
-
+    border-top:
+        1px solid var(--border);
 }
 
 .chat-form input {
-flex: 1;
+    flex: 1;
 
-```
-min-width: 0;
+    min-width: 0;
 
-border: none;
+    border: none;
 
-outline: none;
+    outline: none;
 
-padding: 14px;
+    padding:
+        14px;
 
-background:
-    #090914;
+    background:
+        #090914;
 
-color: white;
-```
-
+    color:
+        white;
 }
 
 .chat-form button {
-width: 50px;
+    width: 50px;
 
-```
-border: none;
+    border: none;
 
-background:
-    var(--purple);
+    background:
+        var(--purple);
 
-color: white;
+    color: white;
 
-cursor: pointer;
-```
-
+    cursor:
+        pointer;
 }
 
-/* =========================================================
-TOAST
-========================================================= */
+
+/* =====================================================
+   TOAST
+===================================================== */
 
 .toast {
-position: fixed;
+    position: fixed;
 
-```
-bottom: 25px;
+    bottom: 25px;
 
-left: 50%;
+    left: 50%;
 
-transform:
-    translateX(-50%)
-    translateY(100px);
+    transform:
+        translateX(-50%)
+        translateY(100px);
 
-background:
-    #18182a;
+    background:
+        #18182a;
 
-border:
-    1px solid var(--border);
+    border:
+        1px solid var(--border);
 
-padding: 12px 18px;
+    padding:
+        12px 18px;
 
-border-radius: 10px;
+    border-radius:
+        10px;
 
-opacity: 0;
+    opacity:
+        0;
 
-transition:
-    .25s;
+    transition:
+        .25s;
 
-z-index: 1000;
+    z-index:
+        1000;
 
-max-width: calc(100vw - 30px);
+    max-width:
+        calc(100vw - 30px);
 
-text-align: center;
-```
-
+    text-align:
+        center;
 }
 
 .toast.show {
-transform:
-translateX(-50%)
-translateY(0);
+    transform:
+        translateX(-50%)
+        translateY(0);
 
-```
-opacity: 1;
-```
-
+    opacity:
+        1;
 }
 
-/* =========================================================
-REAÇÃO FLUTUANTE
-========================================================= */
+
+/* =====================================================
+   REAÇÃO FLUTUANTE
+===================================================== */
 
 .floating-reaction {
-position: fixed;
+    position: fixed;
 
-```
-left: 50%;
-bottom: 25%;
+    left: 50%;
+    bottom: 25%;
 
-transform:
-    translateX(-50%);
+    transform:
+        translateX(-50%);
 
-font-size: 55px;
+    font-size:
+        55px;
 
-z-index: 2000;
+    z-index:
+        2000;
 
-pointer-events: none;
+    pointer-events:
+        none;
 
-animation:
-    floatingReaction 2s ease-out forwards;
-```
-
+    animation:
+        floatingReaction
+        2s ease-out forwards;
 }
 
 @keyframes floatingReaction {
 
-```
-0% {
-    opacity: 0;
-    transform:
-        translateX(-50%)
-        translateY(40px)
-        scale(.6);
+    0% {
+        opacity: 0;
+
+        transform:
+            translateX(-50%)
+            translateY(40px)
+            scale(.6);
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+
+        transform:
+            translateX(-50%)
+            translateY(-160px)
+            scale(1.4);
+    }
 }
 
-20% {
-    opacity: 1;
-}
 
-100% {
-    opacity: 0;
-    transform:
-        translateX(-50%)
-        translateY(-160px)
-        scale(1.4);
-}
-```
-
-}
-
-/* =========================================================
-RESPONSIVO
-========================================================= */
+/* =====================================================
+   RESPONSIVO
+===================================================== */
 
 @media (max-width: 950px) {
 
-```
-.room-layout {
-    grid-template-columns: 1fr;
-}
+    .room-layout {
+        grid-template-columns:
+            1fr;
+    }
 
-.sidebar {
-    min-height: auto;
-}
+    .sidebar {
+        min-height:
+            auto;
+    }
 
-.chat-section {
-    min-height: 400px;
-}
-```
-
+    .chat-section {
+        min-height:
+            400px;
+    }
 }
 
 @media (max-width: 600px) {
 
-```
-.topbar {
-    padding:
-        0 15px;
-}
+    .topbar {
+        padding:
+            0 15px;
+    }
 
-.logo strong {
-    font-size: 14px;
-}
+    .logo strong {
+        font-size:
+            14px;
+    }
 
-.room-screen {
-    padding: 10px;
-}
+    .room-screen {
+        padding:
+            10px;
+    }
 
-.room-actions {
-    width: 100%;
-}
+    .room-actions {
+        width:
+            100%;
+    }
 
-.room-code-box {
-    flex: 1;
-}
+    .room-code-box {
+        flex:
+            1;
+    }
 
-.room-actions .btn {
-    padding:
-        10px 13px;
-}
+    .hero-buttons {
+        flex-direction:
+            column;
+    }
 
-.hero-buttons {
-    flex-direction: column;
-}
+    .hero-buttons .btn {
+        width:
+            100%;
+    }
 
-.hero-buttons .btn {
-    width: 100%;
+    .reactions {
+        overflow-x:
+            auto;
+    }
 }
-
-.reactions {
-    overflow-x: auto;
-}
-```
-
-}
-
