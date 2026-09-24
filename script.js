@@ -17,9 +17,9 @@
 
 ========================================================= */
 
-const SUPABASE_URL = "COLE_SUA_URL_AQUI";
+const SUPABASE_URL = "sb_publishable_kD_pDRjjIAkURClAxGnG-A_VRgyhuQ_";
 
-const SUPABASE_ANON_KEY = "COLE_SUA_ANON_KEY_AQUI";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsZW54YWlpaWdxam11YW5uYmR6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAyMTgxNDQsImV4cCI6MjEwNTc5NDE0NH0.EGTWxgdSEFCY_tUpdG6Q9Jdnv_mTJbD784CgUmCSMtw";
 
 
 /* =========================================================
