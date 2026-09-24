@@ -18,7 +18,7 @@
 
 ========================================================= */
 
-const SUPABASE_URL = "https://ilenxaiiigqjmuannbdz.supabase.co/rest/v1/";
+const SUPABASE_URL = "https://ilenxaiiigqjmuannbdz.supabase.co";
 
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsZW54YWlpaWdxam11YW5uYmR6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAyMTgxNDQsImV4cCI6MjEwNTc5NDE0NH0.EGTWxgdSEFCY_tUpdG6Q9Jdnv_mTJbD784CgUmCSMtw";
 
