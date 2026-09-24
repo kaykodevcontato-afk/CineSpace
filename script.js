@@ -2,6 +2,8 @@
    ALIEN WATCH PARTY V2
    Watch2Gether-like
    Supabase + GitHub Pages
+
+   VERSÃO CORRIGIDA
    ========================================================= */
 
 
@@ -9,10 +11,11 @@
    CONFIGURAÇÃO SUPABASE
    ========================================================= */
 
-const SUPABASE_URL = "https://ilenxaiiigqjmuannbdz.supabase.co";
+const SUPABASE_URL =
+    "https://ilenxaiiigqjmuannbdz.supabase.co";
 
 const SUPABASE_ANON_KEY =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSI6ImxZW5jYWlpaWdxam11YW5uYmR6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAyMTgxNDQsImV4cCI6MjEwNTc5NDE0NH0.EGTWxgdSEFCY_tUpdG6Q9Jdnv_mTJbD784CgUmCSMtw";
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJpbGVueGFpaWlpcWptdWFubmJkeiIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzkwMjE4MTQ0LCJleHAiOjIxMDU3OTQxNDR9.EGTWxgdSEFCY_tUpdG6Q9Jdnv_mTJbD784CgUmCSMtw";
 
 
 /* =========================================================
@@ -22,21 +25,32 @@ const SUPABASE_ANON_KEY =
 let supabaseClient = null;
 
 try {
+
     if (
         SUPABASE_URL &&
         SUPABASE_ANON_KEY &&
         window.supabase
     ) {
-        supabaseClient = window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_ANON_KEY
+
+        supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_ANON_KEY
+            );
+
+        console.log(
+            "✅ Supabase inicializado."
         );
 
-        console.log("✅ Supabase inicializado.");
     } else {
-        console.error("❌ Supabase não foi encontrado.");
+
+        console.error(
+            "❌ Supabase não foi encontrado."
+        );
     }
+
 } catch (error) {
+
     console.error(
         "❌ Erro ao inicializar Supabase:",
         error
@@ -49,11 +63,13 @@ try {
    ========================================================= */
 
 const state = {
+
     userId: null,
     userName: "",
 
     room: null,
     roomId: null,
+
     isHost: false,
 
     participants: [],
@@ -63,11 +79,13 @@ const state = {
 
     channel: null,
 
-    lastSync: 0,
-
     heartbeat: null,
 
-    initialized: false
+    ignoreVideoEvent: false,
+
+    initialized: false,
+
+    openingRoom: false
 };
 
 
@@ -75,38 +93,55 @@ const state = {
    FUNÇÕES AUXILIARES
    ========================================================= */
 
-const $ = (id) => document.getElementById(id);
+const $ = id =>
+    document.getElementById(id);
 
 
 function log(...args) {
-    console.log("[Alien Watch Party]", ...args);
+
+    console.log(
+        "[Alien Watch Party]",
+        ...args
+    );
 }
 
 
 function showElement(element) {
+
     if (element) {
+
         element.style.display = "";
     }
 }
 
 
 function hideElement(element) {
+
     if (element) {
+
         element.style.display = "none";
     }
 }
 
 
 function setText(element, text) {
+
     if (element) {
-        element.textContent = text ?? "";
+
+        element.textContent =
+            text ?? "";
     }
 }
 
 
 function escapeHtml(text) {
-    const div = document.createElement("div");
-    div.textContent = text ?? "";
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        text ?? "";
+
     return div.innerHTML;
 }
 
@@ -115,85 +150,167 @@ function escapeHtml(text) {
    DOM
    ========================================================= */
 
-const homeScreen = $("homeScreen");
-const roomScreen = $("roomScreen");
+const homeScreen =
+    $("homeScreen");
 
-const videoPlayer = $("videoPlayer");
-const videoPlaceholder = $("videoPlaceholder");
+const roomScreen =
+    $("roomScreen");
 
-const playlist = $("playlist");
-const participants = $("participants");
-const chatMessages = $("chatMessages");
+const videoPlayer =
+    $("videoPlayer");
 
-const showCreateRoom = $("showCreateRoom");
-const showJoinRoom = $("showJoinRoom");
+const videoPlaceholder =
+    $("videoPlaceholder");
 
-const createPanel = $("createPanel");
-const joinPanel = $("joinPanel");
+const playlist =
+    $("playlist");
 
-const createName = $("createName");
-const roomName = $("roomName");
-const roomPrivate = $("roomPrivate");
+const participants =
+    $("participants");
 
-const createRoomBtn = $("createRoomBtn");
-const createError = $("createError");
+const chatMessages =
+    $("chatMessages");
 
-const joinName = $("joinName");
-const roomCode = $("roomCode");
-const joinRoomBtn = $("joinRoomBtn");
-const joinError = $("joinError");
 
-const leaveRoomBtn = $("leaveRoomBtn");
-const copyRoomLink = $("copyRoomLink");
+const showCreateRoom =
+    $("showCreateRoom");
 
-const showAddVideo = $("showAddVideo");
-const videoModal = $("videoModal");
-const addVideoBtn = $("addVideoBtn");
+const showJoinRoom =
+    $("showJoinRoom");
 
-const videoTitle = $("videoTitle");
-const videoUrl = $("videoUrl");
-const videoError = $("videoError");
 
-const chatForm = $("chatForm");
-const chatInput = $("chatInput");
+const createPanel =
+    $("createPanel");
 
-const connectionDot = $("connectionDot");
-const connectionText = $("connectionText");
+const joinPanel =
+    $("joinPanel");
 
-const roomTitle = $("roomTitle");
-const roomCodeDisplay = $("roomCodeDisplay");
 
-const participantCount = $("participantCount");
-const hostStatus = $("hostStatus");
+const createName =
+    $("createName");
 
-const toastElement = $("toast");
+const roomName =
+    $("roomName");
+
+const roomPrivate =
+    $("roomPrivate");
+
+
+const createRoomBtn =
+    $("createRoomBtn");
+
+const createError =
+    $("createError");
+
+
+const joinName =
+    $("joinName");
+
+const roomCode =
+    $("roomCode");
+
+const joinRoomBtn =
+    $("joinRoomBtn");
+
+const joinError =
+    $("joinError");
+
+
+const leaveRoomBtn =
+    $("leaveRoomBtn");
+
+const copyRoomLink =
+    $("copyRoomLink");
+
+
+const showAddVideo =
+    $("showAddVideo");
+
+const videoModal =
+    $("videoModal");
+
+const addVideoBtn =
+    $("addVideoBtn");
+
+
+const videoTitle =
+    $("videoTitle");
+
+const videoUrl =
+    $("videoUrl");
+
+const videoError =
+    $("videoError");
+
+
+const chatForm =
+    $("chatForm");
+
+const chatInput =
+    $("chatInput");
+
+
+const connectionDot =
+    $("connectionDot");
+
+const connectionText =
+    $("connectionText");
+
+
+const roomTitle =
+    $("roomTitle");
+
+const roomCodeDisplay =
+    $("roomCodeDisplay");
+
+
+const participantCount =
+    $("participantCount");
+
+const hostStatus =
+    $("hostStatus");
+
+
+const toastElement =
+    $("toast");
 
 
 /* =========================================================
    INICIALIZAÇÃO
    ========================================================= */
 
-document.addEventListener("DOMContentLoaded", init);
+document.addEventListener(
+    "DOMContentLoaded",
+    init
+);
 
 
 async function init() {
 
     if (state.initialized) {
+
         return;
     }
 
-    state.initialized = true;
+    state.initialized =
+        true;
 
-    log("🚀 Inicializando aplicação...");
+    log(
+        "🚀 Inicializando aplicação..."
+    );
+
 
     setupButtons();
+
 
     setConnectionStatus(
         "connecting",
         "Conectando..."
     );
 
+
     if (!supabaseClient) {
+
         setConnectionStatus(
             "error",
             "Supabase indisponível"
@@ -206,26 +323,32 @@ async function init() {
         return;
     }
 
+
     try {
 
         const {
             data,
             error
-        } = await supabaseClient.auth.getUser();
+        } =
+            await supabaseClient.auth.getSession();
+
 
         if (error) {
+
             console.warn(
-                "⚠️ Não foi possível recuperar usuário:",
+                "⚠️ Erro ao recuperar sessão:",
                 error
             );
-        }
 
-        if (data?.user) {
+        } else if (
+            data?.session?.user
+        ) {
 
-            state.userId = data.user.id;
+            state.userId =
+                data.session.user.id;
 
             log(
-                "👤 Usuário encontrado:",
+                "👤 Sessão encontrada:",
                 state.userId
             );
         }
@@ -233,19 +356,24 @@ async function init() {
     } catch (error) {
 
         console.warn(
-            "⚠️ Erro ao verificar autenticação:",
+            "⚠️ Erro ao verificar sessão:",
             error
         );
     }
 
+
     checkRoomFromURL();
+
 
     setConnectionStatus(
         "connected",
         "Online"
     );
 
-    log("✅ Aplicação pronta.");
+
+    log(
+        "✅ Aplicação pronta."
+    );
 }
 
 
@@ -255,14 +383,22 @@ async function init() {
 
 function setupButtons() {
 
+
     showCreateRoom?.addEventListener(
         "click",
         () => {
 
-            showElement(createPanel);
-            hideElement(joinPanel);
+            showElement(
+                createPanel
+            );
 
-            createError.textContent = "";
+            hideElement(
+                joinPanel
+            );
+
+            clearError(
+                createError
+            );
         }
     );
 
@@ -271,10 +407,17 @@ function setupButtons() {
         "click",
         () => {
 
-            showElement(joinPanel);
-            hideElement(createPanel);
+            showElement(
+                joinPanel
+            );
 
-            joinError.textContent = "";
+            hideElement(
+                createPanel
+            );
+
+            clearError(
+                joinError
+            );
         }
     );
 
@@ -307,11 +450,11 @@ function setupButtons() {
         "click",
         () => {
 
-            showElement(videoModal);
+            showElement(
+                videoModal
+            );
 
-            if (videoTitle) {
-                videoTitle.focus();
-            }
+            videoTitle?.focus();
         }
     );
 
@@ -329,7 +472,9 @@ function setupButtons() {
 
 
     document
-        .querySelectorAll("[data-reaction]")
+        .querySelectorAll(
+            "[data-reaction]"
+        )
         .forEach(button => {
 
             button.addEventListener(
@@ -339,38 +484,39 @@ function setupButtons() {
                     const reaction =
                         button.dataset.reaction;
 
-                    sendReaction(reaction);
+                    sendReaction(
+                        reaction
+                    );
                 }
             );
         });
 
-
-    /* -----------------------------------------------------
-       FECHAR MODAL
-       ----------------------------------------------------- */
 
     videoModal?.addEventListener(
         "click",
         event => {
 
             if (
-                event.target === videoModal
+                event.target ===
+                videoModal
             ) {
-                hideElement(videoModal);
+
+                hideElement(
+                    videoModal
+                );
             }
         }
     );
 
 
-    /* -----------------------------------------------------
-       TECLAS
-       ----------------------------------------------------- */
-
     createName?.addEventListener(
         "keydown",
         event => {
 
-            if (event.key === "Enter") {
+            if (
+                event.key === "Enter"
+            ) {
+
                 createRoom();
             }
         }
@@ -381,7 +527,10 @@ function setupButtons() {
         "keydown",
         event => {
 
-            if (event.key === "Enter") {
+            if (
+                event.key === "Enter"
+            ) {
+
                 createRoom();
             }
         }
@@ -392,7 +541,10 @@ function setupButtons() {
         "keydown",
         event => {
 
-            if (event.key === "Enter") {
+            if (
+                event.key === "Enter"
+            ) {
+
                 joinRoom();
             }
         }
@@ -403,16 +555,15 @@ function setupButtons() {
         "keydown",
         event => {
 
-            if (event.key === "Enter") {
+            if (
+                event.key === "Enter"
+            ) {
+
                 joinRoom();
             }
         }
     );
 
-
-    /* -----------------------------------------------------
-       VIDEO
-       ----------------------------------------------------- */
 
     videoPlayer?.addEventListener(
         "play",
@@ -440,35 +591,81 @@ function setupButtons() {
 async function ensureUser() {
 
     if (!supabaseClient) {
+
         throw new Error(
             "Supabase não está inicializado."
         );
     }
 
 
-    if (state.userId) {
+    /* -----------------------------------------------------
+       VERIFICAR SESSÃO EXISTENTE
+       ----------------------------------------------------- */
+
+    const {
+        data: sessionData,
+        error: sessionError
+    } =
+        await supabaseClient.auth.getSession();
+
+
+    if (sessionError) {
+
+        console.error(
+            "❌ Erro ao verificar sessão:",
+            sessionError
+        );
+
+        throw new Error(
+            "Não foi possível verificar sua sessão."
+        );
+    }
+
+
+    const sessionUser =
+        sessionData?.session?.user;
+
+
+    if (sessionUser?.id) {
+
+        state.userId =
+            sessionUser.id;
+
+        log(
+            "👤 Usuário autenticado:",
+            state.userId
+        );
+
         return state.userId;
     }
 
 
-    log("🔐 Criando sessão anônima...");
+    /* -----------------------------------------------------
+       LOGIN ANÔNIMO
+       ----------------------------------------------------- */
+
+    log(
+        "🔐 Criando sessão anônima..."
+    );
 
 
     const {
         data,
         error
-    } = await supabaseClient.auth.signInAnonymously();
+    } =
+        await supabaseClient.auth.signInAnonymously();
 
 
     if (error) {
 
         console.error(
-            "❌ Erro no login anônimo:",
+            "❌ ERRO NO LOGIN ANÔNIMO:",
             error
         );
 
         throw new Error(
-            "Não foi possível criar sua sessão. Verifique se o login anônimo está ativado no Supabase."
+            error.message ||
+            "Não foi possível criar sua sessão."
         );
     }
 
@@ -486,7 +683,7 @@ async function ensureUser() {
 
 
     log(
-        "✅ Usuário autenticado:",
+        "✅ Usuário anônimo autenticado:",
         state.userId
     );
 
@@ -499,12 +696,16 @@ async function ensureUser() {
    GERAR CÓDIGO DA SALA
    ========================================================= */
 
-function generateRoomCode(length = 6) {
+function generateRoomCode(
+    length = 6
+) {
 
     const characters =
         "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
+
     let code = "";
+
 
     for (
         let i = 0;
@@ -512,13 +713,15 @@ function generateRoomCode(length = 6) {
         i++
     ) {
 
-        code += characters.charAt(
-            Math.floor(
-                Math.random() *
-                characters.length
-            )
-        );
+        code +=
+            characters.charAt(
+                Math.floor(
+                    Math.random() *
+                    characters.length
+                )
+            );
     }
+
 
     return code;
 }
@@ -530,11 +733,14 @@ function generateRoomCode(length = 6) {
 
 async function createRoom() {
 
-    clearError(createError);
+    clearError(
+        createError
+    );
 
 
     const name =
         createName?.value.trim();
+
 
     const roomNameValue =
         roomName?.value.trim();
@@ -570,77 +776,199 @@ async function createRoom() {
 
         setConnectionStatus(
             "connecting",
-            "Criando sala..."
+            "Autenticando..."
         );
 
+
+        /* -------------------------------------------------
+           GARANTIR USUÁRIO
+           ------------------------------------------------- */
 
         await ensureUser();
 
 
+        if (!state.userId) {
+
+            throw new Error(
+                "Usuário não autenticado."
+            );
+        }
+
+
+        log(
+            "👤 ID:",
+            state.userId
+        );
+
+
+        /* -------------------------------------------------
+           CRIAR SALA
+           ------------------------------------------------- */
+
+        setConnectionStatus(
+            "connecting",
+            "Criando sala..."
+        );
+
+
         let room = null;
 
-        let attempts = 0;
+        let lastError = null;
 
 
-        while (!room && attempts < 5) {
-
-            attempts++;
-
+        for (
+            let attempt = 1;
+            attempt <= 5;
+            attempt++
+        ) {
 
             const code =
                 generateRoomCode();
 
 
+            log(
+                `🔑 Tentativa ${attempt}/5:`,
+                code
+            );
+
+
             const {
                 data,
                 error
-            } = await supabaseClient
-                .from("rooms")
-                .insert({
-                    name: roomNameValue,
-                    code: code,
-                    owner_id: state.userId,
-                    is_private:
-                        roomPrivate?.checked ?? false,
-                    is_active: true
-                })
-                .select()
-                .single();
+            } =
+                await supabaseClient
+                    .from("rooms")
+                    .insert({
+
+                        name:
+                            roomNameValue,
+
+                        code:
+                            code,
+
+                        owner_id:
+                            state.userId,
+
+                        is_private:
+                            roomPrivate?.checked ??
+                            false,
+
+                        is_active:
+                            true
+
+                    })
+                    .select("*")
+                    .single();
 
 
             if (!error) {
 
-                room = data;
+                room =
+                    data;
 
                 break;
             }
 
 
+            lastError =
+                error;
+
+
             console.warn(
-                "⚠️ Tentativa de criação:",
+                `⚠️ Tentativa ${attempt} falhou:`,
                 error
             );
+
+
+            /* ------------------------------------------------
+               Se não for código duplicado,
+               não adianta tentar novamente.
+               ------------------------------------------------ */
+
+            if (
+                error.code !==
+                "23505"
+            ) {
+
+                break;
+            }
         }
 
 
         if (!room) {
 
+            console.error(
+                "❌ ERRO FINAL AO CRIAR SALA:",
+                lastError
+            );
+
+
+            if (lastError) {
+
+                console.error(
+                    "Código:",
+                    lastError.code
+                );
+
+                console.error(
+                    "Mensagem:",
+                    lastError.message
+                );
+
+                console.error(
+                    "Detalhes:",
+                    lastError.details
+                );
+
+                console.error(
+                    "Hint:",
+                    lastError.hint
+                );
+            }
+
+
             throw new Error(
-                "Não foi possível criar a sala. Verifique se a tabela 'rooms' existe no Supabase e se as políticas RLS estão configuradas."
+                lastError?.message ||
+                "Não foi possível criar a sala."
             );
         }
 
 
-        state.userName = name;
-        state.room = room;
-        state.roomId = room.id;
-        state.isHost = true;
+        /* -------------------------------------------------
+           SALVAR ESTADO
+           ------------------------------------------------- */
 
+        state.userName =
+            name;
+
+        state.room =
+            room;
+
+        state.roomId =
+            room.id;
+
+        state.isHost =
+            true;
+
+
+        log(
+            "🏠 SALA CRIADA:",
+            room
+        );
+
+
+        /* -------------------------------------------------
+           ADICIONAR CRIADOR
+           ------------------------------------------------- */
 
         await addMember();
 
 
-        openRoom();
+        /* -------------------------------------------------
+           ABRIR SALA
+           ------------------------------------------------- */
+
+        await openRoom();
 
 
         setConnectionStatus(
@@ -654,15 +982,10 @@ async function createRoom() {
         );
 
 
-        log(
-            "🏠 Sala criada:",
-            room
-        );
-
     } catch (error) {
 
         console.error(
-            "❌ Erro ao criar sala:",
+            "❌ ERRO AO CRIAR SALA:",
             error
         );
 
@@ -688,11 +1011,14 @@ async function createRoom() {
 
 async function joinRoom() {
 
-    clearError(joinError);
+    clearError(
+        joinError
+    );
 
 
     const name =
         joinName?.value.trim();
+
 
     const code =
         roomCode?.value
@@ -730,22 +1056,43 @@ async function joinRoom() {
 
         setConnectionStatus(
             "connecting",
-            "Entrando na sala..."
+            "Autenticando..."
         );
 
 
         await ensureUser();
 
 
+        if (!state.userId) {
+
+            throw new Error(
+                "Usuário não autenticado."
+            );
+        }
+
+
+        setConnectionStatus(
+            "connecting",
+            "Procurando sala..."
+        );
+
+
         const {
             data: room,
             error
-        } = await supabaseClient
-            .from("rooms")
-            .select("*")
-            .eq("code", code)
-            .eq("is_active", true)
-            .maybeSingle();
+        } =
+            await supabaseClient
+                .from("rooms")
+                .select("*")
+                .eq(
+                    "code",
+                    code
+                )
+                .eq(
+                    "is_active",
+                    true
+                )
+                .maybeSingle();
 
 
         if (error) {
@@ -769,22 +1116,42 @@ async function joinRoom() {
         }
 
 
-        state.userName = name;
-        state.room = room;
-        state.roomId = room.id;
-        state.isHost =
-            room.owner_id === state.userId;
+        /* -------------------------------------------------
+           SALVAR ESTADO
+           ------------------------------------------------- */
 
+        state.userName =
+            name;
+
+        state.room =
+            room;
+
+        state.roomId =
+            room.id;
+
+        state.isHost =
+            room.owner_id ===
+            state.userId;
+
+
+        log(
+            "🚪 Entrando na sala:",
+            room
+        );
+
+
+        /* -------------------------------------------------
+           ADICIONAR MEMBRO
+           ------------------------------------------------- */
 
         await addMember();
 
 
-        /* IMPORTANTE:
-           openRoom() já chama loadRoomData().
-           Não carregamos novamente aqui.
-        */
+        /* -------------------------------------------------
+           ABRIR SALA
+           ------------------------------------------------- */
 
-        openRoom();
+        await openRoom();
 
 
         setConnectionStatus(
@@ -801,7 +1168,7 @@ async function joinRoom() {
     } catch (error) {
 
         console.error(
-            "❌ Erro ao entrar:",
+            "❌ ERRO AO ENTRAR:",
             error
         );
 
@@ -831,33 +1198,55 @@ async function addMember() {
         !state.roomId ||
         !state.userId
     ) {
-        return;
+
+        throw new Error(
+            "Dados do usuário ou da sala estão ausentes."
+        );
     }
 
 
     const {
+        data,
         error
-    } = await supabaseClient
-        .from("room_members")
-        .upsert(
-            {
-                room_id: state.roomId,
-                user_id: state.userId,
-                display_name: state.userName,
-                is_online: true,
-                last_seen: new Date().toISOString()
-            },
-            {
-                onConflict:
-                    "room_id,user_id"
-            }
-        );
+    } =
+        await supabaseClient
+            .from("room_members")
+            .upsert(
+
+                {
+
+                    room_id:
+                        state.roomId,
+
+                    user_id:
+                        state.userId,
+
+                    display_name:
+                        state.userName,
+
+                    is_online:
+                        true,
+
+                    last_seen:
+                        new Date().toISOString()
+
+                },
+
+                {
+
+                    onConflict:
+                        "room_id,user_id"
+
+                }
+            )
+            .select("*")
+            .single();
 
 
     if (error) {
 
         console.error(
-            "❌ Erro ao adicionar membro:",
+            "❌ ERRO AO ADICIONAR MEMBRO:",
             error
         );
 
@@ -868,7 +1257,10 @@ async function addMember() {
     }
 
 
-    log("👤 Participante adicionado.");
+    log(
+        "👤 Participante adicionado:",
+        data
+    );
 }
 
 
@@ -878,35 +1270,58 @@ async function addMember() {
 
 async function openRoom() {
 
-    hideElement(homeScreen);
-    showElement(roomScreen);
+    if (state.openingRoom) {
+
+        log(
+            "⚠️ openRoom já está executando."
+        );
+
+        return;
+    }
 
 
-    setText(
-        roomTitle,
-        state.room?.name || "Sala"
-    );
-
-
-    setText(
-        roomCodeDisplay,
-        state.room?.code || ""
-    );
-
-
-    setText(
-        hostStatus,
-        state.isHost
-            ? "👑 Você é o anfitrião"
-            : "👤 Participante"
-    );
+    state.openingRoom =
+        true;
 
 
     try {
 
+        hideElement(
+            homeScreen
+        );
+
+        showElement(
+            roomScreen
+        );
+
+
+        setText(
+            roomTitle,
+            state.room?.name ||
+            "Sala"
+        );
+
+
+        setText(
+            roomCodeDisplay,
+            state.room?.code ||
+            ""
+        );
+
+
+        setText(
+            hostStatus,
+            state.isHost
+                ? "👑 Você é o anfitrião"
+                : "👤 Participante"
+        );
+
+
         await loadRoomData();
 
+
         await subscribeRealtime();
+
 
         startHeartbeat();
 
@@ -920,7 +1335,7 @@ async function openRoom() {
     } catch (error) {
 
         console.error(
-            "❌ Erro ao abrir sala:",
+            "❌ ERRO AO ABRIR SALA:",
             error
         );
 
@@ -928,12 +1343,18 @@ async function openRoom() {
         showToast(
             "Erro ao carregar os dados da sala."
         );
+
+
+    } finally {
+
+        state.openingRoom =
+            false;
     }
 }
 
 
 /* =========================================================
-   CARREGAR DADOS DA SALA
+   CARREGAR DADOS
    ========================================================= */
 
 async function loadRoomData() {
@@ -953,6 +1374,7 @@ async function loadRoomData() {
 async function loadParticipants() {
 
     if (!state.roomId) {
+
         return;
     }
 
@@ -960,16 +1382,20 @@ async function loadParticipants() {
     const {
         data,
         error
-    } = await supabaseClient
-        .from("room_members")
-        .select("*")
-        .eq("room_id", state.roomId)
-        .order(
-            "created_at",
-            {
-                ascending: true
-            }
-        );
+    } =
+        await supabaseClient
+            .from("room_members")
+            .select("*")
+            .eq(
+                "room_id",
+                state.roomId
+            )
+            .order(
+                "created_at",
+                {
+                    ascending: true
+                }
+            );
 
 
     if (error) {
@@ -998,18 +1424,22 @@ async function loadParticipants() {
 function renderParticipants() {
 
     if (!participants) {
+
         return;
     }
 
 
-    participants.innerHTML = "";
+    participants.innerHTML =
+        "";
 
 
     state.participants.forEach(
         member => {
 
             const item =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
 
             item.className =
@@ -1021,14 +1451,24 @@ function renderParticipants() {
 
 
             item.innerHTML = `
-                <span class="participant-status ${online ? "online" : ""}"></span>
-                <span class="participant-name">
-                    ${escapeHtml(member.display_name)}
+
+                <span
+                    class="participant-status ${online ? "online" : ""}">
                 </span>
+
+                <span
+                    class="participant-name">
+                    ${escapeHtml(
+                        member.display_name
+                    )}
+                </span>
+
             `;
 
 
-            participants.appendChild(item);
+            participants.appendChild(
+                item
+            );
         }
     );
 
@@ -1047,6 +1487,7 @@ function renderParticipants() {
 async function loadPlaylist() {
 
     if (!state.roomId) {
+
         return;
     }
 
@@ -1054,22 +1495,26 @@ async function loadPlaylist() {
     const {
         data,
         error
-    } = await supabaseClient
-        .from("playlist_items")
-        .select("*")
-        .eq("room_id", state.roomId)
-        .order(
-            "position",
-            {
-                ascending: true
-            }
-        )
-        .order(
-            "created_at",
-            {
-                ascending: true
-            }
-        );
+    } =
+        await supabaseClient
+            .from("playlist_items")
+            .select("*")
+            .eq(
+                "room_id",
+                state.roomId
+            )
+            .order(
+                "position",
+                {
+                    ascending: true
+                }
+            )
+            .order(
+                "created_at",
+                {
+                    ascending: true
+                }
+            );
 
 
     if (error) {
@@ -1109,18 +1554,22 @@ async function loadPlaylist() {
 function renderPlaylist() {
 
     if (!playlist) {
+
         return;
     }
 
 
-    playlist.innerHTML = "";
+    playlist.innerHTML =
+        "";
 
 
     state.playlist.forEach(
         item => {
 
             const element =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
 
             element.className =
@@ -1131,6 +1580,7 @@ function renderPlaylist() {
                 item.id ===
                 state.currentVideoId
             ) {
+
                 element.classList.add(
                     "active"
                 );
@@ -1138,47 +1588,69 @@ function renderPlaylist() {
 
 
             element.innerHTML = `
+
                 <div class="playlist-info">
+
                     <strong>
-                        ${escapeHtml(item.title)}
+                        ${escapeHtml(
+                            item.title
+                        )}
                     </strong>
+
                 </div>
+
 
                 <button
                     type="button"
                     class="playlist-play"
-                    title="Reproduzir"
-                >
+                    title="Reproduzir">
                     ▶
                 </button>
+
 
                 <button
                     type="button"
                     class="playlist-delete"
-                    title="Remover"
-                >
+                    title="Remover">
                     ×
                 </button>
+
             `;
 
 
             element
-                .querySelector(".playlist-play")
+                .querySelector(
+                    ".playlist-play"
+                )
                 ?.addEventListener(
                     "click",
-                    () => loadVideo(item)
+                    () => {
+
+                        loadVideo(
+                            item
+                        );
+                    }
                 );
 
 
             element
-                .querySelector(".playlist-delete")
+                .querySelector(
+                    ".playlist-delete"
+                )
                 ?.addEventListener(
                     "click",
-                    () => removePlaylistItem(item)
+                    () => {
+
+                        removePlaylistItem(
+                            item
+                        );
+                    }
                 );
 
 
-            playlist.appendChild(element);
+            playlist.appendChild(
+                element
+            );
         }
     );
 }
@@ -1190,11 +1662,14 @@ function renderPlaylist() {
 
 async function addVideo() {
 
-    clearError(videoError);
+    clearError(
+        videoError
+    );
 
 
     const title =
         videoTitle?.value.trim();
+
 
     const url =
         videoUrl?.value.trim();
@@ -1249,29 +1724,29 @@ async function addVideo() {
         const {
             data,
             error
-        } = await supabaseClient
-            .from("playlist_items")
-            .insert({
+        } =
+            await supabaseClient
+                .from("playlist_items")
+                .insert({
 
-                room_id:
-                    state.roomId,
+                    room_id:
+                        state.roomId,
 
-                title:
-                    title,
+                    title:
+                        title,
 
-                video_url:
-                    url,
+                    video_url:
+                        url,
 
-                position:
-                    position,
+                    position:
+                        position,
 
-                /* CORREÇÃO IMPORTANTE */
-                added_by:
-                    state.userId
+                    added_by:
+                        state.userId
 
-            })
-            .select()
-            .single();
+                })
+                .select("*")
+                .single();
 
 
         if (error) {
@@ -1287,28 +1762,41 @@ async function addVideo() {
         }
 
 
-        state.playlist.push(data);
+        state.playlist.push(
+            data
+        );
 
 
         renderPlaylist();
 
 
-        if (!state.currentVideoId) {
-            loadVideo(data);
+        if (
+            !state.currentVideoId
+        ) {
+
+            loadVideo(
+                data
+            );
         }
 
 
         if (videoTitle) {
-            videoTitle.value = "";
+
+            videoTitle.value =
+                "";
         }
 
 
         if (videoUrl) {
-            videoUrl.value = "";
+
+            videoUrl.value =
+                "";
         }
 
 
-        hideElement(videoModal);
+        hideElement(
+            videoModal
+        );
 
 
         showToast(
@@ -1319,7 +1807,7 @@ async function addVideo() {
     } catch (error) {
 
         console.error(
-            "❌ Erro ao adicionar vídeo:",
+            "❌ ERRO AO ADICIONAR VÍDEO:",
             error
         );
 
@@ -1334,12 +1822,15 @@ async function addVideo() {
 
 
 /* =========================================================
-   REMOVER ITEM DA PLAYLIST
+   REMOVER PLAYLIST
    ========================================================= */
 
-async function removePlaylistItem(item) {
+async function removePlaylistItem(
+    item
+) {
 
     if (!item?.id) {
+
         return;
     }
 
@@ -1348,13 +1839,18 @@ async function removePlaylistItem(item) {
 
         const {
             error
-        } = await supabaseClient
-            .from("playlist_items")
-            .delete()
-            .eq("id", item.id);
+        } =
+            await supabaseClient
+                .from("playlist_items")
+                .delete()
+                .eq(
+                    "id",
+                    item.id
+                );
 
 
         if (error) {
+
             throw new Error(
                 error.message
             );
@@ -1364,8 +1860,50 @@ async function removePlaylistItem(item) {
         state.playlist =
             state.playlist.filter(
                 video =>
-                    video.id !== item.id
+                    video.id !==
+                    item.id
             );
+
+
+        if (
+            state.currentVideoId ===
+            item.id
+        ) {
+
+            state.currentVideoId =
+                null;
+
+
+            if (
+                state.playlist.length
+            ) {
+
+                loadVideo(
+                    state.playlist[0]
+                );
+
+            } else {
+
+                if (videoPlayer) {
+
+                    videoPlayer.pause();
+
+                    videoPlayer.removeAttribute(
+                        "src"
+                    );
+
+                    videoPlayer.load();
+                }
+
+                hideElement(
+                    videoPlayer
+                );
+
+                showElement(
+                    videoPlaceholder
+                );
+            }
+        }
 
 
         renderPlaylist();
@@ -1398,6 +1936,7 @@ async function removePlaylistItem(item) {
 function loadVideo(item) {
 
     if (!item) {
+
         return;
     }
 
@@ -1410,15 +1949,22 @@ function loadVideo(item) {
 
 
     if (!videoPlayer) {
+
         return;
     }
 
 
-    hideElement(videoPlaceholder);
-    showElement(videoPlayer);
+    hideElement(
+        videoPlaceholder
+    );
+
+    showElement(
+        videoPlayer
+    );
 
 
-    state.ignoreVideoEvent = true;
+    state.ignoreVideoEvent =
+        true;
 
 
     try {
@@ -1426,9 +1972,7 @@ function loadVideo(item) {
         videoPlayer.src =
             item.video_url;
 
-
         videoPlayer.load();
-
 
     } catch (error) {
 
@@ -1441,7 +1985,10 @@ function loadVideo(item) {
 
     setTimeout(
         () => {
-            state.ignoreVideoEvent = false;
+
+            state.ignoreVideoEvent =
+                false;
+
         },
         500
     );
@@ -1458,12 +2005,13 @@ function loadVideo(item) {
    VIDEO PLAY
    ========================================================= */
 
-async function handleVideoPlay() {
+function handleVideoPlay() {
 
     if (
         state.ignoreVideoEvent ||
         !state.channel
     ) {
+
         return;
     }
 
@@ -1472,7 +2020,8 @@ async function handleVideoPlay() {
         "play",
         {
             time:
-                videoPlayer?.currentTime || 0
+                videoPlayer?.currentTime ||
+                0
         }
     );
 }
@@ -1482,12 +2031,13 @@ async function handleVideoPlay() {
    VIDEO PAUSE
    ========================================================= */
 
-async function handleVideoPause() {
+function handleVideoPause() {
 
     if (
         state.ignoreVideoEvent ||
         !state.channel
     ) {
+
         return;
     }
 
@@ -1496,7 +2046,8 @@ async function handleVideoPause() {
         "pause",
         {
             time:
-                videoPlayer?.currentTime || 0
+                videoPlayer?.currentTime ||
+                0
         }
     );
 }
@@ -1512,6 +2063,7 @@ function handleVideoSeek() {
         state.ignoreVideoEvent ||
         !state.channel
     ) {
+
         return;
     }
 
@@ -1520,7 +2072,8 @@ function handleVideoSeek() {
         "seek",
         {
             time:
-                videoPlayer?.currentTime || 0
+                videoPlayer?.currentTime ||
+                0
         }
     );
 }
@@ -1536,14 +2089,21 @@ function broadcastPlayer(
 ) {
 
     if (!state.channel) {
+
         return;
     }
 
 
     state.channel.send({
-        type: "broadcast",
-        event: "player",
+
+        type:
+            "broadcast",
+
+        event:
+            "player",
+
         payload: {
+
             userId:
                 state.userId,
 
@@ -1560,9 +2120,12 @@ function broadcastPlayer(
    APLICAR SINCRONIZAÇÃO
    ========================================================= */
 
-async function applyPlayerEvent(payload) {
+async function applyPlayerEvent(
+    payload
+) {
 
     if (!payload) {
+
         return;
     }
 
@@ -1571,16 +2134,19 @@ async function applyPlayerEvent(payload) {
         payload.userId ===
         state.userId
     ) {
+
         return;
     }
 
 
     if (!videoPlayer) {
+
         return;
     }
 
 
-    state.ignoreVideoEvent = true;
+    state.ignoreVideoEvent =
+        true;
 
 
     try {
@@ -1590,8 +2156,12 @@ async function applyPlayerEvent(payload) {
             "number"
         ) {
 
-            videoPlayer.currentTime =
-                payload.time;
+            try {
+
+                videoPlayer.currentTime =
+                    payload.time;
+
+            } catch (_) {}
         }
 
 
@@ -1607,13 +2177,12 @@ async function applyPlayerEvent(payload) {
             } catch (error) {
 
                 console.warn(
-                    "⚠️ Reprodução automática bloqueada pelo navegador.",
+                    "⚠️ Reprodução automática bloqueada:",
                     error
                 );
 
-
                 showToast(
-                    "Clique no vídeo para iniciar a reprodução."
+                    "Clique no vídeo para iniciar."
                 );
             }
         }
@@ -1627,16 +2196,6 @@ async function applyPlayerEvent(payload) {
             videoPlayer.pause();
         }
 
-
-        if (
-            payload.action ===
-            "seek"
-        ) {
-
-            /* Apenas sincroniza o tempo */
-        }
-
-
     } catch (error) {
 
         console.error(
@@ -1648,7 +2207,10 @@ async function applyPlayerEvent(payload) {
 
         setTimeout(
             () => {
-                state.ignoreVideoEvent = false;
+
+                state.ignoreVideoEvent =
+                    false;
+
             },
             300
         );
@@ -1666,25 +2228,40 @@ async function subscribeRealtime() {
         !supabaseClient ||
         !state.roomId
     ) {
+
         return;
     }
 
 
+    /* -----------------------------------------------------
+       REMOVER CANAL ANTERIOR
+       ----------------------------------------------------- */
+
     if (state.channel) {
 
         try {
+
             await supabaseClient
                 .removeChannel(
                     state.channel
                 );
+
         } catch (_) {}
 
-        state.channel = null;
+
+        state.channel =
+            null;
     }
 
 
     const channelName =
         `room-${state.roomId}`;
+
+
+    log(
+        "📡 Conectando Realtime:",
+        channelName
+    );
 
 
     state.channel =
@@ -1694,7 +2271,7 @@ async function subscribeRealtime() {
 
 
     /* -----------------------------------------------------
-       BROADCAST
+       PLAYER
        ----------------------------------------------------- */
 
     state.channel.on(
@@ -1710,6 +2287,10 @@ async function subscribeRealtime() {
         }
     );
 
+
+    /* -----------------------------------------------------
+       REAÇÕES
+       ----------------------------------------------------- */
 
     state.channel.on(
         "broadcast",
@@ -1787,51 +2368,105 @@ async function subscribeRealtime() {
     );
 
 
-    const status =
-        await state.channel.subscribe(
-            status => {
+    /* -----------------------------------------------------
+       CONECTAR
+       ----------------------------------------------------- */
 
-                log(
-                    "Realtime:",
-                    status
-                );
+    await new Promise(
+        resolve => {
+
+            let finished =
+                false;
 
 
-                if (
-                    status ===
-                    "SUBSCRIBED"
-                ) {
+            const finish =
+                status => {
 
-                    setConnectionStatus(
-                        "connected",
-                        "Online"
+                    if (
+                        finished
+                    ) {
+
+                        return;
+                    }
+
+
+                    finished =
+                        true;
+
+
+                    resolve(
+                        status
+                    );
+                };
+
+
+            state.channel.subscribe(
+                status => {
+
+                    log(
+                        "Realtime:",
+                        status
                     );
 
-                } else if (
-                    status ===
-                    "CHANNEL_ERROR"
-                ) {
 
-                    setConnectionStatus(
-                        "error",
-                        "Realtime indisponível"
-                    );
+                    if (
+                        status ===
+                        "SUBSCRIBED"
+                    ) {
 
-                } else if (
-                    status ===
-                    "TIMED_OUT"
-                ) {
+                        setConnectionStatus(
+                            "connected",
+                            "Online"
+                        );
 
-                    setConnectionStatus(
-                        "error",
-                        "Conexão expirou"
-                    );
+                        finish(
+                            status
+                        );
+
+                    } else if (
+                        status ===
+                        "CHANNEL_ERROR"
+                    ) {
+
+                        setConnectionStatus(
+                            "error",
+                            "Realtime indisponível"
+                        );
+
+                        finish(
+                            status
+                        );
+
+                    } else if (
+                        status ===
+                        "TIMED_OUT"
+                    ) {
+
+                        setConnectionStatus(
+                            "error",
+                            "Conexão expirou"
+                        );
+
+                        finish(
+                            status
+                        );
+                    }
                 }
-            }
-        );
+            );
 
 
-    return status;
+            setTimeout(
+                () => {
+
+                    finish(
+                        "TIMEOUT"
+                    );
+
+                },
+                10000
+            );
+        }
+    );
 }
 
 
@@ -1839,7 +2474,9 @@ async function subscribeRealtime() {
    CHAT
    ========================================================= */
 
-async function sendMessage(event) {
+async function sendMessage(
+    event
+) {
 
     event?.preventDefault();
 
@@ -1849,6 +2486,7 @@ async function sendMessage(event) {
 
 
     if (!message) {
+
         return;
     }
 
@@ -1870,22 +2508,23 @@ async function sendMessage(event) {
 
         const {
             error
-        } = await supabaseClient
-            .from("messages")
-            .insert({
+        } =
+            await supabaseClient
+                .from("messages")
+                .insert({
 
-                room_id:
-                    state.roomId,
+                    room_id:
+                        state.roomId,
 
-                user_id:
-                    state.userId,
+                    user_id:
+                        state.userId,
 
-                display_name:
-                    state.userName,
+                    display_name:
+                        state.userName,
 
-                message:
-                    message
-            });
+                    message:
+                        message
+                });
 
 
         if (error) {
@@ -1896,7 +2535,8 @@ async function sendMessage(event) {
         }
 
 
-        chatInput.value = "";
+        chatInput.value =
+            "";
 
 
     } catch (error) {
@@ -1921,6 +2561,7 @@ async function sendMessage(event) {
 async function loadMessages() {
 
     if (!state.roomId) {
+
         return;
     }
 
@@ -1928,17 +2569,21 @@ async function loadMessages() {
     const {
         data,
         error
-    } = await supabaseClient
-        .from("messages")
-        .select("*")
-        .eq("room_id", state.roomId)
-        .order(
-            "created_at",
-            {
-                ascending: true
-            }
-        )
-        .limit(100);
+    } =
+        await supabaseClient
+            .from("messages")
+            .select("*")
+            .eq(
+                "room_id",
+                state.roomId
+            )
+            .order(
+                "created_at",
+                {
+                    ascending: true
+                }
+            )
+            .limit(100);
 
 
     if (error) {
@@ -1953,11 +2598,13 @@ async function loadMessages() {
 
 
     if (!chatMessages) {
+
         return;
     }
 
 
-    chatMessages.innerHTML = "";
+    chatMessages.innerHTML =
+        "";
 
 
     (data || []).forEach(
@@ -1976,7 +2623,7 @@ async function loadMessages() {
 
 
 /* =========================================================
-   ADICIONAR MENSAGEM NA TELA
+   ADICIONAR MENSAGEM
    ========================================================= */
 
 function appendMessage(
@@ -1984,12 +2631,15 @@ function appendMessage(
     scroll = true
 ) {
 
-    if (!chatMessages || !message) {
+    if (
+        !chatMessages ||
+        !message
+    ) {
+
         return;
     }
 
 
-    /* Evita duplicar mensagens */
     const existing =
         chatMessages.querySelector(
             `[data-message-id="${message.id}"]`
@@ -1997,12 +2647,15 @@ function appendMessage(
 
 
     if (existing) {
+
         return;
     }
 
 
     const element =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
 
     element.className =
@@ -2014,13 +2667,19 @@ function appendMessage(
 
 
     element.innerHTML = `
+
         <strong>
-            ${escapeHtml(message.display_name)}
+            ${escapeHtml(
+                message.display_name
+            )}
         </strong>
 
         <span>
-            ${escapeHtml(message.message)}
+            ${escapeHtml(
+                message.message
+            )}
         </span>
+
     `;
 
 
@@ -2030,6 +2689,7 @@ function appendMessage(
 
 
     if (scroll) {
+
         scrollChat();
     }
 }
@@ -2042,6 +2702,7 @@ function appendMessage(
 function scrollChat() {
 
     if (!chatMessages) {
+
         return;
     }
 
@@ -2055,20 +2716,29 @@ function scrollChat() {
    REAÇÕES
    ========================================================= */
 
-function sendReaction(reaction) {
+function sendReaction(
+    reaction
+) {
 
     if (
         !state.channel ||
         !reaction
     ) {
+
         return;
     }
 
 
     state.channel.send({
-        type: "broadcast",
-        event: "reaction",
+
+        type:
+            "broadcast",
+
+        event:
+            "reaction",
+
         payload: {
+
             userId:
                 state.userId,
 
@@ -2078,7 +2748,9 @@ function sendReaction(reaction) {
     });
 
 
-    showReaction(reaction);
+    showReaction(
+        reaction
+    );
 }
 
 
@@ -2086,15 +2758,20 @@ function sendReaction(reaction) {
    MOSTRAR REAÇÃO
    ========================================================= */
 
-function showReaction(reaction) {
+function showReaction(
+    reaction
+) {
 
     if (!reaction) {
+
         return;
     }
 
 
     const element =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
 
     element.className =
@@ -2151,27 +2828,33 @@ async function updateHeartbeat() {
         !state.roomId ||
         !state.userId
     ) {
+
         return;
     }
 
 
     const {
         error
-    } = await supabaseClient
-        .from("room_members")
-        .update({
-            is_online: true,
-            last_seen:
-                new Date().toISOString()
-        })
-        .eq(
-            "room_id",
-            state.roomId
-        )
-        .eq(
-            "user_id",
-            state.userId
-        );
+    } =
+        await supabaseClient
+            .from("room_members")
+            .update({
+
+                is_online:
+                    true,
+
+                last_seen:
+                    new Date().toISOString()
+
+            })
+            .eq(
+                "room_id",
+                state.roomId
+            )
+            .eq(
+                "user_id",
+                state.userId
+            );
 
 
     if (error) {
@@ -2190,13 +2873,16 @@ async function updateHeartbeat() {
 
 function stopHeartbeat() {
 
-    if (state.heartbeat) {
+    if (
+        state.heartbeat
+    ) {
 
         clearInterval(
             state.heartbeat
         );
 
-        state.heartbeat = null;
+        state.heartbeat =
+            null;
     }
 }
 
@@ -2217,9 +2903,13 @@ async function leaveRoom() {
             await supabaseClient
                 .from("room_members")
                 .update({
-                    is_online: false,
+
+                    is_online:
+                        false,
+
                     last_seen:
                         new Date().toISOString()
+
                 })
                 .eq(
                     "room_id",
@@ -2242,7 +2932,8 @@ async function leaveRoom() {
                     state.channel
                 );
 
-            state.channel = null;
+            state.channel =
+                null;
         }
 
 
@@ -2255,14 +2946,23 @@ async function leaveRoom() {
     }
 
 
-    state.room = null;
-    state.roomId = null;
-    state.isHost = false;
+    state.room =
+        null;
 
-    state.participants = [];
-    state.playlist = [];
+    state.roomId =
+        null;
 
-    state.currentVideoId = null;
+    state.isHost =
+        false;
+
+    state.participants =
+        [];
+
+    state.playlist =
+        [];
+
+    state.currentVideoId =
+        null;
 
 
     if (videoPlayer) {
@@ -2277,8 +2977,13 @@ async function leaveRoom() {
     }
 
 
-    showElement(homeScreen);
-    hideElement(roomScreen);
+    showElement(
+        homeScreen
+    );
+
+    hideElement(
+        roomScreen
+    );
 
 
     setConnectionStatus(
@@ -2300,12 +3005,15 @@ async function leaveRoom() {
 async function copyRoomURL() {
 
     if (!state.room?.code) {
+
         return;
     }
 
 
     const url =
-        `${window.location.origin}${window.location.pathname}?room=${encodeURIComponent(state.room.code)}`;
+        `${window.location.origin}${window.location.pathname}?room=${encodeURIComponent(
+            state.room.code
+        )}`;
 
 
     try {
@@ -2353,22 +3061,31 @@ function checkRoomFromURL() {
 
 
     if (!code) {
+
         return;
     }
 
 
     const normalizedCode =
-        code.trim().toUpperCase();
+        code
+            .trim()
+            .toUpperCase();
 
 
     if (roomCode) {
+
         roomCode.value =
             normalizedCode;
     }
 
 
-    showElement(joinPanel);
-    hideElement(createPanel);
+    showElement(
+        joinPanel
+    );
+
+    hideElement(
+        createPanel
+    );
 
 
     log(
@@ -2379,7 +3096,7 @@ function checkRoomFromURL() {
 
 
 /* =========================================================
-   STATUS DA CONEXÃO
+   STATUS
    ========================================================= */
 
 function setConnectionStatus(
@@ -2394,6 +3111,7 @@ function setConnectionStatus(
 
 
     if (!connectionDot) {
+
         return;
     }
 
@@ -2421,12 +3139,14 @@ function showError(
 ) {
 
     if (!element) {
+
         return;
     }
 
 
     element.textContent =
-        message || "Erro";
+        message ||
+        "Erro";
 
 
     element.style.display =
@@ -2434,14 +3154,18 @@ function showError(
 }
 
 
-function clearError(element) {
+function clearError(
+    element
+) {
 
     if (!element) {
+
         return;
     }
 
 
-    element.textContent = "";
+    element.textContent =
+        "";
 
     element.style.display =
         "none";
@@ -2452,7 +3176,9 @@ function clearError(element) {
    TOAST
    ========================================================= */
 
-function showToast(message) {
+function showToast(
+    message
+) {
 
     if (!toastElement) {
 
@@ -2494,7 +3220,7 @@ function showToast(message) {
 
 
 /* =========================================================
-   LIMPEZA AO FECHAR A PÁGINA
+   LIMPEZA AO FECHAR
    ========================================================= */
 
 window.addEventListener(
@@ -2510,9 +3236,13 @@ window.addEventListener(
             supabaseClient
                 .from("room_members")
                 .update({
-                    is_online: false,
+
+                    is_online:
+                        false,
+
                     last_seen:
                         new Date().toISOString()
+
                 })
                 .eq(
                     "room_id",
@@ -2532,22 +3262,30 @@ window.addEventListener(
    ========================================================= */
 
 window.AlienWatchParty = {
+
     state,
 
     createRoom,
+
     joinRoom,
+
     leaveRoom,
 
     addVideo,
+
     loadVideo,
 
     sendMessage,
+
     sendReaction,
 
     loadRoomData,
 
     subscribeRealtime
+
 };
 
 
-log("📡 script.js carregado.");
+log(
+    "📡 script.js carregado."
+);
